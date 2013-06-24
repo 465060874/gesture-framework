@@ -1,18 +1,26 @@
 package attempt2;
 
+import java.util.List;
+
 /**
  * User: Sam Wright
- * Date: 22/06/2013
- * Time: 16:19
+ * Date: 24/06/2013
+ * Time: 18:57
  */
 public interface ImmutableList<T> {
-    ImmutableList<T> insert(int index, T element);
+    void add(int index, T element);
 
-    ImmutableList<T> remove(int index);
+    void remove(int index);
+
+    void replace(T oldElement, T newElement);
 
     T get(int index);
 
-    int indexOf(T element);
+    boolean isEmpty();
+
+    int indexOf(Object element);
 
     int size();
+
+    List<T> getNextList();
 }

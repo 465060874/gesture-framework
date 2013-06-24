@@ -1,6 +1,5 @@
 package attempt2;
 
-import javax.swing.*;
 import java.util.*;
 
 /**
@@ -14,7 +13,14 @@ import java.util.*;
  * input data (either individually or in a batch) has been processed (but before the
  * output is returned).
  */
-public interface Processor<I,O> {
+public interface Processor<I,O>
+        extends Observable<ProcessorObserver<O>>, Duplicable<Processor<I, O>> {
+
+    /**
+     * Returns true iff the 'process' method can run.
+     *
+     * @return true iff the 'process' method can run.
+     */
     boolean isValid();
 
     /**
@@ -79,30 +85,6 @@ public interface Processor<I,O> {
             Set<Mediator<O>> successfulOutputs
             );
 
-    /**
-     * Register an observer to be notified before 'process(input)' or 'process(inputs)'
-     * completes.
-     *
-     * Attempting to register an already-registered observer should have no effect.
-     *
-     * @param observer the observer to register.
-     */
-    void addObserver(ProcessorObserver<O> observer);
 
-    /**
-     * Deregister an observer previously registered using 'addObserver'.
-     *
-     * Attempting to deregister an unregistered observer should have no effect.
-     *
-     * @param observer the observer to deregister.
-     */
-    void removeObserver(ProcessorObserver<O> observer);
-
-    /**
-     * Returns an immutable set of ProcessorObservers that are observing this Processor.
-     *
-     * @return observers of this Processor.
-     */
-    Set<ProcessorObserver<O>> getObservers();
 
 }

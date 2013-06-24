@@ -6,7 +6,7 @@ package attempt2;
  * Time: 12:55
  */
 public interface Workflow<I, O>
-        extends Processor<I, O>, ImmutableList<Element<I, O>> {
+        extends Processor<I, O>, ImmutableList<Element<?, ?>>, SingleParentChild<WorkflowContainer<I, O>> {
 
 
 
