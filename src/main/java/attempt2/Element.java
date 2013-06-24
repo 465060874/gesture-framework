@@ -8,5 +8,5 @@ import javax.swing.*;
  * Time: 12:53
  */
 public interface Element<I,O> extends Processor<I, O> {
-    JPanel createView();
+
 }

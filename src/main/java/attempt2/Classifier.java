@@ -8,11 +8,10 @@ import java.util.Collection;
  * Time: 16:49
  */
 public interface Classifier {
-    void train(Collection<TrainingSample> trainingSamples, Collection<TrainingSample> testSamples);
 
-    void trainLeaveOneOut(Collection<TrainingSample> samples);
+    void train(Collection<TrainingSample> samples);
 
-    double getTestSuccess();
+    double getSuccessRate();
 
     int classify(double[] features);
 }

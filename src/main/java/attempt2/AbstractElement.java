@@ -3,13 +3,10 @@ package attempt2;
 import java.util.*;
 
 /**
- * User: Sam Wright
- * Date: 24/06/2013
- * Time: 12:18
+ * Abstract implementor of Processor for elemental Processors to extend, which requires
+ * a one-to-one mapping of input data to output data (without training necessary).
  */
-public abstract class AbstractProcessor<I,O> implements Processor<I, O> {
-
-    private final Set<ProcessorObserver<O>> observers = new HashSet<>();
+public abstract class AbstractElement<I, O> extends ObservableProcessor<I, O> implements Element<I,O> {
 
     @Override
     public List<Mediator<O>> processTrainingBatch(List<Mediator<I>> inputs) {
@@ -18,12 +15,13 @@ public abstract class AbstractProcessor<I,O> implements Processor<I, O> {
         for (Mediator<I> input : inputs)
             outputs.add(process(input));
 
-        for (ProcessorObserver<O> observer : observers)
+        for (ProcessorObserver<O> observer : getObservers())
             observer.notify(outputs);
 
         return outputs;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<Mediator<O>, Mediator<I>> mapCompletedTrainingBatchBackward(List<Mediator<O>> completedOutputs,
                                                                            Set<Mediator<O>> successfulOutputs) {
@@ -37,18 +35,4 @@ public abstract class AbstractProcessor<I,O> implements Processor<I, O> {
     }
 
 
-    @Override
-    public void addObserver(ProcessorObserver<O> observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(ProcessorObserver<O> observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public Set<ProcessorObserver<O>> getObservers() {
-        return Collections.unmodifiableSet(observers);
-    }
 }
