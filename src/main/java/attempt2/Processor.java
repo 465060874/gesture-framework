@@ -1,5 +1,6 @@
 package attempt2;
 
+import javax.swing.*;
 import java.util.*;
 
 /**
@@ -86,15 +87,22 @@ public interface Processor<I,O> {
      *
      * @param observer the observer to register.
      */
-    void registerObserver(Processor<?,?> observer);
+    void addObserver(ProcessorObserver<O> observer);
 
     /**
-     * Deregister an observer previously registered using 'registerObserver'.
+     * Deregister an observer previously registered using 'addObserver'.
      *
      * Attempting to deregister an unregistered observer should have no effect.
      *
      * @param observer the observer to deregister.
      */
-    void deregisterObserver(Processor<?, ?> observer);
+    void removeObserver(ProcessorObserver<O> observer);
+
+    /**
+     * Returns an immutable set of ProcessorObservers that are observing this Processor.
+     *
+     * @return observers of this Processor.
+     */
+    Set<ProcessorObserver<O>> getObservers();
 
 }

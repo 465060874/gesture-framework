@@ -16,7 +16,7 @@ public class Mediator<T> {
     }
 
     public static <U> Mediator<U> createEmpty() {
-        return new Mediator<>(null, History.createEmpty(), null);
+        return new Mediator<>(null, History.getEpoch(), null);
     }
 
     private Mediator(T data, History history, Mediator<?> previous) {
