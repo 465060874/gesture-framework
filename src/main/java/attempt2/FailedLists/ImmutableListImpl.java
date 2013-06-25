@@ -72,6 +72,6 @@ public class ImmutableListImpl<T> implements ImmutableList<T> {
 
     private void handleNewList() {
         handler.handleMutatedList();
-    };
+    }
 
 }

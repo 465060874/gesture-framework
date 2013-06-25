@@ -1,7 +1,7 @@
 package attempt2;
 
-import attempt2.FailedLists.ImmutableList;
-import attempt2.FailedLists.ImmutableListImpl;
+import attempt2.ImmutableCollections.ImmutableList;
+import attempt2.ImmutableCollections.ImmutableListImpl;
 import lombok.Delegate;
 
 /**
@@ -17,7 +17,7 @@ public abstract class AbstractWorkflowContainer<I, O> implements WorkflowContain
     private final ImmutableList<Workflow<I, O>> workflows;
 
     @Override
-    public ImmutableList getContents() {
+    public ImmutableList<Workflow<I, O>> getContents() {
         return workflows;
     }
 
@@ -32,7 +32,7 @@ public abstract class AbstractWorkflowContainer<I, O> implements WorkflowContain
     }
 
     public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer) {
-        workflows = new ImmutableListImpl<>(oldWorkflowContainer.workflows.getNextList(), this);
+        workflows = new ImmutableListImpl<>(oldWorkflowContainer.workflows.getMutatedList(), this);
     }
 
 

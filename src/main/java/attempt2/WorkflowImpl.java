@@ -1,7 +1,7 @@
 package attempt2;
 
-import attempt2.FailedLists.ImmutableList;
-import attempt2.FailedLists.ImmutableListImpl;
+import attempt2.ImmutableCollections.ImmutableList;
+import attempt2.ImmutableCollections.ImmutableListImpl;
 import lombok.Delegate;
 
 /**
@@ -25,7 +25,7 @@ public abstract class WorkflowImpl<I, O> implements Workflow<I, O> {
     @Override
     public void handleMutatedList() {
         Workflow<I, O> nextWorkflow = (Workflow<I, O>) callCopyConstructor();
-        // for element in elements ...
+        for (Element<?, ?> e : elements)
         getParent().getContents().replace(this, nextWorkflow);
     }
 
@@ -34,6 +34,6 @@ public abstract class WorkflowImpl<I, O> implements Workflow<I, O> {
     }
 
     public WorkflowImpl(WorkflowImpl<I, O> oldworkflow) {
-        elements = new ImmutableListImpl<>(oldworkflow.elements.getNextList(), this);
+        elements = new ImmutableListImpl<>(oldworkflow.elements.getMutatedList(), this);
     }
 }

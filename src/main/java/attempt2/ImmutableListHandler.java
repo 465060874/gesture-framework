@@ -1,6 +1,7 @@
 package attempt2;
 
-import attempt2.FailedLists.ImmutableList;
+
+import attempt2.ImmutableCollections.ImmutableList;
 
 /**
  * User: Sam Wright

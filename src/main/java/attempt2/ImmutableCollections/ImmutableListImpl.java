@@ -26,15 +26,15 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
     @Getter private List<E> mutatedList;
     private final SimpleList<E> backupList;
 
-    @NotNull private final ImmutableListHandler<E> handler;
+    private final ImmutableListHandler<E> handler;
 
-    public ImmutableListImpl(List<E> list, ImmutableListHandler<E> handler) {
+    public ImmutableListImpl(@NotNull List<E> list, @NotNull ImmutableListHandler<E> handler) {
         this.handler = handler;
         this.activeList = new SimpleListImpl<>(Collections.unmodifiableList(list));
         this.backupList = activeList;
     }
 
-    public ImmutableListImpl(ImmutableListHandler<E> handler) {
+    public ImmutableListImpl(@NotNull ImmutableListHandler<E> handler) {
         this(Collections.<E>emptyList(), handler);
     }
 
@@ -48,6 +48,8 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
 
     protected void notifyMutationHandler() {
         handler.handleMutatedList();
+        activeList = backupList;
+        mutatedList = null;
     }
 
 
