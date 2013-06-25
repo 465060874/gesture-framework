@@ -1,12 +1,28 @@
 package attempt2;
 
+import lombok.Delegate;
+
 import java.util.*;
 
 /**
  * Abstract implementor of Processor for elemental Processors to extend, which requires
  * a one-to-one mapping of input data to output data (without training necessary).
  */
-public abstract class AbstractElement<I, O> extends ObservableProcessor<I, O> implements Element<I,O> {
+public abstract class AbstractElement<I, O> implements Element<I,O> {
+
+    @Delegate
+    private final Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
+
+    private Workflow<?, ?> parent;
+
+    public AbstractElement(Workflow<?, ?> parent) {
+        this.parent = parent;
+    }
+
+    public AbstractElement(AbstractElement<I, O> oldAbstractElement) {
+        parent = oldAbstractElement.getParent();
+    }
+
 
     @Override
     public List<Mediator<O>> processTrainingBatch(List<Mediator<I>> inputs) {
@@ -15,7 +31,7 @@ public abstract class AbstractElement<I, O> extends ObservableProcessor<I, O> im
         for (Mediator<I> input : inputs)
             outputs.add(process(input));
 
-        for (ProcessorObserver<O> observer : getObservers())
+        for (MediatorObserver<O> observer : getObservers())
             observer.notify(outputs);
 
         return outputs;
@@ -35,4 +51,8 @@ public abstract class AbstractElement<I, O> extends ObservableProcessor<I, O> im
     }
 
 
+    @Override
+    public Workflow<?, ?> getParent() {
+        return parent;
+    }
 }

@@ -1,30 +1,39 @@
 package attempt2;
 
+import attempt2.FailedLists.ImmutableList;
+import attempt2.FailedLists.ImmutableListImpl;
 import lombok.Delegate;
-
-import java.util.Collections;
 
 /**
  * User: Sam Wright
  * Date: 24/06/2013
  * Time: 20:34
  */
-public class WorkflowImpl<I, O> extends ObservableProcessor<I, O> implements Workflow<I, O>, ImmutableListHandler {
+public abstract class WorkflowImpl<I, O> implements Workflow<I, O> {
 
-    @Delegate(types = ImmutableList.class)
+    @Delegate
+    private final Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
+
     private final ImmutableListImpl<Element<?, ?>> elements;
 
     @Override
-    public void handleNewList() {
-        WorkflowContainer<I, O> nextContainer = (WorkflowContainer<I, O>) callCopyConstructor();
-        getParent().replace(this, nextContainer);
+    public ImmutableList<Element<?,?>> getContents() {
+        return elements;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void handleMutatedList() {
+        Workflow<I, O> nextWorkflow = (Workflow<I, O>) callCopyConstructor();
+        // for element in elements ...
+        getParent().getContents().replace(this, nextWorkflow);
     }
 
     public WorkflowImpl() {
-        elements = new ImmutableListImpl<>(Collections.<Element<?, ?>>emptyList(), this);
+        elements = new ImmutableListImpl<>(this);
     }
 
-    public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow) {
-        elements = new ImmutableListImpl<>(oldWorkflow.elements.getNextList(), this);
+    public WorkflowImpl(WorkflowImpl<I, O> oldworkflow) {
+        elements = new ImmutableListImpl<>(oldworkflow.elements.getNextList(), this);
     }
 }

@@ -9,12 +9,12 @@ import java.util.*;
  * batch completes, the processor is notified (allowing for the processor to train
  * itself).
  *
- * It can also be observed by ProcessorObserver objects, which are notified when
+ * It can also be observed by MediatorObserver objects, which are notified when
  * input data (either individually or in a batch) has been processed (but before the
  * output is returned).
  */
 public interface Processor<I,O>
-        extends Observable<ProcessorObserver<O>>, Duplicable<Processor<I, O>> {
+        extends Observable<MediatorObserver<O>>, Duplicable<Processor<I, O>> {
 
     /**
      * Returns true iff the 'process' method can run.

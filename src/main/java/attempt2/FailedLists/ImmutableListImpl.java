@@ -1,5 +1,6 @@
-package attempt2;
+package attempt2.FailedLists;
 
+import attempt2.ImmutableListHandler;
 import lombok.Delegate;
 
 import java.util.ArrayList;
@@ -22,14 +23,18 @@ public class ImmutableListImpl<T> implements ImmutableList<T> {
 
     @Delegate(types = ReadOnlyMethods.class)
     private final List<T> list;
-    private final ImmutableListHandler handler;
+    private final ImmutableListHandler<T> handler;
 
     private List<T> nextList;
 
-    public ImmutableListImpl(List<T> list, ImmutableListHandler handler) {
+    public ImmutableListImpl(List<T> list, ImmutableListHandler<T> handler) {
         this.handler = handler;
         this.list = Collections.unmodifiableList(list);
         nextList = this.list;
+    }
+
+    public ImmutableListImpl(ImmutableListHandler<T> handler) {
+        this(Collections.<T>emptyList(), handler);
     }
 
     private List<T> duplicateList() {
@@ -66,7 +71,7 @@ public class ImmutableListImpl<T> implements ImmutableList<T> {
     }
 
     private void handleNewList() {
-        handler.handleNewList();
+        handler.handleMutatedList();
     };
 
 }
