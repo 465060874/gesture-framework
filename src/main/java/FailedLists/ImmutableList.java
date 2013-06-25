@@ -1,4 +1,4 @@
-package attempt2.FailedLists;
+package FailedLists;
 
 import java.util.List;
 

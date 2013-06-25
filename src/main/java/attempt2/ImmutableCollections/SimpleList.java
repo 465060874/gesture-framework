@@ -1,4 +1,4 @@
-package attempt2.FailedLists;
+package attempt2.ImmutableCollections;
 
 import java.util.*;
 

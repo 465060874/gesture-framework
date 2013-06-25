@@ -1,4 +1,4 @@
-package attempt2.FailedLists;
+package attempt2.ImmutableCollections;
 
 import lombok.Delegate;
 import lombok.Getter;
@@ -14,7 +14,7 @@ public class SimpleListImpl<E> implements SimpleList<E> {
     @Delegate @Getter
     private final List<E> list;
 
-    public SimpleListImpl(List<E> list) {
+    protected SimpleListImpl(List<E> list) {
         this.list = list;
     }
 }

@@ -1,7 +1,5 @@
 package attempt2.ImmutableCollections;
 
-import attempt2.FailedLists.SimpleList;
-import attempt2.FailedLists.SimpleListImpl;
 import attempt2.ImmutableListHandler;
 import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
