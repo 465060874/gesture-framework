@@ -23,17 +23,17 @@ public class ImmutableListImpl<T> implements ImmutableList<T> {
 
     @Delegate(types = ReadOnlyMethods.class)
     private final List<T> list;
-    private final ImmutableListHandler<T> handler;
+    private final ImmutableListHandler handler;
 
     private List<T> nextList;
 
-    public ImmutableListImpl(List<T> list, ImmutableListHandler<T> handler) {
+    public ImmutableListImpl(List<T> list, ImmutableListHandler handler) {
         this.handler = handler;
         this.list = Collections.unmodifiableList(list);
         nextList = this.list;
     }
 
-    public ImmutableListImpl(ImmutableListHandler<T> handler) {
+    public ImmutableListImpl(ImmutableListHandler handler) {
         this(Collections.<T>emptyList(), handler);
     }
 

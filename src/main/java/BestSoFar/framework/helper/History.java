@@ -1,6 +1,6 @@
 package BestSoFar.framework.helper;
 
-import BestSoFar.framework.abstractions.Processor;
+import BestSoFar.framework.core.Processor;
 import lombok.Getter;
 
 /**
@@ -30,9 +30,9 @@ public abstract class History {
     public abstract History createNext(Processor<?, ?> creator);
 
     /**
-     * Get the History object that immediately preceeded this one.
+     * Get the History object that immediately preceded this one.
      *
-     * @return the History object that immediately preceeded this one.
+     * @return the History object that immediately preceded this one.
      */
     public abstract History getPrevious();
 

@@ -1,7 +1,8 @@
-package BestSoFar.framework.abstractions;
+package BestSoFar.framework.core;
 
 import BestSoFar.ImmutableCollections.ImmutableList;
 import BestSoFar.ImmutableCollections.ImmutableListImpl;
+import BestSoFar.framework.helper.MediatorObserver;
 import BestSoFar.framework.helper.Observable;
 import BestSoFar.framework.helper.ObservableImpl;
 import com.sun.istack.internal.NotNull;

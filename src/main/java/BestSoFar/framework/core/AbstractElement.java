@@ -1,4 +1,4 @@
-package BestSoFar.framework.abstractions;
+package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.*;
 import com.sun.istack.internal.NotNull;

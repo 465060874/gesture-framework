@@ -10,7 +10,5 @@ import java.util.List;
 public interface ImmutableList<E> extends List<E> {
     boolean replace(E oldElement, E newElement);
 
-    List<E> getList();
-
     List<E> getMutatedList();
 }

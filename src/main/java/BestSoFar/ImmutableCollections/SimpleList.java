@@ -30,7 +30,7 @@ public interface SimpleList<E> {
 
 //    <T> T[] toArray(T[] a);
 
-    boolean add(E t);
+//    boolean add(E t);
 
     boolean remove(Object o);
 

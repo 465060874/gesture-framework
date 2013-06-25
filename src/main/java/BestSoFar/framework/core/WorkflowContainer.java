@@ -1,4 +1,4 @@
-package BestSoFar.framework.abstractions;
+package BestSoFar.framework.core;
 
 import BestSoFar.ImmutableCollections.ImmutableList;
 import BestSoFar.ImmutableCollections.ImmutableListHandler;

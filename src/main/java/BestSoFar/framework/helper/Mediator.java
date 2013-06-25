@@ -1,6 +1,6 @@
 package BestSoFar.framework.helper;
 
-import BestSoFar.framework.abstractions.Processor;
+import BestSoFar.framework.core.Processor;
 
 /**
  * Mediator objects contain data that was produced from a Processor<?,T> object, and can

@@ -1,6 +1,6 @@
 package BestSoFar.framework.helper;
 
-import BestSoFar.framework.abstractions.Processor;
+import BestSoFar.framework.core.Processor;
 import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

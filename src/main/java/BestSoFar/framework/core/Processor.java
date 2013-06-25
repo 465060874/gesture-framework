@@ -1,6 +1,7 @@
-package BestSoFar.framework.abstractions;
+package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.*;
+import BestSoFar.framework.helper.Observable;
 
 import java.util.*;
 
@@ -15,8 +16,7 @@ import java.util.*;
  * input data (either individually or in a batch) has been processed (but before the
  * output is returned).
  */
-public interface Processor<I,O>
-        extends BestSoFar.framework.helper.Observable<MediatorObserver<O>>, Duplicable<Processor<I, O>> {
+public interface Processor<I,O> extends Observable<MediatorObserver<O>>, Duplicable<Processor<I, O>> {
 
     /**
      * Returns true iff the 'process' method can run.
