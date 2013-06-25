@@ -1,8 +1,13 @@
-package attempt2;
+package BestSoFar.framework.abstractions;
 
-import attempt2.ImmutableCollections.ImmutableList;
-import attempt2.ImmutableCollections.ImmutableListImpl;
+import BestSoFar.ImmutableCollections.ImmutableList;
+import BestSoFar.ImmutableCollections.ImmutableListImpl;
+import BestSoFar.framework.helper.Observable;
+import BestSoFar.framework.helper.ObservableImpl;
+import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * User: Sam Wright
@@ -14,17 +19,14 @@ public abstract class AbstractWorkflowContainer<I, O> implements WorkflowContain
     @Delegate
     private final Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
 
-    private final ImmutableList<Workflow<I, O>> workflows;
+    @Getter private final ImmutableList<Workflow<I, O>> workflows;
 
-    @Override
-    public ImmutableList<Workflow<I, O>> getContents() {
-        return workflows;
-    }
+    @Getter @Setter @NotNull Workflow<?, ?> parent;
 
     @Override
     public void handleMutatedList() {
         WorkflowContainer<I, O> nextContainer = (WorkflowContainer<I, O>) callCopyConstructor();
-        getParent().getContents().replace(this, nextContainer);
+        getParent().getElements().replace(this, nextContainer);
     }
 
     public AbstractWorkflowContainer() {

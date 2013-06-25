@@ -1,4 +1,6 @@
-package attempt2;
+package BestSoFar.framework.abstractions;
+
+import BestSoFar.framework.helper.*;
 
 import java.util.*;
 
@@ -14,7 +16,7 @@ import java.util.*;
  * output is returned).
  */
 public interface Processor<I,O>
-        extends Observable<MediatorObserver<O>>, Duplicable<Processor<I, O>> {
+        extends BestSoFar.framework.helper.Observable<MediatorObserver<O>>, Duplicable<Processor<I, O>> {
 
     /**
      * Returns true iff the 'process' method can run.

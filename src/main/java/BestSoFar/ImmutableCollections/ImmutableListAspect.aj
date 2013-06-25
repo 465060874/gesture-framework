@@ -1,4 +1,4 @@
-package attempt2.ImmutableCollections;
+package BestSoFar.ImmutableCollections;
 
 /**
  * User: Sam Wright
@@ -8,7 +8,7 @@ package attempt2.ImmutableCollections;
 public aspect ImmutableListAspect {
 
     pointcut anyCall(ImmutableList list):
-            call(* attempt2.ImmutableCollections.ImmutableListImpl.*(..)) &&
+            call(* BestSoFar.ImmutableCollections.ImmutableListImpl.*(..)) &&
             target(list);
 
     Object around(ImmutableListImpl list): anyCall(list) {

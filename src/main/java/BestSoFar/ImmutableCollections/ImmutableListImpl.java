@@ -1,6 +1,5 @@
-package attempt2.ImmutableCollections;
+package BestSoFar.ImmutableCollections;
 
-import attempt2.ImmutableListHandler;
 import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
 import lombok.Getter;

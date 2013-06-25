@@ -1,6 +1,10 @@
-package attempt2;
+package BestSoFar.framework.abstractions;
 
+import BestSoFar.framework.helper.*;
+import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -11,18 +15,17 @@ import java.util.*;
 public abstract class AbstractElement<I, O> implements Element<I,O> {
 
     @Delegate
-    private final Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
+    private final BestSoFar.framework.helper.Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
 
-    private Workflow<?, ?> parent;
+    @Getter @Setter @NotNull private Workflow<?, ?> parent;
 
     public AbstractElement(Workflow<?, ?> parent) {
-        this.parent = parent;
+        setParent(parent);
     }
 
     public AbstractElement(AbstractElement<I, O> oldAbstractElement) {
-        parent = oldAbstractElement.getParent();
+        setParent(oldAbstractElement.getParent());
     }
-
 
     @Override
     public List<Mediator<O>> processTrainingBatch(List<Mediator<I>> inputs) {
@@ -48,11 +51,5 @@ public abstract class AbstractElement<I, O> implements Element<I,O> {
             mapping.put(completedOutput, (Mediator<I>) completedOutput.getPrevious());
 
         return mapping;
-    }
-
-
-    @Override
-    public Workflow<?, ?> getParent() {
-        return parent;
     }
 }

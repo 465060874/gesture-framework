@@ -1,4 +1,4 @@
-package attempt2;
+package BestSoFar.framework.datatypes;
 
 /**
  * User: Sam Wright

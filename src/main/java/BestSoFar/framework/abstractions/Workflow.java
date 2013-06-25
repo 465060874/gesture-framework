@@ -1,11 +1,14 @@
-package attempt2;
+package BestSoFar.framework.abstractions;
+
+import BestSoFar.ImmutableCollections.ImmutableList;
+import BestSoFar.ImmutableCollections.ImmutableListHandler;
 
 /**
  * User: Sam Wright
  * Date: 22/06/2013
  * Time: 12:55
  */
-public interface Workflow<I, O> extends Processor<I, O>, ImmutableListHandler<Element<?, ?>> {
+public interface Workflow<I, O> extends Processor<I, O>, ImmutableListHandler {
 
     /**
      * The workflow container in which this workflow resides.
@@ -17,6 +20,8 @@ public interface Workflow<I, O> extends Processor<I, O>, ImmutableListHandler<El
      * @return the workflow container in which this workflow resides.
      */
     WorkflowContainer<I, O> getParent();
+
+    ImmutableList<Element<?, ?>> getElements();
 
 }
 

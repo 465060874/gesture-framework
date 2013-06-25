@@ -1,6 +1,4 @@
-package attempt2;
-
-import javax.swing.*;
+package BestSoFar.framework.abstractions;
 
 /**
  * An elemental Processor is one which always has a one-to-one mapping of input
@@ -20,5 +18,7 @@ public interface Element<I,O> extends Processor<I, O> {
      * @return the workflow in which this element resides.
      */
     Workflow<?, ?> getParent();
+
+    void setParent(Workflow<?, ?> parent);
 
 }

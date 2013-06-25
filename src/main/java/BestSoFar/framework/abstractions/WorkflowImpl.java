@@ -1,8 +1,10 @@
-package attempt2;
+package BestSoFar.framework.abstractions;
 
-import attempt2.ImmutableCollections.ImmutableList;
-import attempt2.ImmutableCollections.ImmutableListImpl;
+import BestSoFar.ImmutableCollections.ImmutableListImpl;
+import BestSoFar.framework.helper.Observable;
+import BestSoFar.framework.helper.ObservableImpl;
 import lombok.Delegate;
+import lombok.Getter;
 
 /**
  * User: Sam Wright
@@ -14,19 +16,18 @@ public abstract class WorkflowImpl<I, O> implements Workflow<I, O> {
     @Delegate
     private final Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
 
-    private final ImmutableListImpl<Element<?, ?>> elements;
+    @Getter private final ImmutableListImpl<Element<?, ?>> elements;
 
-    @Override
-    public ImmutableList<Element<?,?>> getContents() {
-        return elements;
-    }
 
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     @Override
     public void handleMutatedList() {
         Workflow<I, O> nextWorkflow = (Workflow<I, O>) callCopyConstructor();
+
         for (Element<?, ?> e : elements)
-        getParent().getContents().replace(this, nextWorkflow);
+            e.setParent(nextWorkflow);
+
+        getParent().getWorkflows().replace(this, nextWorkflow);
     }
 
     public WorkflowImpl() {

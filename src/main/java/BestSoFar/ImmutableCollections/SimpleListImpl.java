@@ -1,4 +1,4 @@
-package attempt2.ImmutableCollections;
+package BestSoFar.ImmutableCollections;
 
 import lombok.Delegate;
 import lombok.Getter;

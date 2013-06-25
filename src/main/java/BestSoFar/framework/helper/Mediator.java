@@ -1,4 +1,6 @@
-package attempt2;
+package BestSoFar.framework.helper;
+
+import BestSoFar.framework.abstractions.Processor;
 
 /**
  * Mediator objects contain data that was produced from a Processor<?,T> object, and can
@@ -15,22 +17,7 @@ package attempt2;
  * (ie. mediator1.getHistory() == mediator2.getHistory()) regardless of whether the mediators'
  * data are the same or not.
  */
-public class Mediator<T> {
-    private final T data;
-    private final History history;
-    private final Mediator<?> previous;
-
-    /**
-     * Create the output mediator from this input mediator, given the newly-created 'data'.
-     *
-     * @param creator the Processor that used this input mediator to produce 'data'
-     * @param data the data the Processor created from this input mediator.
-     * @param <U> the type of 'data'.
-     * @return an output mediator containing 'data' created by 'creator' using this mediator as input.
-     */
-    public <U> Mediator<U> createNext(Processor<?,?> creator, U data) {
-        return new Mediator<>(data, history.createNext(creator), this);
-    }
+public abstract class Mediator<T> {
 
     /**
      * Creates an empty mediator, which is used as the starting element from which future mediators
@@ -40,57 +27,46 @@ public class Mediator<T> {
      * @return an empty mediator, from which mediators (which contain data) can be created.
      */
     public static Mediator<?> createEmpty() {
-        return new Mediator<>(null, History.getEpoch(), null);
+        return MediatorImpl.createEmpty();
     }
 
     /**
-     * Private initialiser - used in 'createEmpty()' and 'createNext(creator, data)'.
+     * Create the output mediator from this input mediator, given the newly-created 'data'.
      *
-     * @param data the data for this mediator to contain.
-     * @param history the history object for this mediator.
-     * @param previous the mediator from which this is to be created.
+     * @param creator the Processor that used this input mediator to produce 'data'
+     * @param data the data the Processor created from this input mediator.
+     * @param <U> the type of 'data'.
+     * @return an output mediator containing 'data' created by 'creator' using this mediator as input.
      */
-    private Mediator(T data, History history, Mediator<?> previous) {
-        this.data = data;
-        this.history = history;
-        this.previous = previous;
-    }
+    public abstract <U> Mediator<U> createNext(Processor<?,?> creator, U data);
 
     /**
      * Returns true iff this is an empty mediator (ie. the first in a sequence of mediators).
      *
      * @return true iff this is an empty mediator (ie. the first in a sequence of mediators).
      */
-    public boolean isEmpty() {
-        return previous == null;
-    }
+    public abstract boolean isEmpty();
 
     /**
      * Gets the data contained in this mediator object.
      *
      * @return the data contained in this mediator object.
      */
-    public T getData() {
-        return data;
-    }
+    public abstract T getData();
 
     /**
      * Gets the history object (ie. the sequence of Processors which led to this mediator's creation).
      *
      * @return the history object.
      */
-    public History getHistory() {
-        return history;
-    }
+    public abstract History getHistory();
 
     /**
      * Gets the mediator object from which this one was created.
      *
      * @return the mediator object from which this one was created.s
      */
-    public Mediator<?> getPrevious() {
-        return previous;
-    }
+    public abstract Mediator<?> getPrevious();
 
     /**
      * Gets this mediator's ancestor that was created by 'creator'.
@@ -102,13 +78,5 @@ public class Mediator<T> {
      * @param creator the creator of the ancestral mediator to return.
      * @return the ancestral mediator created by 'creator'.
      */
-    public Mediator<?> getAncestorCreatedBy(Processor<?,?> creator) {
-        Mediator<?> mediator = this;
-
-        while(mediator != null && mediator.getHistory().getCreator() != creator)
-            mediator = mediator.getPrevious();
-
-
-        return mediator;
-    }
+    public abstract Mediator<?> getAncestorCreatedBy(Processor<?, ?> creator);
 }
