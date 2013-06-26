@@ -1,28 +1,16 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.helper.ChildOf;
+import BestSoFar.framework.helper.ObservableProcess;
+
 /**
- * An elemental Processor is one which always has a one-to-one mapping of input
- * data to output data (through the 'process' and 'processTrainingBatch' method).
- *
- * Every element sits inside a Workflow (ie. its parent).
- *
- * The parent field is always up to date - eg. if the parent is replaced (because
- * it was modified) then this object's parent field is updated (even though data
- * returned by the 'process' method will still flow back to the original parent).
+ * An {@code Element} is a {@link Processor} which sits inside a {@link Workflow}.
+ * <p/>
+ * The parent {@code Workflow} is always up to date - eg. if the parent is replaced (because it
+ * was modified) then this object's parent field is updated.  This doesn't affect data already
+ * being processed inside this {@code Element} because the data is passed back to the original
+ * parent when the {@code process(input)} method returns.
  */
-public interface Element<I, O> extends Processor<I, O> {
-
-    /**
-     * Gets the workflow in which this element resides.
-     *
-     * @return the workflow in which this element resides.
-     */
-    Workflow<?, ?> getParent();
-
-    /**
-     * Sets the workflow in which this element resides.
-     *
-     * @param parent the workflow in which this element resides.
-     */
-    void setParent(Workflow<?, ?> parent);
+public interface Element<I, O>
+        extends Processor<I, O>, ObservableProcess<O>, ChildOf<Workflow<?, ?>> {
 }

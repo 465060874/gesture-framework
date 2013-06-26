@@ -1,8 +1,7 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.helper.*;
 import BestSoFar.immutables.ImmutableListImpl;
-import BestSoFar.framework.helper.Mediator;
-import BestSoFar.framework.helper.ProcessorObserverManager;
 import BestSoFar.immutables.TypeData;
 import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
@@ -14,23 +13,28 @@ import java.util.*;
  * Implementation of Workflow.
  */
 public class WorkflowImpl<I, O> implements Workflow<I, O> {
-
-    @Delegate private final ProcessorObserverManager<O> observerManager = new ProcessorObserverManager<>();
+    @Delegate private final ObservableProcess<O> observerManager;
+    @Delegate private final ChildOf<WorkflowContainer<I, O>> parentManager;
     @Getter private final ImmutableListImpl<Element<?, ?>> elements;
-    @Getter @NotNull private WorkflowContainer<I, O> parent;
     @Getter @NotNull private final TypeData<I, O> typeData;
+    @Delegate private final ProcessorMutationHandler<I, O, I, O> mutationHandler =
+            new ProcessorMutationHandler<>(this);
 
     public WorkflowImpl(WorkflowContainer<I, O> parent, TypeData<I, O> typeData) {
         elements = new ImmutableListImpl<>(this);
-        setParent(parent);
         this.typeData = typeData;
+        observerManager = new ImmutableObservableProcessImpl<>(this);
+        parentManager = new ParentMutationHandler<>(parent, this);
         checkTypeData();
     }
 
+    @SuppressWarnings("unchecked")
     public WorkflowImpl(WorkflowImpl<?, ?> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        elements = new ImmutableListImpl<>(oldWorkflow.getElements().getMutatedList(), this);
         checkTypeData();
+        elements = new ImmutableListImpl<>(oldWorkflow.getElements().getMutatedList(), this);
+        observerManager = ((ImmutableObservableProcessImpl<O>) oldWorkflow.observerManager).cloneFor(this);
+        parentManager = ((ParentMutationHandler<WorkflowContainer<I,O>>) oldWorkflow.parentManager).cloneFor(this);
     }
 
     private void checkTypeData() {
@@ -45,14 +49,8 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     }
 
     @Override
-    public void setParent(WorkflowContainer<I, O> parent) {
-        this.parent = parent;
-        checkTypeData();
-    }
-
-    @Override
-    public void handleListMutation() {
-        Workflow<I, O> nextWorkflow = (Workflow<I, O>) cloneAs(typeData);
+    public <I2, O2> void replaceSelfWithClone(Processor<I2, O2> clone) {
+        Workflow<I, O> nextWorkflow = (Workflow<I, O>) clone;
 
         for (Element<?, ?> e : elements)
             e.setParent(nextWorkflow);
@@ -87,9 +85,10 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
         for (Element<?,?> e : elements)
             input = e.process(input);
 
+        Mediator<O> output = (Mediator<O>) input;
+        notifyObservers(output);
 
-
-        return (Mediator<O>) input;
+        return output;
     }
 
     @SuppressWarnings("unchecked")
@@ -98,7 +97,10 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
         for (Element<?, ?> e : elements)
             inputs = (List<Mediator<?>>) (List<?>) e.processTrainingBatch(inputs);
 
-        return (List<Mediator<O>>) inputs;
+        List<Mediator<O>> outputs = (List<Mediator<O>>) inputs;
+        notifyObservers(outputs);
+
+        return outputs;
     }
 
     @SuppressWarnings("unchecked")
@@ -140,7 +142,7 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     }
 
     @Override
-    public <I2, O2> Processor<I2, O2> cloneAs(TypeData<I2, O2> typeData) {
+    public <I2, O2> WorkflowImpl<I2, O2> cloneAs(TypeData<I2, O2> typeData) {
         return new WorkflowImpl<>(this, typeData);
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * A class implementing this will have the ability to notify ProcessorObservers.
  */
-public interface ProcessorObserverNotifier<T> {
+public interface ElementObserverNotifier<T> {
     /**
      * Notify all ProcessorObservers that the supplied mediator has been created by their observed Processors.
      *

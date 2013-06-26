@@ -1,41 +1,48 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.helper.ImmutableObservableProcessImpl;
+import BestSoFar.framework.helper.ProcessObserver;
 import BestSoFar.immutables.ImmutableList;
 import BestSoFar.immutables.ImmutableListImpl;
-import BestSoFar.framework.helper.ProcessorObserverManager;
 import BestSoFar.immutables.TypeData;
 import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
+
 /**
- * User: Sam Wright
- * Date: 24/06/2013
- * Time: 15:22
+ * Abstract implementation of {@link WorkflowContainer}.
+ *
+ * Concrete WorkflowContainer implementations can derive from this to let it handle the internal
+ * list of {@link Workflow} objects (and all the cloning that comes from modifications to it),
+ * along with boilerplate code (accessors for parent and {@link TypeData}, and
+ * {@link BestSoFar.framework.helper.ProcessObserver} management).
  */
-public abstract class AbstractWorkflowContainer<I, O> implements WorkflowContainer<I, O> {
+public abstract class AbstractWorkflowContainer<I, O>
+        extends AbstractElement<I, O> implements WorkflowContainer<I, O> {
 
-    @Delegate private final ProcessorObserverManager<O> observerManager = new ProcessorObserverManager<>();
     @Getter private final ImmutableList<Workflow<I, O>> workflows;
-    @Getter @Setter @NotNull Workflow<?, ?> parent;
-    private final TypeData<I, O> typeData;
 
-    @Override
-    public void handleListMutation() {
-        WorkflowContainer<I, O> nextContainer = (WorkflowContainer<I, O>) cloneAs(typeData);
-        getParent().getElements().replace(this, nextContainer);
-    }
-
-    public AbstractWorkflowContainer(TypeData<I, O> typeData) {
-        this.typeData = typeData;
+    public AbstractWorkflowContainer(Workflow<?, ?> parent, TypeData<I, O> typeData) {
+        super(parent, typeData);
         workflows = new ImmutableListImpl<>(this);
     }
 
     public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer, TypeData<I, O> typeData) {
-        this.typeData = typeData;
+        super(oldWorkflowContainer, typeData);
         workflows = new ImmutableListImpl<>(oldWorkflowContainer.getWorkflows().getMutatedList(), this);
     }
 
+    @Override
+    public <I2, O2> void replaceSelfWithClone(Processor<I2, O2> clone) {
+        AbstractWorkflowContainer<I, O> replacement = (AbstractWorkflowContainer<I, O>) clone;
+
+        for (Workflow<I, O> workflow : workflows)
+            workflow.setParent(replacement);
+
+        super.replaceSelfWithClone(clone);
+    }
 
 }
