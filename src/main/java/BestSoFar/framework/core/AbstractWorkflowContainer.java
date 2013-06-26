@@ -1,6 +1,7 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.ImmutableObservableProcessImpl;
+import BestSoFar.framework.helper.Mediator;
 import BestSoFar.framework.helper.ProcessObserver;
 import BestSoFar.immutables.ImmutableList;
 import BestSoFar.immutables.ImmutableListImpl;
@@ -10,7 +11,9 @@ import lombok.Delegate;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Abstract implementation of {@link WorkflowContainer}.
@@ -28,6 +31,26 @@ public abstract class AbstractWorkflowContainer<I, O>
     public AbstractWorkflowContainer(Workflow<?, ?> parent, TypeData<I, O> typeData) {
         super(parent, typeData);
         workflows = new ImmutableListImpl<>(this);
+    }
+
+    @Override
+    public boolean isValid() {
+        for (Workflow<I, O> workflow : workflows) {
+            if (!workflow.isValid())
+                return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs) {
+        List<Mediator<O>> outputs = new ArrayList<>();
+
+        for (Workflow<I, O> workflow : workflows)
+            outputs.addAll(workflow.processTrainingBatch(inputs));
+
+        return outputs;
     }
 
     public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer, TypeData<I, O> typeData) {

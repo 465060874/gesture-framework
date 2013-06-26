@@ -11,5 +11,6 @@ public interface ReplaceOnMutate<T> {
 
     boolean hasReplacement();
 
-    T getReplacement();
+    // TODO: having this in messed with AbstractElement and AbstractWorkflowContainer.  fixable?
+//    T getReplacement();
 }

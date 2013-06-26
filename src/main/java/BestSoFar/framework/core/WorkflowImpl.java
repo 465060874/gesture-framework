@@ -13,7 +13,6 @@ import java.util.*;
  * Implementation of Workflow.
  */
 public class WorkflowImpl<I, O> implements Workflow<I, O> {
-    @Delegate private final ObservableProcess<O> observerManager;
     @Delegate private final ChildOf<WorkflowContainer<I, O>> parentManager;
     @Getter private final ImmutableListImpl<Element<?, ?>> elements;
     @Getter @NotNull private final TypeData<I, O> typeData;
@@ -23,7 +22,6 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     public WorkflowImpl(WorkflowContainer<I, O> parent, TypeData<I, O> typeData) {
         elements = new ImmutableListImpl<>(this);
         this.typeData = typeData;
-        observerManager = new ImmutableObservableProcessImpl<>(this);
         parentManager = new ParentMutationHandler<>(parent, this);
         checkTypeData();
     }
@@ -31,10 +29,9 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     @SuppressWarnings("unchecked")
     public WorkflowImpl(WorkflowImpl<?, ?> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        checkTypeData();
         elements = new ImmutableListImpl<>(oldWorkflow.getElements().getMutatedList(), this);
-        observerManager = ((ImmutableObservableProcessImpl<O>) oldWorkflow.observerManager).cloneFor(this);
         parentManager = ((ParentMutationHandler<WorkflowContainer<I,O>>) oldWorkflow.parentManager).cloneFor(this);
+        checkTypeData();
     }
 
     private void checkTypeData() {
@@ -62,20 +59,24 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     @Override
     public boolean isValid() {
         if (elements.size() == 0) {
-            return typeData.getInputType() == typeData.getOutputType();
+            return typeData.canBeEmptyContainer();
         } else {
-            Class<?> inType, outType = typeData.getInputType();
+
+            if ( !elements.get(1).getTypeData().canBeAtStartOfContainer(typeData) ||
+                    !elements.get(elements.size()-1).getTypeData().canBeAtEndOfContainer(typeData) )
+                return false;
+
+            TypeData<?, ?> previousType = null;
 
             for (Element<?,?> e : elements) {
-                inType = e.getTypeData().getInputType();
+                if (previousType != null)
+                    if ( !e.getTypeData().canComeAfter(previousType) )
+                        return false;
 
-                if (inType != outType)
-                    return false;
-
-                outType = e.getTypeData().getOutputType();
+                previousType = e.getTypeData();
             }
 
-            return outType == typeData.getOutputType();
+            return true;
         }
     }
 
@@ -86,7 +87,6 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
             input = e.process(input);
 
         Mediator<O> output = (Mediator<O>) input;
-        notifyObservers(output);
 
         return output;
     }
@@ -98,7 +98,6 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
             inputs = (List<Mediator<?>>) (List<?>) e.processTrainingBatch(inputs);
 
         List<Mediator<O>> outputs = (List<Mediator<O>>) inputs;
-        notifyObservers(outputs);
 
         return outputs;
     }
