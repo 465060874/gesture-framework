@@ -1,4 +1,4 @@
-package BestSoFar.ImmutableCollections;
+package BestSoFar.immutables;
 
 import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
@@ -44,7 +44,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
     }
 
     protected void notifyMutationHandler() {
-        handler.handleMutatedList();
+        handler.handleListMutation();
         activeList = backupList;
         mutatedList = null;
     }

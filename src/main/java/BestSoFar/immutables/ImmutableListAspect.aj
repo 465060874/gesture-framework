@@ -1,4 +1,4 @@
-package BestSoFar.ImmutableCollections;
+package BestSoFar.immutables;
 
 /**
  * User: Sam Wright
@@ -8,7 +8,7 @@ package BestSoFar.ImmutableCollections;
 public aspect ImmutableListAspect {
 
     pointcut anyCall(ImmutableList list):
-            call(* BestSoFar.ImmutableCollections.ImmutableListImpl.*(..)) &&
+            call(* BestSoFar.immutables.ImmutableListImpl.*(..)) &&
             target(list);
 
     Object around(ImmutableListImpl list): anyCall(list) {

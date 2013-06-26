@@ -1,4 +1,4 @@
-package BestSoFar.ImmutableCollections;
+package BestSoFar.immutables;
 
 import java.util.List;
 

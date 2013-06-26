@@ -1,7 +1,7 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.ImmutableCollections.ImmutableList;
-import BestSoFar.ImmutableCollections.ImmutableListHandler;
+import BestSoFar.immutables.ImmutableList;
+import BestSoFar.immutables.ImmutableListHandler;
 
 /**
  * User: Sam Wright

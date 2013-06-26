@@ -1,6 +1,6 @@
 package FailedLists;
 
-import BestSoFar.ImmutableCollections.ImmutableListHandler;
+import BestSoFar.immutables.ImmutableListHandler;
 import lombok.Delegate;
 
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class ImmutableListImpl<T> implements ImmutableList<T> {
     }
 
     private void handleNewList() {
-        handler.handleMutatedList();
+        handler.handleListMutation();
     }
 
 }

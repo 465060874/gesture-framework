@@ -2,6 +2,7 @@ package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.*;
 import BestSoFar.framework.helper.Observable;
+import BestSoFar.immutables.TypeData;
 
 import java.util.*;
 
@@ -16,7 +17,7 @@ import java.util.*;
  * input data (either individually or in a batch) has been processed (but before the
  * output is returned).
  */
-public interface Processor<I,O> extends Observable<MediatorObserver<O>>, Duplicable<Processor<I, O>> {
+public interface Processor<I,O> extends Observable<MediatorObserver<O>> {
 
     /**
      * Returns true iff the 'process' method can run.
@@ -31,8 +32,9 @@ public interface Processor<I,O> extends Observable<MediatorObserver<O>>, Duplica
      *
      * @param input input data in a mediator object.
      * @return result of processing the input data, inside a mediator object.
+     * @throws ClassCastException if input cannot be cast to Mediator<I>.
      */
-    Mediator<O> process(Mediator<I> input);
+    Mediator<O> process(Mediator<?> input);
 
     /**
      * Given a list of input mediator objects, produce all output mediator
@@ -47,8 +49,9 @@ public interface Processor<I,O> extends Observable<MediatorObserver<O>>, Duplica
      *
      * @param inputs list of mediator objects containing input data.
      * @return all output mediators that this could possibly produce.
+     * @throws ClassCastException if any input cannot be cast to Mediator<I>.
      */
-    List<Mediator<O>> processTrainingBatch(List<Mediator<I>> inputs);
+    List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs);
 
     /**
      * After the training batch has been processed to completion, this method is
@@ -76,17 +79,33 @@ public interface Processor<I,O> extends Observable<MediatorObserver<O>>, Duplica
      * differently is classified differently.  It is left to the concrete class to decide
      * whether to do this or not (eg. the training set would be larger by not doing this).
      *
+     * NB. Both parameters will be mutated after this function returns, so if this object
+     * needs them it must make a defensive copy.
+     *
      * @param completedOutputs the Mediator objects this object returned from the last call
      *                         to 'processTrainingBatch'.
      * @param successfulOutputs the Mediator objects in 'completedOutputs' which went on to
      *                          be successful.
      * @return
      */
-    Map<Mediator<O>, Mediator<I>> mapCompletedTrainingBatchBackward(
-            List<Mediator<O>> completedOutputs,
-            Set<Mediator<O>> successfulOutputs
-            );
+    Map<Mediator<O>, Mediator<I>> createBackwardMappingForTrainingBatch(
+            List<Mediator<?>> completedOutputs,
+            Set<Mediator<?>> successfulOutputs
+    );
 
+    /**
+     * Gets the input/output types required by this processor.
+     *
+     * @return the input/output types required by this processor.
+     */
+    TypeData<I, O> getTypeData();
 
+    /**
+     * The most-concrete subclass must implement this method, and return:
+     * return new ProcessorSubClass(this, dataType);
+     *
+     * @return a copy of this.
+     */
+    <I2, O2> Processor<I2, O2> cloneAs(TypeData<I2, O2> typeData);
 
 }

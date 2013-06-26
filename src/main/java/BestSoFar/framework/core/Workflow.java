@@ -1,7 +1,7 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.ImmutableCollections.ImmutableList;
-import BestSoFar.ImmutableCollections.ImmutableListHandler;
+import BestSoFar.immutables.ImmutableList;
+import BestSoFar.immutables.ImmutableListHandler;
 
 /**
  * A workflow is a linear list of Element objects.  When a workflow processes an input,
@@ -14,6 +14,11 @@ import BestSoFar.ImmutableCollections.ImmutableListHandler;
  * and should have a way to inform the user (eg. in the associated view there might be connectors between
  * neighbouring elements which are red if incompatible).
  *
+ * However, a workflow's data types MUST equal its parent's (ie. WorkflowContainer) data types.  This is done so that
+ * all code relating to checking neighbouring elements' data types is in Workflow (and nowhere else).  Otherwise all
+ * WorkflowContainers would have to worry about whether its workflows match its data types.  If this assertion is ever
+ * broken, a ClassCastException is thrown.
+ *
  * Workflows (like all Processors) are strictly immutable, so "mutating" them (by changing their list of elements) in
  * fact creates a copy with desired changes.  The old workflow must replace itself in its parent WorkflowContainer's
  * workflow list with this new version, and inform its elements of their new parent.
@@ -25,6 +30,7 @@ import BestSoFar.ImmutableCollections.ImmutableListHandler;
  * The only exception is when a parent disowns this object, in which case the parent field can be the old parent.
  * This is allowed because the parent should be the only object with a pointer to this object,
  * so nothing will access it.
+ *
  */
 public interface Workflow<I, O> extends Processor<I, O>, ImmutableListHandler {
 

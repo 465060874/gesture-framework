@@ -2,6 +2,8 @@ package BestSoFar.framework.helper;
 
 import BestSoFar.framework.core.Processor;
 
+import java.util.*;
+
 /**
  * Mediator objects contain data that was produced from a Processor<?,T> object, and can
  * be fed into another Processor<T,?> object.
@@ -79,4 +81,83 @@ public abstract class Mediator<T> {
      * @return the ancestral mediator created by 'creator'.
      */
     public abstract Mediator<?> getAncestorCreatedBy(Processor<?, ?> creator);
+
+    /**
+     * Creates a backward mapping (ie. linking each mediator 'm' against 'm.getPrevious') where each output mediator
+     * came from a unique input mediator.  If any two output mediators came from the same input mediator,
+     * this will throw an AssertionError.
+     *
+     * @param outputs the list of output mediators to map backward.
+     * @param <I> the input data type.
+     * @param <O> the output data type.
+     * @return a backward mapping of the given output mediators.
+     * @throws AssertionError if any two output mediators share the same input mediator.
+     */
+    @SuppressWarnings("unchecked")
+    public static <I,O> Map<Mediator<O>, Mediator<I>> createBackwardMappingFor1to1(List<Mediator<O>> outputs) {
+        Map<Mediator<O>, Mediator<I>> map  = new HashMap<>();
+
+        for (Mediator<O> output : outputs) {
+            Mediator<I> commonAncestor = map.put(output, (Mediator<I>) output.getPrevious());
+            if (commonAncestor != null)
+                throw new AssertionError("Two mediators shared the same ancestor");
+        }
+
+        return map;
+    }
+
+    /**
+     * Creates a mapping going from the given list of output mediators backward, but reversed (so that the mapping is
+     * from an input mediator to all the output mediators which came from it).
+     *
+     * This is the version of 'createBackwardMappingFor1to1' for when there might be a one-to-many relationship
+     * between input mediators and output mediators.
+     *
+     * @param outputs the list of output mediators to map backward.
+     * @param <I> the input data type.
+     * @param <O> the output data type.
+     * @return mapping from input mediators to the output mediators they created (found in the given 'outputs' list).
+     */
+    @SuppressWarnings("unchecked")
+    public static <I, O> Map<Mediator<I>, List<Mediator<O>>> createReversedBackwardMapping(List<Mediator<O>> outputs) {
+        Map<Mediator<I>, List<Mediator<O>>> map = new HashMap<>();
+
+        for (Mediator<O> output : outputs) {
+            Mediator<I> input = (Mediator<I>) output.getPrevious();
+
+            List<Mediator<O>> outputsFromInput = map.get(input);
+            if (outputsFromInput == null) {
+                outputsFromInput = new LinkedList<>();
+                map.put(input, outputsFromInput);
+            }
+
+            outputsFromInput.add(output);
+        }
+
+        return map;
+    }
+
+    /**
+     * Map the given list of output mediators back to their input mediators using the given backward mapping,
+     * and add those inputs to the given 'inputs' collection.
+     *
+     * Output mediators not found in the mapping are discarded.
+     *
+     * @param outputs the list of output mediators to map backward if they are in the given mapping.
+     * @param backwardMapping the mapping of output mediators to input mediators.
+     * @param inputs the collection which mapped inputs are added to.
+     * @return the mapped input mediators.
+     */
+    public static void mapMediatorsBackward(
+            Collection<Mediator<?>> outputs,
+            Map<Mediator<?>, Mediator<?>> backwardMapping,
+            Collection<Mediator<?>> inputs) {
+
+        for (Mediator<?> output : outputs) {
+            Mediator<?> input = backwardMapping.get(output);
+
+            if (input != null)
+                inputs.add(input);
+        }
+    }
 }

@@ -10,7 +10,7 @@ package BestSoFar.framework.core;
  * it was modified) then this object's parent field is updated (even though data
  * returned by the 'process' method will still flow back to the original parent).
  */
-public interface Element<I,O> extends Processor<I, O> {
+public interface Element<I, O> extends Processor<I, O> {
 
     /**
      * Gets the workflow in which this element resides.
@@ -25,5 +25,4 @@ public interface Element<I,O> extends Processor<I, O> {
      * @param parent the workflow in which this element resides.
      */
     void setParent(Workflow<?, ?> parent);
-
 }

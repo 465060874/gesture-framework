@@ -1,4 +1,4 @@
-package BestSoFar.ImmutableCollections;
+package BestSoFar.immutables;
 
 
 /**
@@ -7,5 +7,5 @@ package BestSoFar.ImmutableCollections;
  * Time: 20:15
  */
 public interface ImmutableListHandler {
-    void handleMutatedList();
+    void handleListMutation();
 }
