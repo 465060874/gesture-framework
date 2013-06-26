@@ -2,9 +2,7 @@ package BestSoFar.framework.core;
 
 import BestSoFar.immutables.ImmutableList;
 import BestSoFar.immutables.ImmutableListImpl;
-import BestSoFar.framework.helper.MediatorObserver;
-import BestSoFar.framework.helper.Observable;
-import BestSoFar.framework.helper.ObservableImpl;
+import BestSoFar.framework.helper.ProcessorObserverManager;
 import BestSoFar.immutables.TypeData;
 import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
@@ -18,7 +16,7 @@ import lombok.Setter;
  */
 public abstract class AbstractWorkflowContainer<I, O> implements WorkflowContainer<I, O> {
 
-    @Delegate private final Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
+    @Delegate private final ProcessorObserverManager<O> observerManager = new ProcessorObserverManager<>();
     @Getter private final ImmutableList<Workflow<I, O>> workflows;
     @Getter @Setter @NotNull Workflow<?, ?> parent;
     private final TypeData<I, O> typeData;

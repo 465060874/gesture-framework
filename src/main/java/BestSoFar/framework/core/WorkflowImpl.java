@@ -2,14 +2,11 @@ package BestSoFar.framework.core;
 
 import BestSoFar.immutables.ImmutableListImpl;
 import BestSoFar.framework.helper.Mediator;
-import BestSoFar.framework.helper.MediatorObserver;
-import BestSoFar.framework.helper.Observable;
-import BestSoFar.framework.helper.ObservableImpl;
+import BestSoFar.framework.helper.ProcessorObserverManager;
 import BestSoFar.immutables.TypeData;
 import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.*;
 
@@ -18,7 +15,7 @@ import java.util.*;
  */
 public class WorkflowImpl<I, O> implements Workflow<I, O> {
 
-    @Delegate private final Observable<MediatorObserver<O>> observerHandler = new ObservableImpl<>();
+    @Delegate private final ProcessorObserverManager<O> observerManager = new ProcessorObserverManager<>();
     @Getter private final ImmutableListImpl<Element<?, ?>> elements;
     @Getter @NotNull private WorkflowContainer<I, O> parent;
     @Getter @NotNull private final TypeData<I, O> typeData;
@@ -30,7 +27,7 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
         checkTypeData();
     }
 
-    public <I2, O2> WorkflowImpl(WorkflowImpl<I2, O2> oldWorkflow, TypeData<I, O> typeData) {
+    public WorkflowImpl(WorkflowImpl<?, ?> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;
         elements = new ImmutableListImpl<>(oldWorkflow.getElements().getMutatedList(), this);
         checkTypeData();
@@ -89,6 +86,8 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     public Mediator<O> process(Mediator<?> input) {
         for (Element<?,?> e : elements)
             input = e.process(input);
+
+
 
         return (Mediator<O>) input;
     }

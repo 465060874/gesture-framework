@@ -10,7 +10,7 @@ import java.util.List;
  * Date: 25/06/2013
  * Time: 13:41
  */
-public class SimpleListImpl<E> implements SimpleList<E> {
+class SimpleListImpl<E> implements SimpleList<E> {
     @Delegate @Getter
     private final List<E> list;
 

@@ -7,7 +7,7 @@ import java.util.*;
  * Date: 25/06/2013
  * Time: 12:12
  */
-public interface SimpleList<E> {
+interface SimpleList<E> {
 
     List<E> getList();
 

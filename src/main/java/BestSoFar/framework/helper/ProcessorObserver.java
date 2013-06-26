@@ -7,9 +7,9 @@ import java.util.List;
  * Date: 24/06/2013
  * Time: 12:00
  */
-public interface MediatorObserver<T> {
+public interface ProcessorObserver<T> {
     /**
-     * Notify this MediatorObserver that a Processor it observes is about to output
+     * Notify this ProcessorObserver that a Processor it observes is about to output
      * a mediator object.
      *
      * @param mediator the mediator the observed Processor is about to output.
@@ -17,7 +17,7 @@ public interface MediatorObserver<T> {
     void notify(Mediator<T> mediator);
 
     /**
-     * Notify this MediatorObserver that a Processor it observes is about to output
+     * Notify this ProcessorObserver that a Processor it observes is about to output
      * a batch of mediator objects (ie. a training batch).
      *
      * @param mediators the batch of mediators the observed Processor is about to output.
