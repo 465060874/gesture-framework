@@ -1,11 +1,14 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.helper.*;
+import BestSoFar.framework.helper.ChildOf;
+import BestSoFar.framework.helper.Mediator;
+import BestSoFar.framework.helper.ParentMutationHandler;
+import BestSoFar.framework.helper.ProcessorMutationHandler;
 import BestSoFar.immutables.ImmutableListImpl;
 import BestSoFar.immutables.TypeData;
-import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.*;
 
@@ -15,7 +18,8 @@ import java.util.*;
 public class WorkflowImpl<I, O> implements Workflow<I, O> {
     @Delegate private final ChildOf<WorkflowContainer<I, O>> parentManager;
     @Getter private final ImmutableListImpl<Element<?, ?>> elements;
-    @Getter @NotNull private final TypeData<I, O> typeData;
+    @Getter @NonNull
+    private final TypeData<I, O> typeData;
     @Delegate private final ProcessorMutationHandler<I, O, I, O> mutationHandler =
             new ProcessorMutationHandler<>(this);
 

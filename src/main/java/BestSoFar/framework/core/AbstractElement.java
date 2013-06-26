@@ -2,11 +2,14 @@ package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.*;
 import BestSoFar.immutables.TypeData;
-import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
 import lombok.Getter;
+import lombok.NonNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Abstract implementor of {@link Processor} for elemental Processors to extend,
@@ -18,7 +21,7 @@ import java.util.*;
 public abstract class AbstractElement<I, O> implements Element<I, O> {
 
     @Delegate private final ObservableProcess<O> observerManager;
-    @Getter @NotNull private final TypeData<I, O> typeData;
+    @Getter @NonNull private final TypeData<I, O> typeData;
     @Delegate private final ChildOf<Workflow<?, ?>> parentManager;
     @Delegate private final ProcessorMutationHandler<I, O, ?, ?> mutationHandler =
             new ProcessorMutationHandler<>(this);

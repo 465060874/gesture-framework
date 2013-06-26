@@ -1,10 +1,9 @@
 package BestSoFar.immutables;
 
-import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.NonNull;
 
 /**
  * User: Sam Wright Date: 25/06/2013 Time: 19:24
@@ -12,8 +11,8 @@ import lombok.ToString;
 @AllArgsConstructor()
 @EqualsAndHashCode
 public class TypeData<I, O> {
-    @Getter @NotNull private final Class<I> inputType;
-    @Getter @NotNull private final Class<O> outputType;
+    @Getter @NonNull private final Class<I> inputType;
+    @Getter @NonNull private final Class<O> outputType;
 
     @Override
     public String toString() {

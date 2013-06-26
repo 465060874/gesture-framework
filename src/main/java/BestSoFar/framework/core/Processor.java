@@ -1,10 +1,13 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.helper.*;
+import BestSoFar.framework.helper.History;
+import BestSoFar.framework.helper.Mediator;
 import BestSoFar.immutables.ReplaceOnMutate;
 import BestSoFar.immutables.TypeData;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The top-level interface for all parts of the workflow framework.

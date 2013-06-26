@@ -1,18 +1,12 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.helper.ImmutableObservableProcessImpl;
 import BestSoFar.framework.helper.Mediator;
-import BestSoFar.framework.helper.ProcessObserver;
 import BestSoFar.immutables.ImmutableList;
 import BestSoFar.immutables.ImmutableListImpl;
 import BestSoFar.immutables.TypeData;
-import com.sun.istack.internal.NotNull;
-import lombok.Delegate;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

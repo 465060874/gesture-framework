@@ -1,16 +1,16 @@
 package BestSoFar.framework.helper;
 
 import BestSoFar.immutables.ReplaceOnMutate;
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
+import lombok.NonNull;
 
 /**
  * User: Sam Wright Date: 26/06/2013 Time: 18:48
  */
 public class ParentMutationHandler<T> implements ChildOf<T> {
-    @Getter @NotNull private final T parent;
-    @Getter @NotNull private T parentForClone;
-    @NotNull private final ReplaceOnMutate replaceOnMutate;
+    @Getter private final T parent;
+    @Getter private T parentForClone;
+    @NonNull private final ReplaceOnMutate replaceOnMutate;
 
     public ParentMutationHandler(T parent, ReplaceOnMutate replaceOnMutate) {
         this.replaceOnMutate = replaceOnMutate;

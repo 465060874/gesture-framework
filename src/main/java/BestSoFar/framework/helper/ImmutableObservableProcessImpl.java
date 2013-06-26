@@ -1,7 +1,7 @@
 package BestSoFar.framework.helper;
 
 import BestSoFar.immutables.ReplaceOnMutate;
-import com.sun.istack.internal.NotNull;
+import lombok.NonNull;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,9 +12,9 @@ import java.util.Set;
  * Implementation of ObservableProcess.
  */
 public class ImmutableObservableProcessImpl<T> implements ObservableProcess<T> {
-    @NotNull private final Set<ProcessObserver<T>> observers;
-    @NotNull private final ReplaceOnMutate replaceOnMutate;
-    @NotNull private Set<ProcessObserver<T>> observersForClone;
+    @NonNull private final Set<ProcessObserver<T>> observers;
+    @NonNull private final ReplaceOnMutate replaceOnMutate;
+    @NonNull private Set<ProcessObserver<T>> observersForClone;
 
 
     public ImmutableObservableProcessImpl(ReplaceOnMutate replaceOnMutate) {

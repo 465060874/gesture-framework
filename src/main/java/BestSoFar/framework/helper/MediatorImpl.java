@@ -1,17 +1,18 @@
 package BestSoFar.framework.helper;
 
 import BestSoFar.framework.core.Processor;
-import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 
 /**
  * Implementation of Mediator.  Don't use this - create via Mediator instead.
  */
 @AllArgsConstructor
 public class MediatorImpl<T> extends Mediator<T> {
-    @Getter @NotNull private final T data;
-    @Getter @NotNull private final History history;
+    @Getter @NonNull
+    private final T data;
+    @Getter @NonNull private final History history;
     @Getter private final Mediator<?> previous;
 
     public static Mediator<?> createEmpty() {

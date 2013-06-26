@@ -1,8 +1,8 @@
 package BestSoFar.immutables;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Delegate;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +25,13 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
 
     private final ReplaceOnMutate handler;
 
-    public ImmutableListImpl(@NotNull List<E> list, @NotNull ReplaceOnMutate handler) {
+    public ImmutableListImpl(@NonNull List<E> list, @NonNull ReplaceOnMutate handler) {
         this.handler = handler;
         this.activeList = new SimpleListImpl<>(Collections.unmodifiableList(list));
         this.backupList = activeList;
     }
 
-    public ImmutableListImpl(@NotNull ReplaceOnMutate handler) {
+    public ImmutableListImpl(@NonNull ReplaceOnMutate handler) {
         this(Collections.<E>emptyList(), handler);
     }
 
