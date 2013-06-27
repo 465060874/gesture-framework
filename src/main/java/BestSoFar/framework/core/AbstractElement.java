@@ -29,7 +29,6 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
 
     @SuppressWarnings("unchecked")
     public AbstractElement(Workflow<?, ?> parent, TypeData<I, O> typeData) {
-        setParent(parent);
         this.typeData = typeData;
         observerManager = new ImmutableObservableProcessImpl<>(this);
         parentManager = (ChildOf<Workflow<?, ?>>) (ChildOf<?>) new ParentMutationHandler<>(parent, this);
@@ -37,7 +36,6 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
 
     @SuppressWarnings("unchecked")
     public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
-        setParent(oldAbstractElement.getParent());
         this.typeData = typeData;
         observerManager = ((ImmutableObservableProcessImpl<O>) oldAbstractElement.observerManager).cloneFor(this);
         parentManager = ((ParentMutationHandler<Workflow<?,?>>) oldAbstractElement.parentManager).cloneFor(this);

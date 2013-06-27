@@ -39,6 +39,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
     // Mutation handling methods
 
     protected void makeMutable() {
+        System.out.println("I am mutable now!!");
         mutatedList = new ArrayList<>(backupList.getList());
         activeList = new SimpleListImpl<>(mutatedList);
     }

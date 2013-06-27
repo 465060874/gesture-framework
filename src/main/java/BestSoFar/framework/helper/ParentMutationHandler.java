@@ -10,7 +10,7 @@ import lombok.NonNull;
 public class ParentMutationHandler<T> implements ChildOf<T> {
     @Getter private final T parent;
     @Getter private T parentForClone;
-    @NonNull private final ReplaceOnMutate replaceOnMutate;
+    private final ReplaceOnMutate replaceOnMutate;
 
     public ParentMutationHandler(T parent, ReplaceOnMutate replaceOnMutate) {
         this.replaceOnMutate = replaceOnMutate;

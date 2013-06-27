@@ -1,16 +1,18 @@
-package BestSoFar.framework.core;
+package BestSoFar.immutables;
 
+import BestSoFar.framework.core.AbstractWorkflowContainer;
+import BestSoFar.framework.core.Processor;
+import BestSoFar.framework.core.Workflow;
+import BestSoFar.framework.core.WorkflowImpl;
 import BestSoFar.framework.helper.Mediator;
-import BestSoFar.immutables.TypeData;
-import org.junit.Test;
 
 /**
- * User: Sam Wright Date: 26/06/2013 Time: 20:17
+ * User: Sam Wright Date: 27/06/2013 Time: 16:05
  */
-public class WorkflowImplTest {
-    private static TypeData<String,String> stringType = new TypeData<>(String.class, String.class);
+public class ImmutableListPSVM {
+    private static TypeData<String, String> stringType = new TypeData<>(String.class, String.class);
 
-    private static class SimpleContainer extends AbstractWorkflowContainer<String,String> {
+    private static class SimpleContainer extends AbstractWorkflowContainer<String, String> {
 
         public SimpleContainer() {
             super((Workflow<?, ?>) null, stringType);
@@ -32,21 +34,13 @@ public class WorkflowImplTest {
         }
     }
 
-    @Test
-    public void testSimple() throws Exception {
+
+    public static void main(String... args) {
 
         SimpleContainer container = new SimpleContainer();
         Workflow<String, String> workflow = new WorkflowImpl<>(container, stringType);
 
         container.getWorkflows().add(workflow);
-
-        // TODO: maven nearly builds, but antrun doesn't work (so no lombok).
-
-    }
-
-    @Test
-    public void testNothing() throws Exception {
-        System.out.println(" ==== HELLO WORLD!!! ====");
 
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * Date: 22/06/2013
  * Time: 16:19
  */
-public class ImmutableListImpl<T> implements ImmutableList<T> {
+public class ImmutableListImpl<T> {} /* implements ImmutableList<T> {
 
     private interface ReadOnlyMethods<T> {
         T get(int index);
@@ -74,4 +74,4 @@ public class ImmutableListImpl<T> implements ImmutableList<T> {
         handler.handleMutation();
     }
 
-}
+}*/

@@ -60,8 +60,8 @@
 
 
     <build>
-        <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
-        <testSourceDirectory>target/generated-test-sources/delombok
+        <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory>
+        <testSourceDirectory>${project.build.directory}/generated-test-sources/delombok
         </testSourceDirectory>
 
         <plugins>
@@ -83,6 +83,9 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <weaveDirectories>
+                        <weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>
+                    </weaveDirectories>
                     <aspectLibraries>
                         <aspectLibrary>
                             <groupId>org.springframework</groupId>
@@ -98,8 +101,19 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>default-compile</id>
                         <goals>
                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-test-compile</id>
+                        <configuration>
+                            <includes>
+                                <include>target/generated-sources/delombok/**.*</include>
+                            </includes>
+                        </configuration>
+                        <goals>
                             <goal>test-compile</goal>
                         </goals>
                     </execution>
@@ -114,10 +128,6 @@
                 <configuration>
                     <source>${java-version}</source>
                     <target>${java-version}</target>
-                    <excludes>
-                        <exclude>**/*.java</exclude>
-                        <exclude>**/*.aj</exclude>
-                    </excludes>
                 </configuration>
 
             </plugin>
@@ -145,7 +155,6 @@
                         <configuration>
                             <addOutputDirectory>false</addOutputDirectory>
                             <sourceDirectory>src/main/java</sourceDirectory>
-                            <verbose>true</verbose>
                         </configuration>
                     </execution>
                     <execution>
@@ -155,10 +164,9 @@
                             <goal>testDelombok</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>src/main/java</sourceDirectory>
+                            <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
                             <addOutputDirectory>false</addOutputDirectory>
                             <sourceDirectory>src/test/java</sourceDirectory>
-                            <verbose>true</verbose>
                         </configuration>
                     </execution>
                 </executions>
@@ -215,6 +223,7 @@
                             </dependency>
                         </dependencies>
                     </plugin>
+
 
 
                 </plugins>

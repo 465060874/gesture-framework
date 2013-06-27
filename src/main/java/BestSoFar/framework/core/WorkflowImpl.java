@@ -30,11 +30,11 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
         checkTypeData();
     }
 
-    @SuppressWarnings("unchecked")
-    public WorkflowImpl(WorkflowImpl<?, ?> oldWorkflow, TypeData<I, O> typeData) {
+
+    public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;
         elements = new ImmutableListImpl<>(oldWorkflow.getElements().getMutatedList(), this);
-        parentManager = ((ParentMutationHandler<WorkflowContainer<I,O>>) oldWorkflow.parentManager).cloneFor(this);
+        parentManager = ((ParentMutationHandler<WorkflowContainer<I, O>>) oldWorkflow.parentManager).cloneFor(this);
         checkTypeData();
     }
 
@@ -101,7 +101,7 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
         for (Element<?, ?> e : elements)
             inputs = (List<Mediator<?>>) (List<?>) e.processTrainingBatch(inputs);
 
-        List<Mediator<O>> outputs = (List<Mediator<O>>) inputs;
+        List<Mediator<O>> outputs = (List<Mediator<O>>) (List<?>) inputs;
 
         return outputs;
     }
@@ -141,11 +141,12 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
             }
         }
 
-        return (Map<Mediator<O>, Mediator<I>>) totalBackwardMapping;
+        return (Map<Mediator<O>, Mediator<I>>) (Map<?,?>) totalBackwardMapping;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <I2, O2> WorkflowImpl<I2, O2> cloneAs(TypeData<I2, O2> typeData) {
-        return new WorkflowImpl<>(this, typeData);
+        return new WorkflowImpl<>((WorkflowImpl<I2, O2>) this, typeData);
     }
 }
