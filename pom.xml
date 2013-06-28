@@ -12,11 +12,6 @@
         <java-version>1.7</java-version>
         <lombok-version>0.11.8</lombok-version>
         <org.aspectj-version>1.7.3</org.aspectj-version>
-        <org.springaspects.jar>
-            /Users/eatmuchpie/.m2/repository/org/springframework/spring-aspects/3.2.3.RELEASE/spring-aspects-3.2.3.RELEASE.jar
-        </org.springaspects.jar>
-        <java-path>/Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home</java-path>
-        <!--org.springframework:spring-aspects:jar-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -233,8 +228,6 @@
                             </dependency>
                         </dependencies>
                     </plugin>
-
-
 
                 </plugins>
             </build>
