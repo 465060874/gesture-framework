@@ -3,15 +3,29 @@ package BestSoFar.immutables;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import static junit.framework.Assert.assertEquals;
+
 /**
  * User: Sam Wright Date: 27/06/2013 Time: 11:32
  */
 public class ImmutableListImplTest {
     class TestHandler implements ReplaceOnMutate<TestHandler> {
+        private ImmutableListImpl<String> list;
+
+        public TestHandler() {
+            list = new ImmutableListImpl<>(this);
+        }
+
+        public ImmutableListImpl<String> getList() {
+            return list;
+        }
 
         @Override
         public void handleMutation() {
-            throw new RuntimeException();
+
         }
 
         @Override
@@ -20,12 +34,13 @@ public class ImmutableListImplTest {
         }
     }
 
-    private TestHandler handler = new TestHandler();
     private ImmutableListImpl<String> list;
+    private TestHandler handler;
 
     @Before
     public void setUp() throws Exception {
-        list = new ImmutableListImpl<>(handler);
+        handler = new TestHandler();
+        list = handler.getList();
     }
 
     @Test
@@ -37,6 +52,8 @@ public class ImmutableListImplTest {
 
         list.makeMutable();
         list.add("Hello");
+
+        assertEquals(Arrays.asList("Hello"), list.getMutatedList());
     }
 
     @Test

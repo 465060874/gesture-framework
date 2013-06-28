@@ -67,6 +67,41 @@
         <plugins>
 
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>clean-delomboked-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <delete dir="${basedir}/target/generated-test-sources/delombok"/>
+                                <copy todir="${basedir}/target/generated-test-sources/delombok">
+                                    <fileset dir="${basedir}/src/test/java" includes="**/*"/>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>clean-delomboked-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <delete dir="${basedir}/target/generated-sources/delombok"/>
+                                <mkdir dir="${basedir}/target/generated-sources/delombok"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <version>1.4</version>
@@ -147,17 +182,17 @@
                             <sourceDirectory>src/main/java</sourceDirectory>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>test-delombok</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>testDelombok</goal>
-                        </goals>
-                        <configuration>
-                            <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>src/test/java</sourceDirectory>
-                        </configuration>
-                    </execution>
+                    <!--<execution>-->
+                        <!--<id>test-delombok</id>-->
+                        <!--<phase>generate-test-sources</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>testDelombok</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<addOutputDirectory>false</addOutputDirectory>-->
+                            <!--<sourceDirectory>src/test/java</sourceDirectory>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
                 </executions>
             </plugin>
 
@@ -183,8 +218,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
-
 
         </plugins>
     </build>
