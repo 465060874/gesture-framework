@@ -20,9 +20,9 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
     // TODO: split some functionality into AbstractImmutableList<E>
 
     @Getter private ImmutableListImpl<E> replacement;
-    @Delegate private SimpleList<E> activeList;
-    private SimpleList<E> mutatedList;
-    private final SimpleList<E> backupList;
+    @Delegate private List<E> activeList;
+    private List<E> mutatedList;
+    private final List<E> backupList;
     private final MutationHandler mutationHandler;
     private Lock lock = new Lock();
 
@@ -34,7 +34,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
 
     private ImmutableListImpl(@NonNull List<E> list, @NonNull MutationHandler mutationHandler) {
         this.mutationHandler = mutationHandler;
-        this.activeList = new SimpleListImpl<>(Collections.unmodifiableList(list));
+        this.activeList = Collections.unmodifiableList(list);
         mutatedList = backupList = activeList;
     }
 
@@ -43,7 +43,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
         if (hasReplacement())
             throw new AlreadyMutatedException();
 
-        return new ImmutableListImpl<>(mutatedList.getList(), mutationHandler);
+        return new ImmutableListImpl<>(mutatedList, mutationHandler);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
         if (hasReplacement() || replacementIsMutated())
             throw new AlreadyMutatedException();
 
-        mutatedList = new SimpleListImpl<>(new ArrayList<>(backupList.getList()));
+        mutatedList = new ArrayList<>(backupList);
         activeList = mutatedList;
     }
 
@@ -105,7 +105,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
     }
 
 
-    // Implementation of problematic List methods
+    // Extra List methods
 
     @Override
     public boolean replace(E oldElement, E newElement) {
@@ -113,18 +113,4 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
         return index != -1 && set(index, newElement) == oldElement;
     }
 
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return activeList.getList().toArray(a);
-    }
-
-    @Override
-    public boolean add(E e) {
-        return activeList.getList().add(e);
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends E> c) {
-        return activeList.getList().addAll(c);
-    }
 }
