@@ -1,12 +1,5 @@
 package FailedLists;
 
-import BestSoFar.immutables.ReplaceOnMutate;
-import lombok.Delegate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * User: Sam Wright
  * Date: 22/06/2013

@@ -1,4 +1,4 @@
-package BestSoFar.framework.helper;
+package BestSoFar.framework.common;
 
 /**
  * User: Sam Wright Date: 26/06/2013 Time: 18:43

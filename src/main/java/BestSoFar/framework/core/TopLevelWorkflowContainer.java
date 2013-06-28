@@ -1,7 +1,7 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.Mediator;
-import BestSoFar.immutables.TypeData;
+import BestSoFar.framework.helper.TypeData;
 
 /**
  * User: Sam Wright Date: 26/06/2013 Time: 20:21

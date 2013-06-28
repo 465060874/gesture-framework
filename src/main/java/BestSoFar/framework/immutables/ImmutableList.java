@@ -1,6 +1,6 @@
-package BestSoFar.immutables;
+package BestSoFar.framework.immutables;
 
-import BestSoFar.framework.helper.ImmutableReplacement;
+import BestSoFar.framework.immutables.common.ImmutableReplacement;
 
 import java.util.List;
 

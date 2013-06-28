@@ -1,5 +1,8 @@
-package BestSoFar.immutables;
+package BestSoFar.framework.immutables;
 
+import BestSoFar.framework.immutables.helper.Lock;
+import BestSoFar.framework.immutables.common.MutationHandler;
+import BestSoFar.framework.immutables.common.ReplaceOnMutate;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;

@@ -1,6 +1,6 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.immutables.ImmutableList;
+import BestSoFar.framework.immutables.ImmutableList;
 
 /**
  * A WorkflowContainer is an Element that contains one or more Workflows.

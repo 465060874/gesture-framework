@@ -1,7 +1,7 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.Mediator;
-import BestSoFar.immutables.TypeData;
+import BestSoFar.framework.helper.TypeData;
 import org.junit.Test;
 
 /**

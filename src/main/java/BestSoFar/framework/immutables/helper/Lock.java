@@ -1,4 +1,4 @@
-package BestSoFar.immutables;
+package BestSoFar.framework.immutables.helper;
 
 import lombok.Synchronized;
 
@@ -15,7 +15,6 @@ public class Lock {
         synchronized (lock) {
             waitForWriteToEnd();
             readers += 1;
-            System.out.println("++ readers = " + readers);
         }
     }
 
@@ -23,7 +22,6 @@ public class Lock {
         synchronized (lock) {
             readers -= 1;
             lock.notifyAll();
-            System.out.println("- readers = " + readers);
         }
     }
 

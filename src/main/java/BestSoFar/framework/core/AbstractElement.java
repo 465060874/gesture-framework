@@ -1,7 +1,11 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.common.ChildOf;
+import BestSoFar.framework.common.ObservableProcess;
 import BestSoFar.framework.helper.*;
-import BestSoFar.immutables.TypeData;
+import BestSoFar.framework.helper.TypeData;
+import BestSoFar.framework.immutables.ImmutableObservableProcessImpl;
+import BestSoFar.framework.immutables.ParentMutationHandler;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;
@@ -16,7 +20,7 @@ import java.util.Set;
  * which requires a one-to-one mapping of input data to output data (without training necessary).
  * <p/>
  * Concrete Element implementations can derive from this to let it handle the boilerplate code
- * (accessors for parent and {@link TypeData}, and {@link BestSoFar.framework.helper.ProcessObserver} management).
+ * (accessors for parent and {@link TypeData}, and {@link BestSoFar.framework.common.ProcessObserver} management).
  */
 public abstract class AbstractElement<I, O> implements Element<I, O> {
 
@@ -37,7 +41,10 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     @SuppressWarnings("unchecked")
     public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        observerManager = ((ImmutableObservableProcessImpl<O>) oldAbstractElement.observerManager).cloneFor(this);
+
+        observerManager = ((ImmutableObservableProcessImpl<O>) oldAbstractElement.observerManager)
+                                .makeReplacementFor(this);
+
         parentManager = ((ParentMutationHandler<Workflow<?, ?>>) oldAbstractElement.parentManager)
                                 .makeReplacementFor(this);
     }

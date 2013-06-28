@@ -1,7 +1,7 @@
 package BestSoFar.framework.helper;
 
 import BestSoFar.framework.core.Processor;
-import BestSoFar.immutables.ReplaceOnMutate;
+import BestSoFar.framework.immutables.common.ReplaceOnMutate;
 import lombok.Getter;
 
 /**

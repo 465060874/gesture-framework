@@ -1,4 +1,6 @@
-package BestSoFar.framework.helper;
+package BestSoFar.framework.common;
+
+import BestSoFar.framework.helper.Mediator;
 
 import java.util.List;
 import java.util.Set;

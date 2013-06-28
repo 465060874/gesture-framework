@@ -1,9 +1,7 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.helper.ChildOf;
-import BestSoFar.immutables.ImmutableList;
-
-import java.util.List;
+import BestSoFar.framework.common.ChildOf;
+import BestSoFar.framework.immutables.ImmutableList;
 
 /**
  * A workflow is a linear list of {@link Element} objects which sits in a

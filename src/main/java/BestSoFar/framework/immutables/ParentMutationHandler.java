@@ -1,6 +1,8 @@
-package BestSoFar.framework.helper;
+package BestSoFar.framework.immutables;
 
-import BestSoFar.immutables.MutationHandler;
+import BestSoFar.framework.common.ChildOf;
+import BestSoFar.framework.immutables.common.ImmutableReplacement;
+import BestSoFar.framework.immutables.common.MutationHandler;
 import lombok.Getter;
 
 /**

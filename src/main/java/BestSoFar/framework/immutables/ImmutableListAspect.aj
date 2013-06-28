@@ -1,4 +1,4 @@
-package BestSoFar.immutables;
+package BestSoFar.framework.immutables;
 
 /**
  * User: Sam Wright

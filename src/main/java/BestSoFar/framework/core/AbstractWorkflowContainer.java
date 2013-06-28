@@ -1,9 +1,9 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.Mediator;
-import BestSoFar.immutables.ImmutableList;
-import BestSoFar.immutables.ImmutableListImpl;
-import BestSoFar.immutables.TypeData;
+import BestSoFar.framework.immutables.ImmutableList;
+import BestSoFar.framework.immutables.ImmutableListImpl;
+import BestSoFar.framework.helper.TypeData;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
  * Concrete WorkflowContainer implementations can derive from this to let it handle the internal
  * list of {@link Workflow} objects (and all the cloning that comes from modifications to it),
  * along with boilerplate code (accessors for parent and {@link TypeData}, and
- * {@link BestSoFar.framework.helper.ProcessObserver} management).
+ * {@link BestSoFar.framework.common.ProcessObserver} management).
  */
 public abstract class AbstractWorkflowContainer<I, O>
         extends AbstractElement<I, O> implements WorkflowContainer<I, O> {

@@ -4,7 +4,6 @@ import attempt1.DataType;
 import attempt1.Element;
 import attempt1.Mediator;
 
-import java.util.Collections;
 import java.util.List;
 
 /**

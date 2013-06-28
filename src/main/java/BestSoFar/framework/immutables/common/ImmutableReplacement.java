@@ -1,7 +1,6 @@
-package BestSoFar.framework.helper;
+package BestSoFar.framework.immutables.common;
 
-import BestSoFar.immutables.MutationHandler;
-import BestSoFar.immutables.ReplaceOnMutate;
+import BestSoFar.framework.immutables.common.MutationHandler;
 
 /**
  * User: Sam Wright Date: 28/06/2013 Time: 10:47
