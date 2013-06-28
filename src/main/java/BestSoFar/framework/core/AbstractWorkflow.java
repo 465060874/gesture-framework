@@ -11,7 +11,8 @@ import lombok.Getter;
 import lombok.NonNull;
 
 /**
- * User: Sam Wright Date: 28/06/2013 Time: 10:38
+ * Abstract implementation of Workflow.  Manages parent, the list of elements in the workflow,
+ * typedata, and mutation management.
  */
 public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     @Delegate private final ChildOf<WorkflowContainer<I, O>> parentManager;

@@ -4,7 +4,7 @@ import BestSoFar.framework.helper.Mediator;
 import BestSoFar.framework.helper.TypeData;
 
 /**
- * User: Sam Wright Date: 26/06/2013 Time: 20:21
+ * TODO: work in progress.
  */
 public class TopLevelWorkflowContainer<I, O> extends AbstractWorkflowContainer<I, O> {
 

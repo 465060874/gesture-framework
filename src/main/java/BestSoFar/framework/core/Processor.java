@@ -129,5 +129,18 @@ public interface Processor<I,O> extends ReplaceOnMutate<Processor<I, O>> {
      */
     <I2, O2> Processor<I2, O2> cloneAs(TypeData<I2, O2> typeData);
 
+    /**
+     * Replaces this object with the provided clone.
+     * <p/>
+     * For example, calling this method on a workflow will instruct its parent to replace it in
+     * its list of workflows with the clone, as well as instructing the workflow's children that
+     * they have a new parent.
+     * <p/>
+     * This can be called in response to this object being mutated.
+     *
+     * @param clone the clone to replace this with.
+     * @param <I2> the input type of the clone.
+     * @param <O2> the output type of the clone.
+     */
     <I2, O2> void replaceSelfWithClone(Processor<I2, O2> clone);
 }
