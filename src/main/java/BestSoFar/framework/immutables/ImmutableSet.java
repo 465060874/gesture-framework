@@ -24,6 +24,11 @@ public class ImmutableSet<E> extends ImmutableWrapper<Set<E>> implements Set<E> 
     }
 
     @Override
+    public ImmutableSet<E> makeReplacementFor(MutationHandler mutationHandler) {
+        return (ImmutableSet<E>) super.makeReplacementFor(mutationHandler);
+    }
+
+    @Override
     ImmutableWrapper<Set<E>> createNewFromMutated(Set<E> mutated, MutationHandler mutationHandler) {
         return new ImmutableSet<>(Collections.unmodifiableSet(mutated), mutationHandler);
     }

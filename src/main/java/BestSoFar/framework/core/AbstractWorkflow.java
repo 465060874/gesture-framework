@@ -1,10 +1,9 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.common.ChildOf;
+import BestSoFar.framework.immutables.ImmutableList;
 import BestSoFar.framework.immutables.ParentMutationHandler;
 import BestSoFar.framework.helper.ProcessorMutationHandler;
-import BestSoFar.framework.immutables.ImmutableList;
-import BestSoFar.framework.immutables.ImmutableListImpl;
 import BestSoFar.framework.helper.TypeData;
 import lombok.Delegate;
 import lombok.Getter;
@@ -22,7 +21,7 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
             new ProcessorMutationHandler<>(this);
 
     public AbstractWorkflow(WorkflowContainer<I, O> parent, TypeData<I, O> typeData) {
-        elements = new ImmutableListImpl<>(this);
+        elements = new ImmutableList<>(this);
         this.typeData = typeData;
         parentManager = new ParentMutationHandler<>(parent, this);
         checkTypeData();

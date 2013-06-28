@@ -5,13 +5,14 @@ package BestSoFar.framework.immutables;
  * Date: 28/06/2013
  * Time: 20:50
  */
-public aspect NewImmutableAspect {
+public aspect ImmutableAspect {
     pointcut anyCall(ImmutableWrapper wrapper):
-        call(* (ImmutableWrapper+ && !(ImmutableWrapper || ImmutableReplacement)).*(..)) &&
-        ! call(@ImmutableWrapper.DoNotAdvise * *.*(..)) &&
+        call(* BestSoFar.framework.immutables.ImmutableWrapper.*(..)) &&
+        ! call(@BestSoFar.framework.immutables.ImmutableWrapper.DoNotAdvise * *.*(..)) &&
         ! call(* *.createNewFromMutated(..)) &&
         ! call(* *.cloneDelegateAsMutable(..)) &&
         ! call(* *.setActiveDelegate(..)) &&
+        ! call(* *.makeReplacementFor(..)) &&
         target(wrapper);
 
     Object around(ImmutableWrapper wrapper): anyCall(wrapper) {

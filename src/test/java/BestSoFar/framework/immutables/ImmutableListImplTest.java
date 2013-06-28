@@ -17,20 +17,20 @@ import static junit.framework.TestCase.assertTrue;
  */
 public class ImmutableListImplTest {
     class TestHandler implements ReplaceOnMutate<TestHandler> {
-        private ImmutableListImpl<String> list;
+        private ImmutableList<String> list;
 
         public TestHandler() {
-            list = new ImmutableListImpl<>(this);
+            list = new ImmutableList<>(this);
         }
 
-        public ImmutableListImpl<String> getList() {
+        public ImmutableList<String> getList() {
             return list;
         }
 
         @Override
         public void handleMutation() {
             hasBeenNotified = true;
-            list = (ImmutableListImpl<String>) list.makeReplacementFor(this);
+            list = (ImmutableList<String>) list.makeReplacementFor(this);
         }
 
         @Override
@@ -40,7 +40,7 @@ public class ImmutableListImplTest {
     }
 
     private boolean hasBeenNotified = false;
-    private ImmutableListImpl<String> list;
+    private ImmutableList<String> list;
     private TestHandler handler;
 
     @Before

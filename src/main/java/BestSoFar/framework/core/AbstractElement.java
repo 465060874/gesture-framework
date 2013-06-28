@@ -4,7 +4,7 @@ import BestSoFar.framework.common.ChildOf;
 import BestSoFar.framework.common.ObservableProcess;
 import BestSoFar.framework.helper.*;
 import BestSoFar.framework.helper.TypeData;
-import BestSoFar.framework.immutables.ImmutableObservableProcessImpl;
+import BestSoFar.framework.immutables.ObserverSet;
 import BestSoFar.framework.immutables.ParentMutationHandler;
 import lombok.Delegate;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public abstract class AbstractElement<I, O> implements Element<I, O> {
 
-    @Delegate private final ObservableProcess<O> observerManager;
+    @Delegate private final ObservableProcess<O> observers;
     @Getter @NonNull private final TypeData<I, O> typeData;
     @Delegate private final ChildOf<Workflow<?, ?>> parentManager;
     @Delegate private final ProcessorMutationHandler<I, O, ?, ?> mutationHandler =
@@ -34,17 +34,14 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     @SuppressWarnings("unchecked")
     public AbstractElement(Workflow<?, ?> parent, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        observerManager = new ImmutableObservableProcessImpl<>(this);
+        observers = new ObserverSet<>(this);
         parentManager = new ParentMutationHandler<Workflow<?, ?>>(parent, this);
     }
 
     @SuppressWarnings("unchecked")
     public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
         this.typeData = typeData;
-
-        observerManager = ((ImmutableObservableProcessImpl<O>) oldAbstractElement.observerManager)
-                                .makeReplacementFor(this);
-
+        observers = ((ObserverSet<O>) oldAbstractElement.observers).makeReplacementFor(this);
         parentManager = ((ParentMutationHandler<Workflow<?, ?>>) oldAbstractElement.parentManager)
                                 .makeReplacementFor(this);
     }

@@ -11,21 +11,6 @@ import java.util.Set;
  * Time: 15:53
  */
 public interface ObservableProcess<T> {
-    /**
-     * Register an observer.
-     *
-     * Attempting to register an already-registered observer should have no effect.
-     *
-     * @param observer the observer to register.
-     */
-    void addObserver(ProcessObserver<T> observer);
-
-    /**
-     * Returns the immutable set of observers that are observing this ObservableProcess.
-     *
-     * @return observers of this ObservableProcess.
-     */
-    Set<ProcessObserver<T>> getObservers();
 
     /**
      * Notify all ProcessObservers that the supplied mediator has been created by their observed

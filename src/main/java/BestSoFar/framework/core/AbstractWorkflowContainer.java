@@ -2,7 +2,6 @@ package BestSoFar.framework.core;
 
 import BestSoFar.framework.helper.Mediator;
 import BestSoFar.framework.immutables.ImmutableList;
-import BestSoFar.framework.immutables.ImmutableListImpl;
 import BestSoFar.framework.helper.TypeData;
 import lombok.Getter;
 
@@ -24,7 +23,7 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     public AbstractWorkflowContainer(Workflow<?, ?> parent, TypeData<I, O> typeData) {
         super(parent, typeData);
-        workflows = new ImmutableListImpl<>(this);
+        workflows = new ImmutableList<>(this);
     }
 
     public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer, TypeData<I, O> typeData) {
