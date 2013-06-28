@@ -7,30 +7,30 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
 
 /**
- * User: Sam Wright Date: 27/06/2013 Time: 11:32
+ * User: Sam Wright Date: 28/06/2013 Time: 20:41
  */
-public class ImmutableListImplTest {
+public class NewImmutableListTest {
+
     class TestHandler implements ReplaceOnMutate<TestHandler> {
-        private ImmutableListImpl<String> list;
+        private NewImmutableList<String> list;
 
         public TestHandler() {
-            list = new ImmutableListImpl<>(this);
+            list = new NewImmutableList<>(this);
         }
 
-        public ImmutableListImpl<String> getList() {
+        public NewImmutableList<String> getList() {
             return list;
         }
 
         @Override
         public void handleMutation() {
             hasBeenNotified = true;
-            list = (ImmutableListImpl<String>) list.makeReplacementFor(this);
+            list = (NewImmutableList<String>) list.makeReplacementFor(this);
         }
 
         @Override
@@ -40,7 +40,7 @@ public class ImmutableListImplTest {
     }
 
     private boolean hasBeenNotified = false;
-    private ImmutableListImpl<String> list;
+    private NewImmutableList<String> list;
     private TestHandler handler;
 
     @Before
@@ -82,7 +82,7 @@ public class ImmutableListImplTest {
         list.addAll(Arrays.asList("hello", "goodbye"));
         list = handler.getList();
 
-        ImmutableList<String> replacementList = list.makeReplacementFor(handler);
+        NewImmutableList<String> replacementList = (NewImmutableList<String>) list.makeReplacementFor(handler);
 
         assertEquals(replacementList, list);
         assertTrue(list.getReplacement() == replacementList);
@@ -112,7 +112,7 @@ public class ImmutableListImplTest {
         list.addAll(Arrays.asList("hello", "goodbye"));
         list = handler.getList();
         list.add("third");
-        ImmutableList<String> replacementList = handler.getList();
+        NewImmutableList<String> replacementList = handler.getList();
 
         assertEquals(Arrays.asList("hello", "goodbye"), list);
         assertEquals(Arrays.asList("hello", "goodbye", "third"), replacementList);

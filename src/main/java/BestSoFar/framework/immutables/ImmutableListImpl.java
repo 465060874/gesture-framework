@@ -28,8 +28,8 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
 
     // Delegation and setup
 
-    public ImmutableListImpl(ReplaceOnMutate handler) {
-        this(Collections.<E>emptyList(), handler);
+    public ImmutableListImpl(MutationHandler mutationHandler) {
+        this(Collections.<E>emptyList(), mutationHandler);
     }
 
     private ImmutableListImpl(List<E> list, @NonNull MutationHandler mutationHandler) {
