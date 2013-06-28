@@ -31,14 +31,15 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     public AbstractElement(Workflow<?, ?> parent, TypeData<I, O> typeData) {
         this.typeData = typeData;
         observerManager = new ImmutableObservableProcessImpl<>(this);
-        parentManager = (ChildOf<Workflow<?, ?>>) (ChildOf<?>) new ParentMutationHandler<>(parent, this);
+        parentManager = new ParentMutationHandler<Workflow<?, ?>>(parent, this);
     }
 
     @SuppressWarnings("unchecked")
     public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
         this.typeData = typeData;
         observerManager = ((ImmutableObservableProcessImpl<O>) oldAbstractElement.observerManager).cloneFor(this);
-        parentManager = ((ParentMutationHandler<Workflow<?,?>>) oldAbstractElement.parentManager).cloneFor(this);
+        parentManager = ((ParentMutationHandler<Workflow<?, ?>>) oldAbstractElement.parentManager)
+                                .makeReplacementFor(this);
     }
 
     @SuppressWarnings("unchecked")

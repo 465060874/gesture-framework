@@ -12,14 +12,26 @@ public aspect ImmutableListAspect {
             target(list);
 
     Object around(ImmutableListImpl list): anyCall(list) {
-        Object result;
-        System.out.println(" !!!!!!!!!!! advice being taken !!!!!!!!!!!");
+        Object result = null;
+        boolean wantsToWrite;
+
         try {
+            list.startRead();
             result = proceed(list);
+            wantsToWrite = false;
         } catch (UnsupportedOperationException e) {
-            list.makeMutable();
-            result = proceed(list);
-            list.notifyMutationHandler();
+            wantsToWrite = true;
+        } finally {
+            list.endRead();
+        }
+
+        if (wantsToWrite) {
+            try {
+                list.startMutation();
+                result = proceed(list);
+            } finally {
+                list.endMutation();
+            }
         }
 
         return result;

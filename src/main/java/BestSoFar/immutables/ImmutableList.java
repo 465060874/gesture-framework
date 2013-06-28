@@ -1,5 +1,7 @@
 package BestSoFar.immutables;
 
+import BestSoFar.framework.helper.ImmutableReplacement;
+
 import java.util.List;
 
 /**
@@ -7,8 +9,8 @@ import java.util.List;
  * Date: 25/06/2013
  * Time: 14:32
  */
-public interface ImmutableList<E> extends List<E> {
-    boolean replace(E oldElement, E newElement);
+public interface ImmutableList<E>
+        extends List<E>, ImmutableReplacement<ImmutableList<E>> {
 
-    List<E> getMutatedList();
+    boolean replace(E oldElement, E newElement);
 }

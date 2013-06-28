@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * User: Sam Wright Date: 27/06/2013 Time: 11:32
@@ -25,7 +25,7 @@ public class ImmutableListImplTest {
 
         @Override
         public void handleMutation() {
-
+            list = (ImmutableListImpl<String>) list.makeReplacementFor(this);
         }
 
         @Override
@@ -44,16 +44,11 @@ public class ImmutableListImplTest {
     }
 
     @Test
-    public void testMakeMutable() throws Exception {
-        try {
-            list.add("Won't work");
-            throw new RuntimeException("Was mutable to begin with..");
-        } catch (UnsupportedOperationException e) {}
+    public void testMutability() throws Exception {
 
-        list.makeMutable();
         list.add("Hello");
-
-        assertEquals(Arrays.asList("Hello"), list.getMutatedList());
+        assertTrue(list.isEmpty());
+        assertEquals(Arrays.asList("Hello"), handler.getList());
     }
 
     @Test

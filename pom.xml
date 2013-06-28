@@ -17,7 +17,6 @@
         </org.springaspects.jar>
         <java-path>/Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home</java-path>
         <!--org.springframework:spring-aspects:jar-->
-        <maven.junit.usefile>false</maven.junit.usefile>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

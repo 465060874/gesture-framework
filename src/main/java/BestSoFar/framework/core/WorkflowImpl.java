@@ -15,64 +15,34 @@ import java.util.*;
 /**
  * Implementation of Workflow.
  */
-public class WorkflowImpl<I, O> implements Workflow<I, O> {
-    @Delegate private final ChildOf<WorkflowContainer<I, O>> parentManager;
-    @Getter private final ImmutableListImpl<Element<?, ?>> elements;
-    @Getter @NonNull
-    private final TypeData<I, O> typeData;
-    @Delegate private final ProcessorMutationHandler<I, O, I, O> mutationHandler =
-            new ProcessorMutationHandler<>(this);
+public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
+
 
     public WorkflowImpl(WorkflowContainer<I, O> parent, TypeData<I, O> typeData) {
-        elements = new ImmutableListImpl<>(this);
-        this.typeData = typeData;
-        parentManager = new ParentMutationHandler<>(parent, this);
-        checkTypeData();
+        super(parent, typeData);
     }
 
 
     public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow, TypeData<I, O> typeData) {
-        this.typeData = typeData;
-        elements = new ImmutableListImpl<>(oldWorkflow.getElements().getMutatedList(), this);
-        parentManager = ((ParentMutationHandler<WorkflowContainer<I, O>>) oldWorkflow.parentManager).cloneFor(this);
-        checkTypeData();
+        super(oldWorkflow, typeData);
     }
 
-    private void checkTypeData() {
-        if (!typeData.equals(getParent().getTypeData())) {
-            String msg = String.format(
-                    "Workflow%s must have same type data as WorkflowContainer%s",
-                    typeData.toString(),
-                    getParent().getTypeData().toString()
-            );
-            throw new ClassCastException(msg);
-        }
-    }
-
-    @Override
-    public <I2, O2> void replaceSelfWithClone(Processor<I2, O2> clone) {
-        Workflow<I, O> nextWorkflow = (Workflow<I, O>) clone;
-
-        for (Element<?, ?> e : elements)
-            e.setParent(nextWorkflow);
-
-        // If this returns false, then I have been previously disowned and nothing happens.
-        getParent().getWorkflows().replace(this, nextWorkflow);
-    }
 
     @Override
     public boolean isValid() {
-        if (elements.size() == 0) {
-            return typeData.canBeEmptyContainer();
+        if (getElements().size() == 0) {
+            return getTypeData().canBeEmptyContainer();
         } else {
 
-            if ( !elements.get(1).getTypeData().canBeAtStartOfContainer(typeData) ||
-                    !elements.get(elements.size()-1).getTypeData().canBeAtEndOfContainer(typeData) )
+            if ( !getElements().get(1).getTypeData().canBeAtStartOfContainer(getTypeData()) ||
+                    !getElements().get(getElements().size()-1).getTypeData().canBeAtEndOfContainer
+                            (getTypeData()
+                    ) )
                 return false;
 
             TypeData<?, ?> previousType = null;
 
-            for (Element<?,?> e : elements) {
+            for (Element<?,?> e : getElements()) {
                 if (previousType != null)
                     if ( !e.getTypeData().canComeAfter(previousType) )
                         return false;
@@ -87,7 +57,7 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     @SuppressWarnings("unchecked")
     @Override
     public Mediator<O> process(Mediator<?> input) {
-        for (Element<?,?> e : elements)
+        for (Element<?,?> e : getElements())
             input = e.process(input);
 
         Mediator<O> output = (Mediator<O>) input;
@@ -98,7 +68,7 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     @SuppressWarnings("unchecked")
     @Override
     public List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs) {
-        for (Element<?, ?> e : elements)
+        for (Element<?, ?> e : getElements())
             inputs = (List<Mediator<?>>) (List<?>) e.processTrainingBatch(inputs);
 
         List<Mediator<O>> outputs = (List<Mediator<O>>) (List<?>) inputs;
@@ -111,7 +81,7 @@ public class WorkflowImpl<I, O> implements Workflow<I, O> {
     public Map<Mediator<O>, Mediator<I>> createBackwardMappingForTrainingBatch(List<Mediator<?>> completedOutputs,
                                                                                Set<Mediator<?>> successfulOutputs) {
 
-        ListIterator<Element<?, ?>> itr = elements.listIterator(elements.size());
+        ListIterator<Element<?, ?>> itr = getElements().listIterator(getElements().size());
         Map<Mediator<?>, Mediator<?>> backwardMapping;
         Map<Mediator<?>, Mediator<?>> totalBackwardMapping = new HashMap<>();
 

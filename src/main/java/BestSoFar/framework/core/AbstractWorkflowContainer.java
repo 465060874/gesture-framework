@@ -27,6 +27,11 @@ public abstract class AbstractWorkflowContainer<I, O>
         workflows = new ImmutableListImpl<>(this);
     }
 
+    public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer, TypeData<I, O> typeData) {
+        super(oldWorkflowContainer, typeData);
+        workflows = oldWorkflowContainer.workflows.makeReplacementFor(this);
+    }
+
     @Override
     public boolean isValid() {
         for (Workflow<I, O> workflow : workflows) {
@@ -45,11 +50,6 @@ public abstract class AbstractWorkflowContainer<I, O>
             outputs.addAll(workflow.processTrainingBatch(inputs));
 
         return outputs;
-    }
-
-    public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer, TypeData<I, O> typeData) {
-        super(oldWorkflowContainer, typeData);
-        workflows = new ImmutableListImpl<>(oldWorkflowContainer.getWorkflows().getMutatedList(), this);
     }
 
     @Override
