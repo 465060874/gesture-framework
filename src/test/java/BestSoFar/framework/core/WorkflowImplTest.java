@@ -28,7 +28,9 @@ public class WorkflowImplTest {
         @SuppressWarnings("unchecked")
         @Override
         public <I2, O2> Processor<I2, O2> cloneAs(TypeData<I2, O2> typeData) {
-            return (Processor<I2, O2>) new SimpleContainer(this, getTypeData());
+            System.out.println(" --- tried to clone ---");
+//            return (Processor<I2, O2>) new SimpleContainer(this, getTypeData());
+            return null;
         }
     }
 
@@ -39,8 +41,6 @@ public class WorkflowImplTest {
 //        Workflow<String, String> workflow = new WorkflowImpl<>(container, stringType);
 //
 //        container.getWorkflows().add(workflow);
-
-        // TODO: maven nearly builds, but antrun doesn't work (so no lombok).
 
     }
 

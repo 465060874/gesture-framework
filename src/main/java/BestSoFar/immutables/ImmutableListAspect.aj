@@ -8,7 +8,7 @@ package BestSoFar.immutables;
 public aspect ImmutableListAspect {
 
     pointcut anyCall(ImmutableListImpl list):
-            call(* BestSoFar.immutables.ImmutableListImpl.*(..)) &&
+            call(* java.util.List.*(..)) &&
             target(list);
 
     Object around(ImmutableListImpl list): anyCall(list) {

@@ -11,35 +11,42 @@ public class Lock {
     private Object[] lock = new Object[0];
     private boolean waitingToWrite = false;
 
-    @Synchronized
     public void getReadLock() {
+        synchronized (lock) {
             waitForWriteToEnd();
             readers += 1;
+            System.out.println("++ readers = " + readers);
+        }
     }
 
-    @Synchronized
     public void releaseReadLock() {
+        synchronized (lock) {
             readers -= 1;
-            notifyAll();
+            lock.notifyAll();
+            System.out.println("- readers = " + readers);
+        }
     }
 
-    @Synchronized
     public void releaseWriteLock() {
+        synchronized (lock) {
             waitingToWrite = false;
-            notifyAll();
+            lock.notifyAll();
+        }
     }
 
     @Synchronized
     public void getWriteLock() {
+        synchronized (lock) {
             waitForWriteToEnd();
             waitingToWrite = true;
             waitToBeAbleToWrite();
+        }
     }
 
     private void waitForWriteToEnd() {
         while (waitingToWrite) {
             try {
-                wait();
+                lock.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -49,7 +56,7 @@ public class Lock {
     private void waitToBeAbleToWrite() {
         while (readers != READERS_REQUIRED_FOR_WRITE) {
             try {
-                wait();
+                lock.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

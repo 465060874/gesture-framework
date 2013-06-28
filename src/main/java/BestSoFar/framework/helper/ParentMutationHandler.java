@@ -25,6 +25,7 @@ public class ParentMutationHandler<T>
             throw new AlreadyMutatedException();
 
         parentForReplacement = parent;
+        mutationHandler.handleMutation();
     }
 
     @Override
@@ -32,7 +33,8 @@ public class ParentMutationHandler<T>
         if (hasReplacement())
             throw new AlreadyMutatedException();
 
-        return new ParentMutationHandler<>(parentForReplacement, mutationHandler);
+        replacement = new ParentMutationHandler<>(parentForReplacement, mutationHandler);
+        return replacement;
     }
 
     @Override

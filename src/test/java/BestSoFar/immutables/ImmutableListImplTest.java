@@ -1,11 +1,14 @@
 package BestSoFar.immutables;
 
+import BestSoFar.framework.helper.ImmutableReplacement;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -25,6 +28,7 @@ public class ImmutableListImplTest {
 
         @Override
         public void handleMutation() {
+            hasBeenNotified = true;
             list = (ImmutableListImpl<String>) list.makeReplacementFor(this);
         }
 
@@ -34,6 +38,7 @@ public class ImmutableListImplTest {
         }
     }
 
+    private boolean hasBeenNotified = false;
     private ImmutableListImpl<String> list;
     private TestHandler handler;
 
@@ -45,34 +50,91 @@ public class ImmutableListImplTest {
 
     @Test
     public void testMutability() throws Exception {
-
         list.add("Hello");
         assertTrue(list.isEmpty());
         assertEquals(Arrays.asList("Hello"), handler.getList());
     }
 
     @Test
+    public void testWriteLock() throws Exception {
+        list.startMutation();
+        list.endMutation();
+    }
+
+    @Test
+    public void testReadLock() throws Exception {
+        list.startRead();
+        list.endRead();
+    }
+
+    @Test
     public void testNotifyMutationHandler() throws Exception {
-
+        assertFalse(hasBeenNotified);
+        list.size(); // read-only operations don't notify handler
+        assertFalse(hasBeenNotified);
+        list.add("hello"); // write-only ops will notify handler
+        assertTrue(hasBeenNotified);
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testUnmodifiedHandling() throws Exception {
+        list.addAll(Arrays.asList("hello", "goodbye"));
+        list = handler.getList();
 
+        ImmutableList<String> replacementList = list.makeReplacementFor(handler);
+
+        assertEquals(replacementList, list);
+        assertTrue(list.getReplacement() == replacementList);
+        assertTrue(list.hasReplacement());
+        assertFalse(list.replacementIsMutated());
     }
 
     @Test
-    public void testGetList() throws Exception {
+    public void testForgetReplacement() throws Exception {
+        testUnmodifiedHandling();
 
+        list.forgetReplacement();
+
+        assertFalse(list.hasReplacement());
+        assertFalse(list.replacementIsMutated());
+        assertNull(list.getReplacement());
+    }
+
+    @Test(expected = ImmutableReplacement.AlreadyMutatedException.class)
+    public void testMutationAfterReplacement() throws Exception {
+        testUnmodifiedHandling();
+        list.add("should fail");
     }
 
     @Test
-    public void testSize() throws Exception {
+    public void testModifiedHandling() throws Exception {
+        list.addAll(Arrays.asList("hello", "goodbye"));
+        list = handler.getList();
+        list.add("third");
+        ImmutableList<String> replacementList = handler.getList();
 
+        assertEquals(Arrays.asList("hello", "goodbye"), list);
+        assertEquals(Arrays.asList("hello", "goodbye", "third"), replacementList);
+
+        assertTrue(list.getReplacement() == replacementList);
+        assertTrue(list.hasReplacement());
+        assertTrue(list.replacementIsMutated());
     }
 
     @Test
-    public void testGetMutatedList() throws Exception {
+    public void testForgetModifiedReplacement() throws Exception {
+        testModifiedHandling();
 
+        list.forgetReplacement();
+
+        assertFalse(list.hasReplacement());
+        assertFalse(list.replacementIsMutated());
+        assertNull(list.getReplacement());
+    }
+
+    @Test(expected = ImmutableReplacement.AlreadyMutatedException.class)
+    public void testSecondMutation() throws Exception {
+        testModifiedHandling();
+        list.add("should fail");
     }
 }

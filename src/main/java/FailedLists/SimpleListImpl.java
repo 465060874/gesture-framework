@@ -1,4 +1,4 @@
-package BestSoFar.immutables;
+package FailedLists;
 
 import lombok.Delegate;
 import lombok.Getter;

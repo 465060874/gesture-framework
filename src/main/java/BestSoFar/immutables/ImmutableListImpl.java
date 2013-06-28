@@ -4,10 +4,7 @@ import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: Sam Wright
@@ -28,11 +25,11 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
 
     // Delegation and setup
 
-    public ImmutableListImpl(@NonNull ReplaceOnMutate handler) {
+    public ImmutableListImpl(ReplaceOnMutate handler) {
         this(Collections.<E>emptyList(), handler);
     }
 
-    private ImmutableListImpl(@NonNull List<E> list, @NonNull MutationHandler mutationHandler) {
+    private ImmutableListImpl(List<E> list, @NonNull MutationHandler mutationHandler) {
         this.mutationHandler = mutationHandler;
         this.activeList = Collections.unmodifiableList(list);
         mutatedList = backupList = activeList;
@@ -43,7 +40,8 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
         if (hasReplacement())
             throw new AlreadyMutatedException();
 
-        return new ImmutableListImpl<>(mutatedList, mutationHandler);
+        replacement = new ImmutableListImpl<>(mutatedList, mutationHandler);
+        return replacement;
     }
 
     @Override
@@ -73,8 +71,8 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
     }
 
     /**
-     * Called after any method returns (but before 'startMutation()' and 'endMutation',
-     * if they are called).
+     * Called after any method returns or throws exception (but before 'startMutation()' and
+     * 'endMutation', if they are called).
      */
     protected void endRead() {
         lock.releaseReadLock();
@@ -89,13 +87,17 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
         if (hasReplacement() || replacementIsMutated())
             throw new AlreadyMutatedException();
 
-        mutatedList = new ArrayList<>(backupList);
+        if (ArrayList.class.isAssignableFrom(backupList.getClass()))
+            mutatedList = new ArrayList<>(backupList);
+        else
+            mutatedList = new LinkedList<>(backupList);
+
         activeList = mutatedList;
     }
 
     /**
      * If method called was a mutation (so 'startMutation()' was called) this is called after
-     * the method returns.
+     * the method returns (or throws exception).
      */
     protected void endMutation() {
         activeList = backupList;
@@ -113,4 +115,18 @@ public class ImmutableListImpl<E> implements ImmutableList<E> {
         return index != -1 && set(index, newElement) == oldElement;
     }
 
+    @Override
+    public int hashCode() {
+        return backupList.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return backupList.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return backupList.toString();
+    }
 }
