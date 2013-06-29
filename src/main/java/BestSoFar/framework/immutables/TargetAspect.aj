@@ -7,15 +7,16 @@ package BestSoFar.framework.immutables;
  */
 public aspect TargetAspect {
 
-    pointcut one_foo(TargetTest t):
+    pointcut one_foo(Object t):
             call(void TargetTest.say(String)) &&
             target(t);
 
-    void around (TargetTest t): one_foo(t) {
+    void around (Object tS): one_foo(tS) {
+        TargetTest t = (TargetTest) tS;
         System.out.println("advice: foo = " + t.getFoo());
         System.out.print("advice: proceed: ");
         proceed(t);
-        t = t.getOneBigger();
+        t = (TargetTest) t.getOneBigger();
         System.out.println("advice: bigger foo = " + t.getFoo());
         System.out.print("advice: proceed: ");
         proceed(t);

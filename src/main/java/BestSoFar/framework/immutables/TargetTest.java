@@ -7,7 +7,7 @@ import lombok.Getter;
  * User: Sam Wright Date: 28/06/2013 Time: 23:54
  */
 @AllArgsConstructor
-public class TargetTest {
+public class TargetTest extends SuperTarget {
     @Getter
     private final int foo;
 
@@ -15,7 +15,7 @@ public class TargetTest {
         System.out.println(msg + foo);
     }
 
-    public TargetTest getOneBigger() {
+    public Object getOneBigger() {
         return new TargetTest(foo + 1);
     }
 

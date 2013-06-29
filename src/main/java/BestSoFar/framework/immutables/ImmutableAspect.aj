@@ -19,8 +19,6 @@ public aspect ImmutableAspect {
         Object result = null;
         boolean wantsToWrite;
 
-        System.out.println("Advising: " + thisJoinPoint);
-
         try {
             wrapper.startRead();
             result = proceed(wrapper);

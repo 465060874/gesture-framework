@@ -7,6 +7,7 @@ import BestSoFar.framework.immutables.common.MutationHandler;
  * TODO: merge with ReplaceOnMutate somehow (these are very similar).
  */
 public interface ImmutableReplacement<T> {
+
     class AlreadyMutatedException extends RuntimeException {}
 
     T makeReplacementFor(MutationHandler mutationHandler);
