@@ -28,7 +28,7 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer, TypeData<I, O> typeData) {
         super(oldWorkflowContainer, typeData);
-        workflows = oldWorkflowContainer.workflows.makeReplacementFor(this);
+        workflows = oldWorkflowContainer.workflows.assignReplacementTo(this);
     }
 
     @Override

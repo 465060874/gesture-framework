@@ -36,7 +36,7 @@ public class ObserverSet<T>
     }
 
     @Override
-    public ObserverSet<T> makeReplacementFor(MutationHandler mutationHandler) {
-        return (ObserverSet<T>) super.makeReplacementFor(mutationHandler);
+    public ObserverSet<T> assignReplacementTo(MutationHandler mutationHandler) {
+        return (ObserverSet<T>) super.assignReplacementTo(mutationHandler);
     }
 }

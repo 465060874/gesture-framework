@@ -1,18 +1,21 @@
 package BestSoFar.framework.immutables.common;
 
-import BestSoFar.framework.immutables.common.MutationHandler;
-
 /**
- * User: Sam Wright Date: 28/06/2013 Time: 10:47
- * TODO: merge with ReplaceOnMutate somehow (these are very similar).
+ * User: Sam Wright Date: 29/06/2013 Time: 21:09
  */
-public interface ImmutableReplacement<T> {
-
+public interface ImmutableReplacement {
     class AlreadyMutatedException extends RuntimeException {}
 
-    T makeReplacementFor(MutationHandler mutationHandler);
-    void forgetReplacement();
+    class ReplacementNotHandled extends RuntimeException {
+    }
+
+    ImmutableReplacement assignReplacementTo(MutationHandler mutationHandler);
+
+    void discardReplacement();
+
     boolean hasReplacement();
-    boolean replacementIsMutated();
-    T getReplacement();
+
+    boolean isMutated();
+
+    ImmutableReplacement getReplacement();
 }

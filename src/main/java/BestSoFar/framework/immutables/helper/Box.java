@@ -11,4 +11,7 @@ public interface Box<T> {
     T getContents();
 
     void setContents(T contents);
+
+
+    void lock();
 }

@@ -1,6 +1,7 @@
 package BestSoFar.framework.helper;
 
 import BestSoFar.framework.core.Processor;
+import BestSoFar.framework.immutables.common.ImmutableReplacement;
 import BestSoFar.framework.immutables.common.ReplaceOnMutate;
 import lombok.Getter;
 
@@ -16,15 +17,15 @@ public class ProcessorMutationHandler<I, O, I2, O2> implements ReplaceOnMutate<P
         this.original = original;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void handleMutation() {
-        replacement = (Processor<I2, O2>) original.cloneAs(original.getTypeData());
-        original.replaceSelfWithClone(replacement);
-    }
-
     @Override
     public boolean hasReplacement() {
         return replacement != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void handleReplacement(ImmutableReplacement existingObject, ImmutableReplacement proposedReplacement) {
+        replacement = (Processor<I2, O2>) original.cloneAs(original.getTypeData());
+        original.replaceSelfWithClone(replacement);
     }
 }

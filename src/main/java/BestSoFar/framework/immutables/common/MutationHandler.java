@@ -1,8 +1,9 @@
 package BestSoFar.framework.immutables.common;
 
 /**
- * User: Sam Wright Date: 28/06/2013 Time: 10:49
+ * User: Sam Wright Date: 29/06/2013 Time: 21:18
  */
 public interface MutationHandler {
-    void handleMutation();
+    void handleReplacement(ImmutableReplacement existingObject,
+                           ImmutableReplacement proposedReplacement);
 }

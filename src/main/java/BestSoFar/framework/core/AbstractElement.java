@@ -5,7 +5,7 @@ import BestSoFar.framework.common.ObservableProcess;
 import BestSoFar.framework.helper.*;
 import BestSoFar.framework.helper.TypeData;
 import BestSoFar.framework.immutables.ObserverSet;
-import BestSoFar.framework.immutables.ParentMutationHandler;
+import BestSoFar.framework.immutables.ParentBox;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;
@@ -35,15 +35,15 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     public AbstractElement(Workflow<?, ?> parent, TypeData<I, O> typeData) {
         this.typeData = typeData;
         observers = new ObserverSet<>(this);
-        parentManager = new ParentMutationHandler<Workflow<?, ?>>(parent, this);
+        parentManager = new ParentBox<Workflow<?, ?>>(parent, this);
     }
 
     @SuppressWarnings("unchecked")
     public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        observers = ((ObserverSet<O>) oldAbstractElement.observers).makeReplacementFor(this);
-        parentManager = ((ParentMutationHandler<Workflow<?, ?>>) oldAbstractElement.parentManager)
-                                .makeReplacementFor(this);
+        observers = ((ObserverSet<O>) oldAbstractElement.observers).assignReplacementTo(this);
+        parentManager = ((ParentBox<Workflow<?, ?>>) oldAbstractElement.parentManager)
+                                .assignReplacementTo(this);
     }
 
     @SuppressWarnings("unchecked")

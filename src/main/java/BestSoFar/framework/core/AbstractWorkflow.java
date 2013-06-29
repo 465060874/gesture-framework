@@ -2,7 +2,7 @@ package BestSoFar.framework.core;
 
 import BestSoFar.framework.common.ChildOf;
 import BestSoFar.framework.immutables.ImmutableList;
-import BestSoFar.framework.immutables.ParentMutationHandler;
+import BestSoFar.framework.immutables.ParentBox;
 import BestSoFar.framework.helper.ProcessorMutationHandler;
 import BestSoFar.framework.helper.TypeData;
 import lombok.Delegate;
@@ -23,16 +23,16 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     public AbstractWorkflow(WorkflowContainer<I, O> parent, TypeData<I, O> typeData) {
         elements = new ImmutableList<>(this);
         this.typeData = typeData;
-        parentManager = new ParentMutationHandler<>(parent, this);
+        parentManager = new ParentBox<>(parent, this);
         checkTypeData();
     }
 
 
     public AbstractWorkflow(AbstractWorkflow<I, O> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        elements = oldWorkflow.elements.makeReplacementFor(this);
-        parentManager = ((ParentMutationHandler<WorkflowContainer<I,O>>) oldWorkflow.parentManager)
-                            .makeReplacementFor(this);
+        elements = oldWorkflow.elements.assignReplacementTo(this);
+        parentManager = ((ParentBox<WorkflowContainer<I,O>>) oldWorkflow.parentManager)
+                            .assignReplacementTo(this);
 
         checkTypeData();
     }

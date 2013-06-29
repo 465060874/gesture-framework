@@ -1,7 +1,7 @@
 package BestSoFar.framework.immutables;
 
-import BestSoFar.framework.immutables.common.NewImmutableReplacement;
-import BestSoFar.framework.immutables.common.NewMutationHandler;
+import BestSoFar.framework.immutables.common.ImmutableReplacement;
+import BestSoFar.framework.immutables.common.MutationHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,26 +14,26 @@ import static junit.framework.Assert.assertNull;
 /**
  * User: Sam Wright Date: 29/06/2013 Time: 10:30
  */
-public class NewImmutableListTest {
-    class TestHandler implements NewMutationHandler {
-        private NewImmutableList<String> handledList;
+public class ImmutableListTest {
+    class TestHandler implements MutationHandler {
+        private ImmutableList<String> handledList;
         private boolean willAssignReplacement = true;
         private boolean willForgetReplacement = false;
 
         public TestHandler() {
-            handledList = new NewImmutableList<>(this);
+            handledList = new ImmutableList<>(this);
         }
 
-        public NewImmutableList<String> getHandledList() {
+        public ImmutableList<String> getHandledList() {
             return handledList;
         }
 
         @Override
-        public void handleReplacement(NewImmutableReplacement existingObject,
-                                      NewImmutableReplacement proposedReplacement) {
+        public void handleReplacement(ImmutableReplacement existingObject,
+                                      ImmutableReplacement proposedReplacement) {
             hasBeenNotified = true;
             if (willAssignReplacement)
-                handledList = (NewImmutableList<String>) existingObject.assignReplacementTo(this);
+                handledList = (ImmutableList<String>) existingObject.assignReplacementTo(this);
             if (willForgetReplacement)
                 handledList.discardReplacement();
 
@@ -41,7 +41,7 @@ public class NewImmutableListTest {
     }
 
     private boolean hasBeenNotified = false;
-    private NewImmutableList<String> list;
+    private ImmutableList<String> list;
     private TestHandler handler;
 
     @Before
@@ -78,7 +78,7 @@ public class NewImmutableListTest {
         list.addAll(Arrays.asList("hello", "goodbye"));
         list = handler.getHandledList();
 
-        NewImmutableList<String> replacementList = list.assignReplacementTo(handler);
+        ImmutableList<String> replacementList = list.assignReplacementTo(handler);
 
         assertEquals(replacementList, list);
         assertTrue(list.getReplacement() == replacementList);
@@ -99,7 +99,7 @@ public class NewImmutableListTest {
         list.add("boo");
     }
 
-    @Test(expected = NewImmutableReplacement.AlreadyMutatedException.class)
+    @Test(expected = ImmutableReplacement.AlreadyMutatedException.class)
     public void testMutationAfterReplacement() throws Exception {
         testUnmodifiedHandling();
         list.add("should fail");
@@ -110,7 +110,7 @@ public class NewImmutableListTest {
         list.addAll(Arrays.asList("hello", "goodbye"));
         list = handler.getHandledList();
         list.add("third");
-        NewImmutableList<String> replacementList = handler.getHandledList();
+        ImmutableList<String> replacementList = handler.getHandledList();
 
         assertEquals(Arrays.asList("hello", "goodbye"), list);
         assertEquals(Arrays.asList("hello", "goodbye", "third"), replacementList);
@@ -133,7 +133,7 @@ public class NewImmutableListTest {
         list.add("boo");
     }
 
-    @Test(expected = NewImmutableReplacement.AlreadyMutatedException.class)
+    @Test(expected = ImmutableReplacement.AlreadyMutatedException.class)
     public void testSecondMutation() throws Exception {
         testModifiedHandling();
         list.add("should fail");

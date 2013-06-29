@@ -2,137 +2,108 @@ package BestSoFar.framework.immutables;
 
 import BestSoFar.framework.immutables.common.ImmutableReplacement;
 import BestSoFar.framework.immutables.common.MutationHandler;
-import BestSoFar.framework.immutables.helper.Lock;
-import lombok.NonNull;
+import lombok.Getter;
 
 /**
- * User: Sam Wright Date: 28/06/2013 Time: 20:14
+ * User: Sam Wright Date: 29/06/2013 Time: 00:17
  */
-public abstract class ImmutableWrapper<T>
-        implements ImmutableReplacement<ImmutableWrapper<T>> {
+public abstract class ImmutableWrapper<T> implements ImmutableReplacement {
 
-    public static @ interface DoNotAdvise {}
+    public static @interface DoNotAdvise {}
 
     private ImmutableWrapper<T> replacement;
-    private T mutated;
-    private T immutable;
-    private final MutationHandler mutationHandler;
-    private Lock lock = new Lock();
+    private MutationHandler mutationHandler;
+    @Getter private boolean isMutated;
 
     // Delegation and setup
-
-    public ImmutableWrapper(T delegate, @NonNull MutationHandler mutationHandler) {
-        this.mutationHandler = mutationHandler;
-        mutated = immutable = delegate;
-        setActiveDelegate(delegate);
-    }
 
     @DoNotAdvise
     @Override
     public ImmutableWrapper<T> getReplacement() {
-        return replacement;
+        if (hasReplacement())
+            return replacement;
+        else
+            return null;
     }
+
+    /**
+     * First-time constructor.  Subsequent objects are created using assignReplacementTo(..).
+     * @param mutationHandler
+     */
+    public ImmutableWrapper(MutationHandler mutationHandler) {
+        this.mutationHandler = mutationHandler;
+        isMutated = false;
+    }
+
+    /**
+     * Constructor used when subclass clones.
+     */
+    public ImmutableWrapper() {};
 
     @DoNotAdvise
     @Override
-    public ImmutableWrapper<T> makeReplacementFor(MutationHandler mutationHandler) {
+    public ImmutableWrapper<T> assignReplacementTo(MutationHandler mutationHandler) {
         if (hasReplacement())
             throw new ImmutableReplacement.AlreadyMutatedException();
 
-        replacement = createNewFromMutated(mutated, mutationHandler);
+        if (replacement == null) {
+            replacement = createMutableClone();
+            replacement.isMutated = false;
+            replacement.makeDelegateImmutable();
+        }
+
+        replacement.mutationHandler = mutationHandler;
+
+
         return replacement;
     }
 
-    @DoNotAdvise
-    abstract ImmutableWrapper<T> createNewFromMutated(T mutated, MutationHandler mutationHandler);
+    abstract ImmutableWrapper<T> createMutableClone();
 
-    @DoNotAdvise
-    abstract T cloneDelegateAsMutable(T delegate);
+    abstract void makeDelegateImmutable();
 
-    @DoNotAdvise
-    abstract void setActiveDelegate(T delegate);
 
     @DoNotAdvise
     @Override
-    public void forgetReplacement() {
-        mutated = immutable;
+    public void discardReplacement() {
         replacement = null;
     }
 
     @DoNotAdvise
     @Override
     public boolean hasReplacement() {
-        return replacement != null;
-    }
-
-    @DoNotAdvise
-    @Override
-    public boolean replacementIsMutated() {
-        return mutated != immutable;
+        return replacement != null && replacement.mutationHandler != null;
     }
 
 
     // Mutation handling methods
 
     /**
-     * Called before any method is called.
-     */
-    @DoNotAdvise
-    protected void startRead() {
-        lock.getReadLock();
-    }
-
-    /**
-     * Called after any method returns or throws exception (but before 'startMutation()' and
-     * 'endMutation', if they are called).
-     */
-    @DoNotAdvise
-    protected void endRead() {
-        lock.releaseReadLock();
-    }
-
-    /**
      * Called if method tried to mutate, so threw UnsupportedOperationException
      */
     @DoNotAdvise
-    protected void startMutation() {
-        lock.getWriteLock();
-
-        if (hasReplacement() || replacementIsMutated())
+    protected ImmutableWrapper<T> startMutation() {
+        if (replacement != null)
             throw new ImmutableReplacement.AlreadyMutatedException();
 
-        mutated = cloneDelegateAsMutable(immutable);
+        replacement = createMutableClone();
+        replacement.isMutated = true;
 
-        setActiveDelegate(mutated);
+        return replacement;
     }
 
     /**
      * If method called was a mutation (so 'startMutation()' was called) this is called after the
      * method returns (or throws exception).
      */
+    @SuppressWarnings("all")
     @DoNotAdvise
     protected void endMutation() {
-        setActiveDelegate(immutable);
-        mutationHandler.handleMutation();
+        replacement.makeDelegateImmutable();
+        mutationHandler.handleReplacement(this, replacement);
 
-        lock.releaseWriteLock();
-    }
-
-    @DoNotAdvise
-    @Override
-    public int hashCode() {
-        return immutable.hashCode();
-    }
-
-    @DoNotAdvise
-    @Override
-    public boolean equals(Object obj) {
-        return immutable.equals(obj);
-    }
-
-    @DoNotAdvise
-    @Override
-    public String toString() {
-        return immutable.toString();
+        // Check that user either created replacement or forgot it
+        if (replacement != null && replacement.mutationHandler == null)
+            throw new ReplacementNotHandled();
     }
 }
