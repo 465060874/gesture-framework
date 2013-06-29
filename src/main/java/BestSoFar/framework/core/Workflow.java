@@ -1,6 +1,6 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.common.ChildOf;
+import BestSoFar.framework.core.common.ChildOf;
 import BestSoFar.framework.immutables.ImmutableList;
 
 /**

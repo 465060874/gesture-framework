@@ -1,11 +1,11 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.common.ChildOf;
-import BestSoFar.framework.common.ObservableProcess;
-import BestSoFar.framework.helper.*;
-import BestSoFar.framework.helper.TypeData;
-import BestSoFar.framework.immutables.ObserverSet;
-import BestSoFar.framework.immutables.ParentBox;
+import BestSoFar.framework.core.common.ChildOf;
+import BestSoFar.framework.core.common.ObservableProcess;
+import BestSoFar.framework.core.helper.*;
+import BestSoFar.framework.core.helper.TypeData;
+import BestSoFar.framework.core.helper.ObserverSet;
+import BestSoFar.framework.core.helper.ParentBox;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;
@@ -20,7 +20,7 @@ import java.util.Set;
  * which requires a one-to-one mapping of input data to output data (without training necessary).
  * <p/>
  * Concrete Element implementations can derive from this to let it handle the boilerplate code
- * (accessors for parent and {@link TypeData}, and {@link BestSoFar.framework.common.ProcessObserver} management).
+ * (accessors for parent and {@link TypeData}, and {@link BestSoFar.framework.core.common.ProcessObserver} management).
  */
 public abstract class AbstractElement<I, O> implements Element<I, O> {
 

@@ -1,7 +1,7 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.common.ChildOf;
-import BestSoFar.framework.common.ObservableProcess;
+import BestSoFar.framework.core.common.ChildOf;
+import BestSoFar.framework.core.common.ObservableProcess;
 
 /**
  * An {@code Element} is a {@link Processor} which sits inside a {@link Workflow}.

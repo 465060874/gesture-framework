@@ -1,7 +1,7 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.helper.Mediator;
-import BestSoFar.framework.helper.TypeData;
+import BestSoFar.framework.core.helper.Mediator;
+import BestSoFar.framework.core.helper.TypeData;
 
 /**
  * TODO: work in progress.

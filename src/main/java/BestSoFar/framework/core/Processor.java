@@ -1,9 +1,9 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.helper.History;
-import BestSoFar.framework.helper.Mediator;
+import BestSoFar.framework.core.helper.History;
+import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.immutables.common.ReplaceOnMutate;
-import BestSoFar.framework.helper.TypeData;
+import BestSoFar.framework.core.helper.TypeData;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.Set;
  * for example it might choose to process the data in a certain way that worked well during
  * training.
  * <p/>
- * It can also be observed by {@link BestSoFar.framework.common.ProcessObserver} objects, which are notified when input data
+ * It can also be observed by {@link BestSoFar.framework.core.common.ProcessObserver} objects, which are notified when input data
  * (either individually or in a batch) has been processed (but before the output is returned).
  */
 public interface Processor<I,O> extends ReplaceOnMutate<Processor<I, O>> {

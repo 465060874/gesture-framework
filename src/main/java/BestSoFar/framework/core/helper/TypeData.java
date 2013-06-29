@@ -1,4 +1,4 @@
-package BestSoFar.framework.helper;
+package BestSoFar.framework.core.helper;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

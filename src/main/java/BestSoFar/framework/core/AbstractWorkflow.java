@@ -1,10 +1,10 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.common.ChildOf;
+import BestSoFar.framework.core.common.ChildOf;
 import BestSoFar.framework.immutables.ImmutableList;
-import BestSoFar.framework.immutables.ParentBox;
-import BestSoFar.framework.helper.ProcessorMutationHandler;
-import BestSoFar.framework.helper.TypeData;
+import BestSoFar.framework.core.helper.ParentBox;
+import BestSoFar.framework.core.helper.ProcessorMutationHandler;
+import BestSoFar.framework.core.helper.TypeData;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;
