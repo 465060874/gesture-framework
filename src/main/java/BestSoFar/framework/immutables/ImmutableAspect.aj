@@ -9,7 +9,6 @@ public aspect ImmutableAspect {
     pointcut anyCall(Object target):
             call(* BestSoFar.framework.immutables.ImmutableWrapper+.*(..)) &&
             ! call(* BestSoFar.framework.immutables.ImmutableWrapper.*(..)) &&
-
             ! call(@BestSoFar.framework.immutables.ImmutableWrapper.DoNotAdvise * *.*(..)) &&
             ! call(* *.makeDelegateImmutable(..)) &&
             ! call(* *.createMutableClone(..)) &&

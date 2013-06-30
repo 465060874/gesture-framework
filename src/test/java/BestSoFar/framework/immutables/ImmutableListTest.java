@@ -17,8 +17,8 @@ import static junit.framework.Assert.assertNull;
 public class ImmutableListTest {
     class TestHandler implements MutationHandler {
         private ImmutableList<String> handledList;
-        private boolean willAssignReplacement = true;
-        private boolean willForgetReplacement = false;
+        public boolean willAssignReplacement = true;
+        public boolean willForgetReplacement = false;
 
         public TestHandler() {
             handledList = new ImmutableList<>(this);
@@ -137,5 +137,21 @@ public class ImmutableListTest {
     public void testSecondMutation() throws Exception {
         testModifiedHandling();
         list.add("should fail");
+    }
+
+    @Test
+    public void testHandlerDiscardsReplacment() throws Exception {
+        handler.willAssignReplacement = false;
+        handler.willForgetReplacement = true;
+        list.add("will be discarded");
+
+        assertTrue(handler.getHandledList().isEmpty());
+    }
+
+    @Test(expected = ImmutableReplacement.ReplacementNotHandled.class)
+    public void testUnhandledReplacement() throws Exception {
+        handler.willAssignReplacement = false;
+        handler.willForgetReplacement = false;
+        list.add("won't be handled");
     }
 }
