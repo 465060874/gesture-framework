@@ -94,7 +94,7 @@ public abstract class Mediator<T> {
      * @throws AssertionError if any two output mediators share the same input mediator.
      */
     @SuppressWarnings("unchecked")
-    public static <I,O> Map<Mediator<O>, Mediator<I>> createBackwardMappingFor1to1(List<Mediator<O>> outputs) {
+    public static <I,O> Map<Mediator<O>, Mediator<I>> create1to1BackwardMapping(List<Mediator<O>> outputs) {
         Map<Mediator<O>, Mediator<I>> map  = new HashMap<>();
 
         for (Mediator<O> output : outputs) {
@@ -110,7 +110,7 @@ public abstract class Mediator<T> {
      * Creates a mapping going from the given list of output mediators backward, but reversed (so that the mapping is
      * from an input mediator to all the output mediators which came from it).
      *
-     * This is the version of 'createBackwardMappingFor1to1' for when there might be a one-to-many relationship
+     * This is the version of 'create1to1BackwardMapping' for when there might be a one-to-many relationship
      * between input mediators and output mediators.
      *
      * @param outputs the list of output mediators to map backward.

@@ -2,6 +2,7 @@ package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
+import BestSoFar.framework.immutables.common.HandledImmutable;
 
 import java.util.*;
 
@@ -11,13 +12,14 @@ import java.util.*;
 public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
 
 
-    public WorkflowImpl(WorkflowContainer<I, O> parent, TypeData<I, O> typeData) {
-        super(parent, typeData);
+    public WorkflowImpl(TypeData<I, O> typeData, boolean mutable) {
+        super(typeData, mutable);
     }
 
 
-    public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow, TypeData<I, O> typeData) {
-        super(oldWorkflow, typeData);
+    public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow,
+                        TypeData<I, O> typeData, boolean mutable) {
+        super(oldWorkflow, typeData, mutable);
     }
 
 
@@ -107,9 +109,8 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
         return (Map<Mediator<O>, Mediator<I>>) (Map<?,?>) totalBackwardMapping;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <I2, O2> WorkflowImpl<I2, O2> cloneAs(TypeData<I2, O2> typeData) {
-        return new WorkflowImpl<>((WorkflowImpl<I2, O2>) this, typeData);
+    public WorkflowImpl<I, O> createClone(boolean mutable) {
+        return new WorkflowImpl<>(this, getTypeData(), mutable);
     }
 }

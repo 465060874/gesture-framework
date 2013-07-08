@@ -1,5 +1,7 @@
 package BestSoFar.framework.immutables;
 
+import BestSoFar.framework.immutables.common.HandledImmutable;
+import BestSoFar.framework.immutables.common.Immutable;
 import BestSoFar.framework.immutables.common.MutationHandler;
 import lombok.Delegate;
 
@@ -11,37 +13,38 @@ import java.util.List;
 /**
  * User: Sam Wright Date: 29/06/2013 Time: 10:10
  */
-public class ImmutableList<E> extends ImmutableWrapper<List<E>> implements List<E> {
+public class ImmutableList<E> extends ImmutableWrapper implements List<E> {
 
     @Delegate private List<E> delegate;
 
-    public ImmutableList(MutationHandler mutationHandler) {
-        super(mutationHandler);
+    public ImmutableList(boolean mutable) {
+        super(mutable);
         delegate = Collections.emptyList();
     }
 
-    private ImmutableList(List<E> mutableClone) {
-        this.delegate = mutableClone;
+    private ImmutableList(List<E> delegate, boolean mutable) {
+        super(mutable);
+        this.delegate = delegate;
     }
 
     @Override
-    public ImmutableList<E> assignReplacementTo(MutationHandler mutationHandler) {
-        return (ImmutableList<E>) super.assignReplacementTo(mutationHandler);
+    public ImmutableList<E> createClone(boolean mutable) {
+        if (mutable) {
+            List<E> clone;
+            if (ArrayList.class.isAssignableFrom(delegate.getClass()))
+                clone = new ArrayList<>(delegate);
+            else
+                clone = new LinkedList<>(delegate);
+
+            return new ImmutableList<>(clone, true);
+
+        } else {
+            return new ImmutableList<>(delegate, false);
+        }
     }
 
     @Override
-    ImmutableWrapper<List<E>> createMutableClone() {
-        List<E> clone;
-        if (ArrayList.class.isAssignableFrom(delegate.getClass()))
-            clone = new ArrayList<>(delegate);
-        else
-            clone = new LinkedList<>(delegate);
-
-        return new ImmutableList<>(clone);
-    }
-
-    @Override
-    void makeDelegateImmutable() {
+    public void finalise() {
         delegate = Collections.unmodifiableList(delegate);
     }
 
@@ -64,5 +67,21 @@ public class ImmutableList<E> extends ImmutableWrapper<List<E>> implements List<
     public boolean replace(E oldElement, E newElement) {
         int index = indexOf(oldElement);
         return index != -1 && set(index, newElement) == oldElement;
+    }
+
+    @DoNotAdvise
+    public void replaceOrAdd(E oldElement, E newElement) {
+        for (int i = 0; i < size(); ++i) {
+            E pointer = get(i);
+            if (pointer == oldElement) {
+                set(i, newElement);
+                return;
+            }
+
+            if (pointer == newElement)
+                return;
+        }
+
+        add(newElement);
     }
 }

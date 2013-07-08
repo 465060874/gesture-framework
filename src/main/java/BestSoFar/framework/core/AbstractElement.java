@@ -1,19 +1,17 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.core.common.ChildOf;
-import BestSoFar.framework.core.common.ObservableProcess;
+import BestSoFar.framework.core.common.ProcessObserver;
 import BestSoFar.framework.core.helper.*;
 import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.core.helper.ObserverSet;
-import BestSoFar.framework.core.helper.ParentBox;
+import BestSoFar.framework.immutables.ImmutableSet;
+import BestSoFar.framework.immutables.SelfReplacingImmutableImpl;
+import BestSoFar.framework.immutables.common.HandledImmutable;
+import BestSoFar.framework.immutables.common.Immutable;
+import BestSoFar.framework.immutables.common.SelfReplacingImmutable;
 import lombok.Delegate;
 import lombok.Getter;
-import lombok.NonNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Abstract implementor of {@link Processor} for elemental Processors to extend,
@@ -24,46 +22,100 @@ import java.util.Set;
  */
 public abstract class AbstractElement<I, O> implements Element<I, O> {
 
-    @Delegate private final ObservableProcess<O> observers;
-    @Getter @NonNull private final TypeData<I, O> typeData;
-    @Delegate private final ChildOf<Workflow<?, ?>> parentManager;
-    @Delegate private final ProcessorMutationHandler<I, O, ?, ?> mutationHandler =
-            new ProcessorMutationHandler<>(this);
+    @Getter private ImmutableSet<ProcessObserver<O>> observers;
+    @Getter private final TypeData<I, O> typeData;
+    @Getter private Workflow<?, ?> parent;
+
+    @Delegate(excludes = SelfReplacingImmutableImpl.ToOverride.class)
+    private final SelfReplacingImmutableImpl replacementManager;
 
 
-    @SuppressWarnings("unchecked")
-    public AbstractElement(Workflow<?, ?> parent, TypeData<I, O> typeData) {
+    public AbstractElement(TypeData<I, O> typeData, boolean mutable) {
         this.typeData = typeData;
-        observers = new ObserverSet<>(this);
-        parentManager = new ParentBox<Workflow<?, ?>>(parent, this);
+        observers = new ImmutableSet<>(false);
+        observers.assignToHandler(this);
+        replacementManager = new SelfReplacingImmutableImpl(mutable);
     }
 
     @SuppressWarnings("unchecked")
-    public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
+    public AbstractElement(AbstractElement<?, ?> oldAbstractElement,
+                           TypeData<I, O> typeData, boolean mutable) {
         this.typeData = typeData;
-        observers = ((ObserverSet<O>) oldAbstractElement.observers).assignReplacementTo(this);
-        parentManager = ((ParentBox<Workflow<?, ?>>) oldAbstractElement.parentManager)
-                                .assignReplacementTo(this);
+        this.observers = (ImmutableSet<ProcessObserver<O>>) (ImmutableSet<?>)
+                oldAbstractElement.getObservers().createClone(false);
+        replacementManager = new SelfReplacingImmutableImpl(mutable);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    public void setParent(Workflow<?, ?> parent) {
+        if (this.parent == parent)
+            return;
+
+        if (isMutable())
+            this.parent = parent;
+        else {
+            AbstractElement<I, O> replacement = createClone(true);
+            replacement.setParent((Workflow<?, ?>) parent.getLatest());
+            proposeReplacement(replacement);
+        }
+    }
+
+    @Override
+    abstract public AbstractElement<I, O> createClone(boolean mutable);
+
+    @Override
+    public void delete() {
+        replacementManager.delete();
+
+        if (!parent.isDeleted())
+            getParent().getElements().remove(this);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public AbstractElement<I, O> getReplacement() {
+        return (AbstractElement<I, O>) replacementManager.getReplacement();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public AbstractElement<I, O> getReplaced() {
+        return (AbstractElement<I, O>) replacementManager.getReplaced();
+    }
+
+    @Override
+    public void finalise() {
+
+        if (!parent.isMutable())
+            parent.getElements().replaceOrAdd(getReplaced(), this);
+
+        observers = Observers.updateObservers(observers);
+        observers.assignToHandler(this);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void handleReplacement(Immutable existingObject, Immutable proposedObject) {
+        if (observers == existingObject) {
+            if (isMutable()) {
+                observers = (ImmutableSet<ProcessObserver<O>>) proposedObject;
+            } else {
+                AbstractElement<I, O> replacement = createClone(true);
+                getReplacement().observers = (ImmutableSet<ProcessObserver<O>>) proposedObject;
+                getReplacement().observers.assignToHandler(replacement);
+                proposeReplacement(replacement);
+            }
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public Map<Mediator<O>, Mediator<I>> createBackwardMappingForTrainingBatch(List<Mediator<?>> completedOutputs,
                                                                                Set<Mediator<?>> successfulOutputs) {
 
-        Map<Mediator<O>, Mediator<I>> mapping = new HashMap<>();
-
-        for (Mediator<?> completedOutput : completedOutputs)
-            mapping.put((Mediator<O>) completedOutput, (Mediator<I>) completedOutput.getPrevious());
-
-        return mapping;
+        List<Mediator<O>> castedOutputs = (List<Mediator<O>>) (List<?>) completedOutputs;
+        return  Mediator.create1to1BackwardMapping(castedOutputs);
     }
 
-    @Override
-    public <I2, O2> void replaceSelfWithClone(Processor<I2, O2> clone) {
-        AbstractElement<I, O> replacement = (AbstractElement<I, O>) clone;
 
-        // If this returns false, then I have been previously disowned and nothing happens.
-        getParent().getElements().replace(this, replacement);
-    }
 }

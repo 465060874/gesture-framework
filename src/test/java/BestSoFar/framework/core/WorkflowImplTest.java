@@ -10,27 +10,26 @@ import org.junit.Test;
 public class WorkflowImplTest {
     private static TypeData<String,String> stringType = new TypeData<>(String.class, String.class);
 
-    private static class SimpleContainer extends AbstractWorkflowContainer<String,String> {
+    public static class SimpleContainer extends AbstractWorkflowContainer<String,String> {
 
-        public SimpleContainer() {
-            super((Workflow<?, ?>) null, stringType);
+
+        public SimpleContainer(TypeData<String, String> typeData, boolean mutable) {
+            super(typeData, mutable);
         }
 
-        public SimpleContainer(AbstractWorkflowContainer<String, String> oldWorkflowContainer, TypeData<String, String> typeData) {
-            super(oldWorkflowContainer, typeData);
+        public SimpleContainer(AbstractWorkflowContainer<String, String> oldWorkflowContainer,
+                               TypeData<String, String> typeData, boolean mutable) {
+            super(oldWorkflowContainer, typeData, mutable);
+        }
+
+        @Override
+        public AbstractWorkflowContainer<String, String> createClone(boolean mutable) {
+            return new SimpleContainer(getTypeData(), mutable);
         }
 
         @Override
         public Mediator<String> process(Mediator<?> input) {
             return getWorkflows().get(0).process(input);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <I2, O2> Processor<I2, O2> cloneAs(TypeData<I2, O2> typeData) {
-            System.out.println(" --- tried to clone ---");
-//            return (Processor<I2, O2>) new SimpleContainer(this, getTypeData());
-            return null;
         }
     }
 
