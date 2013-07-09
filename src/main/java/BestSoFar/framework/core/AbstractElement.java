@@ -25,7 +25,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     private final ParentManager<Element<?, ?>, Workflow<?, ?>> parentManager;
 
     {
-        parentManager = new ParentManager<>((Element<?, ?>) this);
+        parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this);
         deleted = false;
     }
 
@@ -39,13 +39,18 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
         this.typeData = typeData;
         this.mutable = true;
-        this.observers = (Set<ProcessObserver<O>>) oldAbstractElement.getObservers();
+        this.observers = (Set<ProcessObserver<O>>) (Set<?>) oldAbstractElement.getObservers();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Element<I, O> withParent(Workflow<?, ?> parent) {
         return (Element<I, O>) parentManager.withParent(parent);
+    }
+
+    @Override
+    public Workflow<?, ?> getParent() {
+        return parentManager.getParent();
     }
 
     @Override

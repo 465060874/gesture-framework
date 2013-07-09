@@ -13,23 +13,23 @@ public class WorkflowImplTest {
     public static class SimpleContainer extends AbstractWorkflowContainer<String,String> {
 
 
-        public SimpleContainer(TypeData<String, String> typeData, boolean mutable) {
-            super(typeData, mutable);
+        public SimpleContainer(TypeData<String, String> typeData) {
+            super(typeData);
         }
 
         public SimpleContainer(AbstractWorkflowContainer<String, String> oldWorkflowContainer,
                                TypeData<String, String> typeData, boolean mutable) {
-            super(oldWorkflowContainer, typeData, mutable);
+            super(oldWorkflowContainer, typeData);
         }
 
         @Override
-        public AbstractWorkflowContainer<String, String> createMutableClone(boolean mutable) {
-            return new SimpleContainer(getTypeData(), mutable);
+        public AbstractWorkflowContainer<String, String> createMutableClone() {
+            return new SimpleContainer(getTypeData());
         }
 
         @Override
         public Mediator<String> process(Mediator<?> input) {
-            return getWorkflows().get(0).process(input);
+            return getChildren().get(0).process(input);
         }
     }
 

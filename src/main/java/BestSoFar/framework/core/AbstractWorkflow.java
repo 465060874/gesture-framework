@@ -33,14 +33,14 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     public AbstractWorkflow(TypeData<I, O> typeData) {
         this.typeData = typeData;
         mutable = false;
-        childrenManager = new ChildrenManager<>((Workflow<?, ?>) this);
+        childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this);
     }
 
     @SuppressWarnings("unchecked")
     public AbstractWorkflow(AbstractWorkflow<I, O> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;
         mutable = true;
-        childrenManager = new ChildrenManager<>((Workflow<?, ?>) this, oldWorkflow.getChildren());
+        childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this, oldWorkflow.getChildren());
     }
 
     @Override

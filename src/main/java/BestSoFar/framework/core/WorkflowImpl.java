@@ -2,24 +2,23 @@ package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.immutables.common.HandledImmutable;
 
 import java.util.*;
 
 /**
  * Implementation of Workflow.
  */
-public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
+final public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
 
 
-    public WorkflowImpl(TypeData<I, O> typeData, boolean mutable) {
-        super(typeData, mutable);
+    public WorkflowImpl(TypeData<I, O> typeData) {
+        super(typeData);
     }
 
 
-    public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow,
-                        TypeData<I, O> typeData, boolean mutable) {
-        super(oldWorkflow, typeData, mutable);
+    private WorkflowImpl(WorkflowImpl<I, O> oldWorkflow,
+                        TypeData<I, O> typeData) {
+        super(oldWorkflow, typeData);
     }
 
 
@@ -106,7 +105,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
     }
 
     @Override
-    public WorkflowImpl<I, O> createMutableClone(boolean mutable) {
-        return new WorkflowImpl<>(this, getTypeData(), mutable);
+    public WorkflowImpl<I, O> createMutableClone() {
+        return new WorkflowImpl<>(this, getTypeData());
     }
 }
