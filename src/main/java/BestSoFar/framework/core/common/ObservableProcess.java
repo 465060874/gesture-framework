@@ -13,4 +13,6 @@ import java.util.Set;
 public interface ObservableProcess<T> {
 
     public Set<ProcessObserver<T>> getObservers();
+
+    public ObservableProcess<T> withObservers(Set<ProcessObserver<T>> newObservers);
 }

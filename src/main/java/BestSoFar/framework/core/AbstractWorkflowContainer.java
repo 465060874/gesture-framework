@@ -1,12 +1,15 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.core.helper.ChildrenManager;
 import BestSoFar.framework.core.helper.Mediator;
-import BestSoFar.framework.immutables.ImmutableList;
 import BestSoFar.framework.core.helper.TypeData;
+import BestSoFar.framework.immutables.ImmutableVersion;
 import BestSoFar.framework.immutables.common.EventuallyImmutable;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,25 +23,23 @@ import java.util.List;
 public abstract class AbstractWorkflowContainer<I, O>
         extends AbstractElement<I, O> implements WorkflowContainer<I, O> {
 
-    @Getter private ImmutableList<Workflow<I, O>> workflows;
+    private final ChildrenManager<Workflow<I, O>, WorkflowContainer<I, O>> childrenManager;
 
-    public AbstractWorkflowContainer(TypeData<I, O> typeData, boolean mutable) {
-        super(typeData, mutable);
-        workflows = new ImmutableList<>(false);
-        workflows.assignToHandler(this);
+    public AbstractWorkflowContainer(TypeData<I, O> typeData) {
+        super(typeData);
+        childrenManager = new ChildrenManager<>((WorkflowContainer<I, O>) this);
     }
 
-    @SuppressWarnings("unchecked")
     public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer,
-                                     TypeData<I, O> typeData, boolean mutable) {
-        super(oldWorkflowContainer, typeData, mutable);
-        workflows = oldWorkflowContainer.workflows.createClone(false);
-        workflows.assignToHandler(this);
+                                     TypeData<I, O> typeData) {
+        super(oldWorkflowContainer, typeData);
+        childrenManager = new ChildrenManager<>((WorkflowContainer<I, O>) this,
+                oldWorkflowContainer.getChildren());
     }
 
     @Override
     public boolean isValid() {
-        for (Workflow<I, O> workflow : workflows) {
+        for (Workflow<I, O> workflow : getChildren()) {
             if (!workflow.isValid())
                 return false;
         }
@@ -47,10 +48,15 @@ public abstract class AbstractWorkflowContainer<I, O>
     }
 
     @Override
+    public WorkflowContainer<I, O> withParent(Workflow<?, ?> parent) {
+        return (WorkflowContainer<I, O>) super.withParent(parent);
+    }
+
+    @Override
     public List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs) {
         List<Mediator<O>> outputs = new ArrayList<>();
 
-        for (Workflow<I, O> workflow : workflows)
+        for (Workflow<I, O> workflow : getChildren())
             outputs.addAll(workflow.processTrainingBatch(inputs));
 
         return outputs;
@@ -59,61 +65,25 @@ public abstract class AbstractWorkflowContainer<I, O>
     @Override
     public void delete() {
         super.delete();
-
-        for (Workflow<I, O> workflow : workflows)
-            workflow.delete();
+        childrenManager.delete();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void finalise() {
-        super.finalise();
-
-        ImmutableList<Workflow<I, O>> updatedWorkflows = new ImmutableList<>(true);
-        workflows.assignToHandler(this);
-
-        for (Workflow<I, O> workflow : workflows) {
-            workflow = (Workflow<I, O>) workflow.getLatest();
-            if (workflow.getParent() == getReplaced()) {
-                workflow.setParent(this);
-                workflow = (Workflow<I, O>) workflow.getLatest();
-                updatedWorkflows.add(workflow);
-            } else if (workflow.getParent() == this) {
-                updatedWorkflows.add(workflow);
-            }
-        }
-
-        workflows = updatedWorkflows;
-        workflows.assignToHandler(this);
+    public void finalise(ImmutableVersion version) {
+        childrenManager.finalise(version);
+        super.finalise(version);
     }
 
     @Override
-    public AbstractWorkflowContainer<I, O> getReplaced() {
-        return (AbstractWorkflowContainer<I, O>) super.getReplaced();
+    public abstract AbstractWorkflowContainer<I, O> createMutableClone();
+
+    @Override
+    public List<Workflow<I, O>> getChildren() {
+        return childrenManager.getChildren();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void handleReplacement(EventuallyImmutable existingObject, EventuallyImmutable proposedObject) {
-        super.handleReplacement(existingObject, proposedObject);
-
-        if (workflows == existingObject) {
-            if (isMutable()) {
-                workflows = (ImmutableList<Workflow<I, O>>) proposedObject;
-            } else {
-                AbstractWorkflowContainer<I, O> replacement = createClone(true);
-                replacement.workflows = (ImmutableList<Workflow<I,O>>) proposedObject;
-                replacement.workflows.assignToHandler(replacement);
-                proposeReplacement(replacement);
-            }
-        }
-    }
-
-    @Override
-    public abstract AbstractWorkflowContainer<I, O> createClone(boolean mutable);
-
-    @Override
-    public AbstractWorkflowContainer<I, O> getReplacement() {
-        return (AbstractWorkflowContainer<I, O>) super.getReplacement();
+    public WorkflowContainer<I, O> withChildren(List<Workflow<I, O>> newChildren) {
+        return childrenManager.withChildren(newChildren);
     }
 }

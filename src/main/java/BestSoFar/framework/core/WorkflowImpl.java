@@ -25,19 +25,19 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
 
     @Override
     public boolean isValid() {
-        if (getElements().size() == 0) {
+        if (getChildren().size() == 0) {
             return getTypeData().canBeEmptyContainer();
         } else {
 
-            if ( !getElements().get(1).getTypeData().canBeAtStartOfContainer(getTypeData()) ||
-                    !getElements().get(getElements().size()-1).getTypeData().canBeAtEndOfContainer
+            if ( !getChildren().get(1).getTypeData().canBeAtStartOfContainer(getTypeData()) ||
+                    !getChildren().get(getChildren().size()-1).getTypeData().canBeAtEndOfContainer
                             (getTypeData()
                     ) )
                 return false;
 
             TypeData<?, ?> previousType = null;
 
-            for (Element<?,?> e : getElements()) {
+            for (Element<?,?> e : getChildren()) {
                 if (previousType != null)
                     if ( !e.getTypeData().canComeAfter(previousType) )
                         return false;
@@ -52,7 +52,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
     @SuppressWarnings("unchecked")
     @Override
     public Mediator<O> process(Mediator<?> input) {
-        for (Element<?,?> e : getElements())
+        for (Element<?,?> e : getChildren())
             input = e.process(input);
 
         return (Mediator<O>) input;
@@ -61,7 +61,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
     @SuppressWarnings("unchecked")
     @Override
     public List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs) {
-        for (Element<?, ?> e : getElements())
+        for (Element<?, ?> e : getChildren())
             inputs = (List<Mediator<?>>) (List<?>) e.processTrainingBatch(inputs);
 
         return (List<Mediator<O>>) (List<?>) inputs;
@@ -72,7 +72,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
     public Map<Mediator<O>, Mediator<I>> createBackwardMappingForTrainingBatch(List<Mediator<?>> completedOutputs,
                                                                                Set<Mediator<?>> successfulOutputs) {
 
-        ListIterator<Element<?, ?>> itr = getElements().listIterator(getElements().size());
+        ListIterator<Element<?, ?>> itr = getChildren().listIterator(getChildren().size());
         Map<Mediator<?>, Mediator<?>> backwardMapping;
         Map<Mediator<?>, Mediator<?>> totalBackwardMapping = new HashMap<>();
 
@@ -106,7 +106,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
     }
 
     @Override
-    public WorkflowImpl<I, O> createClone(boolean mutable) {
+    public WorkflowImpl<I, O> createMutableClone(boolean mutable) {
         return new WorkflowImpl<>(this, getTypeData(), mutable);
     }
 }

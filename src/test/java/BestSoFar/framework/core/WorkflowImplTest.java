@@ -23,7 +23,7 @@ public class WorkflowImplTest {
         }
 
         @Override
-        public AbstractWorkflowContainer<String, String> createClone(boolean mutable) {
+        public AbstractWorkflowContainer<String, String> createMutableClone(boolean mutable) {
             return new SimpleContainer(getTypeData(), mutable);
         }
 

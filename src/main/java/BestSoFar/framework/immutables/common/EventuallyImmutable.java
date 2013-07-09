@@ -1,5 +1,7 @@
 package BestSoFar.framework.immutables.common;
 
+import BestSoFar.framework.immutables.ImmutableVersion;
+
 /**
  * User: Sam Wright Date: 04/07/2013 Time: 10:23
  */
@@ -13,15 +15,14 @@ public interface EventuallyImmutable {
      * Creating an immutable clone has the same effect as creating a mutable clone then
      * finalising it, except aggregated objects can be shared with an immutable clone.
      *
-     * @param mutable the initial mutability of the clone.
      * @return a clone with the given initial mutability.
      */
-    EventuallyImmutable createClone(boolean mutable);
+    EventuallyImmutable createMutableClone();
 
     /**
      * If this object is mutable, this method will make it immutable.
      */
-    void finalise();
+    void finalise(ImmutableVersion version);
 
     /**
      * Returns true iff this object is mutable, meaning it was created as mutable and has not
@@ -38,5 +39,7 @@ public interface EventuallyImmutable {
      * @param proposed
      * @throws RuntimeException if this object is still mutable.
      */
-    void proposeReplacement(EventuallyImmutable proposed);
+    void replaceWith(EventuallyImmutable proposed);
+
+    ImmutableVersion getVersion();
 }

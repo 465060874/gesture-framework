@@ -13,4 +13,6 @@ import BestSoFar.framework.core.common.ObservableProcess;
  */
 public interface Element<I, O>
         extends Processor<I, O>, ObservableProcess<O>, ChildOf<Workflow<?, ?>> {
+
+    Element<I, O> withParent(Workflow<?, ?> newParent);
 }

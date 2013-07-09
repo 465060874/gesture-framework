@@ -1,6 +1,6 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.immutables.ImmutableList;
+import java.util.List;
 
 /**
  * A WorkflowContainer is an Element that contains one or more Workflows.
@@ -15,7 +15,9 @@ import BestSoFar.framework.immutables.ImmutableList;
  *      - createBackwardMappingForTrainingBatch(..) : when the completed training batch is travelling backward over
  *                                                    the workflow that created it
  */
-public interface WorkflowContainer<I, O> extends Element<I, O> {
+public interface WorkflowContainer<I, O> extends Element<I, O>, ParentOf<Workflow<I, O>> {
 
-    ImmutableList<Workflow<I, O>> getWorkflows();
+    WorkflowContainer<I, O> withChildren(List<Workflow<I, O>> newChildren);
+
+    WorkflowContainer<I, O> withParent(Workflow<?, ?> newParent);
 }

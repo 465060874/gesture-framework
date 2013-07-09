@@ -1,7 +1,8 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.common.ChildOf;
-import BestSoFar.framework.immutables.ImmutableList;
+
+import java.util.List;
 
 /**
  * A workflow is a linear list of {@link Element} objects which sits in a
@@ -41,16 +42,11 @@ import BestSoFar.framework.immutables.ImmutableList;
  * parent when the {@code process(input)} method returns.
  */
 public interface Workflow<I, O>
-        extends Processor<I, O> , ChildOf<WorkflowContainer<I, O>> {
+        extends Processor<I, O> , ChildOf<WorkflowContainer<I, O>>, ParentOf<Element<?, ?>> {
 
-    /**
-     * Returns the immutable list of elements inside this workflow.  Attempting to mutate this list results in a new
-     * Workflow being created and integrated into the new system.
-     *
-     * @return the list of elements inside this workflow.
-     */
-    ImmutableList<Element<?, ?>> getElements();
+    Workflow<I, O> withChildren(List<Element<?, ?>> newChildren);
 
+    Workflow<I, O> withParent(WorkflowContainer<I, O> newParent);
 }
 
 
