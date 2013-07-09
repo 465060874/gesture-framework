@@ -3,7 +3,7 @@ package BestSoFar.framework.core;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.immutables.ImmutableList;
 import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.immutables.common.Immutable;
+import BestSoFar.framework.immutables.common.EventuallyImmutable;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     @Override
     @SuppressWarnings("unchecked")
-    public void handleReplacement(Immutable existingObject, Immutable proposedObject) {
+    public void handleReplacement(EventuallyImmutable existingObject, EventuallyImmutable proposedObject) {
         super.handleReplacement(existingObject, proposedObject);
 
         if (workflows == existingObject) {

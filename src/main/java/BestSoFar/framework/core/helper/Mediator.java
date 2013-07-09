@@ -146,7 +146,6 @@ public abstract class Mediator<T> {
      * @param outputs the list of output mediators to map backward if they are in the given mapping.
      * @param backwardMapping the mapping of output mediators to input mediators.
      * @param inputs the collection which mapped inputs are added to.
-     * @return the mapped input mediators.
      */
     public static void mapMediatorsBackward(
             Collection<Mediator<?>> outputs,

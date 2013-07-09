@@ -5,16 +5,14 @@ import BestSoFar.framework.core.helper.*;
 import BestSoFar.framework.core.helper.TypeData;
 import BestSoFar.framework.immutables.ImmutableSet;
 import BestSoFar.framework.immutables.SelfReplacingImmutableImpl;
-import BestSoFar.framework.immutables.common.HandledImmutable;
-import BestSoFar.framework.immutables.common.Immutable;
-import BestSoFar.framework.immutables.common.SelfReplacingImmutable;
+import BestSoFar.framework.immutables.common.EventuallyImmutable;
 import lombok.Delegate;
 import lombok.Getter;
 
 import java.util.*;
 
 /**
- * Abstract implementor of {@link Processor} for elemental Processors to extend,
+ * Abstract implementation of {@link Processor} for elemental Processors to extend,
  * which requires a one-to-one mapping of input data to output data (without training necessary).
  * <p/>
  * Concrete Element implementations can derive from this to let it handle the boilerplate code
@@ -42,7 +40,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
                            TypeData<I, O> typeData, boolean mutable) {
         this.typeData = typeData;
         this.observers = (ImmutableSet<ProcessObserver<O>>) (ImmutableSet<?>)
-                oldAbstractElement.getObservers().createClone(false);
+                oldAbstractElement.observers.createClone(false);
         replacementManager = new SelfReplacingImmutableImpl(mutable);
     }
 
@@ -95,7 +93,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void handleReplacement(Immutable existingObject, Immutable proposedObject) {
+    public void handleReplacement(EventuallyImmutable existingObject, EventuallyImmutable proposedObject) {
         if (observers == existingObject) {
             if (isMutable()) {
                 observers = (ImmutableSet<ProcessObserver<O>>) proposedObject;

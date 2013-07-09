@@ -1,8 +1,5 @@
 package BestSoFar.framework.immutables;
 
-import BestSoFar.framework.immutables.common.HandledImmutable;
-import BestSoFar.framework.immutables.common.Immutable;
-import BestSoFar.framework.immutables.common.MutationHandler;
 import lombok.Delegate;
 
 import java.util.ArrayList;
@@ -19,7 +16,9 @@ public class ImmutableList<E> extends ImmutableWrapper implements List<E> {
 
     public ImmutableList(boolean mutable) {
         super(mutable);
-        delegate = Collections.emptyList();
+        delegate = new ArrayList<>();
+        if (!mutable)
+            finalise();
     }
 
     private ImmutableList(List<E> delegate, boolean mutable) {

@@ -55,9 +55,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
         for (Element<?,?> e : getElements())
             input = e.process(input);
 
-        Mediator<O> output = (Mediator<O>) input;
-
-        return output;
+        return (Mediator<O>) input;
     }
 
     @SuppressWarnings("unchecked")
@@ -66,9 +64,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
         for (Element<?, ?> e : getElements())
             inputs = (List<Mediator<?>>) (List<?>) e.processTrainingBatch(inputs);
 
-        List<Mediator<O>> outputs = (List<Mediator<O>>) (List<?>) inputs;
-
-        return outputs;
+        return (List<Mediator<O>>) (List<?>) inputs;
     }
 
     @SuppressWarnings("unchecked")

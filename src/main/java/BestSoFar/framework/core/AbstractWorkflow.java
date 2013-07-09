@@ -1,12 +1,9 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.core.common.ProcessObserver;
 import BestSoFar.framework.immutables.ImmutableList;
 import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.immutables.ImmutableSet;
 import BestSoFar.framework.immutables.SelfReplacingImmutableImpl;
-import BestSoFar.framework.immutables.common.Immutable;
-import BestSoFar.framework.immutables.common.SelfReplacingImmutable;
+import BestSoFar.framework.immutables.common.EventuallyImmutable;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;
@@ -77,7 +74,7 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void handleReplacement(Immutable existingObject, Immutable proposedObject) {
+    public void handleReplacement(EventuallyImmutable existingObject, EventuallyImmutable proposedObject) {
         if (elements == existingObject) {
             if (isMutable()) {
                 elements = (ImmutableList<Element<?, ?>>) proposedObject;

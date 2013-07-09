@@ -1,12 +1,10 @@
 package BestSoFar.framework.immutables;
 
-import BestSoFar.framework.core.AbstractElement;
 import BestSoFar.framework.core.common.Deletable;
+import BestSoFar.framework.immutables.common.EventuallyImmutable;
 import BestSoFar.framework.immutables.common.HandledImmutable;
-import BestSoFar.framework.immutables.common.Immutable;
 import BestSoFar.framework.immutables.common.SelfReplacingImmutable;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * User: Sam Wright Date: 26/06/2013 Time: 19:22
@@ -81,7 +79,7 @@ public class SelfReplacingImmutableImpl implements SelfReplacingImmutable, Delet
     }
 
     @Override
-    final public void proposeReplacement(Immutable proposed) {
+    final public void proposeReplacement(EventuallyImmutable proposed) {
         if (hasReplacement())
             throw new RuntimeException("Replacement already exists");
         if (isMutable())

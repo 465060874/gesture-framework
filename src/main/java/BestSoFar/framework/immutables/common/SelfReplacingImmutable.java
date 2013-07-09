@@ -3,7 +3,7 @@ package BestSoFar.framework.immutables.common;
 /**
  * User: Sam Wright Date: 30/06/2013 Time: 18:38
  */
-public interface SelfReplacingImmutable extends Immutable {
+public interface SelfReplacingImmutable extends EventuallyImmutable {
     SelfReplacingImmutable getReplacement();
 
     SelfReplacingImmutable getReplaced();

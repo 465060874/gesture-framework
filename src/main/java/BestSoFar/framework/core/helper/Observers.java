@@ -25,6 +25,7 @@ public class Observers {
             observer.notify(mediators);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> ImmutableSet<ProcessObserver<T>> updateObservers(ImmutableSet<ProcessObserver<T>> observers) {
 
         ImmutableSet<ProcessObserver<T>> newObservers = new ImmutableSet<>(true);

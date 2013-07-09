@@ -14,10 +14,9 @@ public class ImmutableSet<E> extends ImmutableWrapper implements Set<E> {
 
     public ImmutableSet(boolean mutable) {
         super(mutable);
-        if (mutable)
-            delegate = Collections.emptySet();
-        else
-            delegate = new HashSet<>();
+        delegate = new HashSet<>();
+        if (!mutable)
+            finalise();
     }
 
     private ImmutableSet(Set<E> delegate, boolean mutable) {

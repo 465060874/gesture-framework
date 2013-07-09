@@ -1,8 +1,7 @@
 package BestSoFar.framework.immutables;
 
-import BestSoFar.framework.immutables.common.HandledImmutable;
-import BestSoFar.framework.immutables.common.Immutable;
-import BestSoFar.framework.immutables.common.MutationHandler;
+import BestSoFar.framework.immutables.common.EventuallyImmutable;
+import BestSoFar.framework.immutables.common.ReplacementHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,14 +15,12 @@ import static junit.framework.Assert.assertNull;
  * User: Sam Wright Date: 29/06/2013 Time: 10:30
  */
 public class ImmutableListTest {
-    class TestHandler implements MutationHandler {
+    class TestHandler implements ReplacementHandler {
         private ImmutableList<String> handledList;
-//        public boolean willAssignReplacement = true;
-//        public boolean willForgetReplacement = false;
 
         public TestHandler() {
             handledList = new ImmutableList<>(false);
-            handledList.assignToHandler(this);
+            finalise();
         }
 
         public ImmutableList<String> getHandledList() {
@@ -31,7 +28,8 @@ public class ImmutableListTest {
         }
 
         @Override
-        public void handleReplacement(Immutable existingObject, Immutable proposedObject) {
+        @SuppressWarnings("unchecked")
+        public void handleReplacement(EventuallyImmutable existingObject, EventuallyImmutable proposedObject) {
             hasBeenNotified = true;
             handledList = (ImmutableList<String>) proposedObject;
         }
@@ -54,14 +52,14 @@ public class ImmutableListTest {
     }
 
     @Test
-    public void testMutability() throws Exception {
+    public void testMutation() throws Exception {
         list.add("Hello");
         assertTrue(list.isEmpty());
         assertEquals(Arrays.asList("Hello"), handler.getHandledList());
     }
 
     @Test
-    public void testWriteLock() throws Exception {
+    public void testProposeManually() throws Exception {
         list.proposeReplacement(anotherList);
         assertTrue(hasBeenNotified);
     }
@@ -82,7 +80,7 @@ public class ImmutableListTest {
         list = handler.getHandledList();
 
 
-        ImmutableList<String> replacementList = list.createClone(false);
+        ImmutableList<String> replacementList = list.createClone(true);
 
         assertFalse(list.isMutable());
         assertTrue(replacementList.isMutable());
@@ -151,7 +149,7 @@ public class ImmutableListTest {
 //    }
 //
 //    @Test
-//    public void testHandlerDiscardsReplacment() throws Exception {
+//    public void testHandlerDiscardsReplacement() throws Exception {
 //        handler.willAssignReplacement = false;
 //        handler.willForgetReplacement = true;
 //        list.add("will be discarded");

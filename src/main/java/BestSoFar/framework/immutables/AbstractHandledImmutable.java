@@ -1,8 +1,8 @@
 package BestSoFar.framework.immutables;
 
+import BestSoFar.framework.immutables.common.EventuallyImmutable;
 import BestSoFar.framework.immutables.common.HandledImmutable;
-import BestSoFar.framework.immutables.common.Immutable;
-import BestSoFar.framework.immutables.common.MutationHandler;
+import BestSoFar.framework.immutables.common.ReplacementHandler;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Synchronized;
@@ -11,7 +11,7 @@ import lombok.Synchronized;
  * User: Sam Wright Date: 30/06/2013 Time: 18:00
  */
 public abstract class AbstractHandledImmutable implements HandledImmutable {
-    @Getter private MutationHandler mutationHandler;
+    @Getter private ReplacementHandler replacementHandler;
     @Getter private boolean mutable;
 
     public AbstractHandledImmutable(boolean mutable) {
@@ -20,17 +20,18 @@ public abstract class AbstractHandledImmutable implements HandledImmutable {
 
     @Override
     @Synchronized
-    final public void assignToHandler(@NonNull MutationHandler mutationHandler) {
-        if (mutable)
+    final public void assignToHandler(@NonNull ReplacementHandler replacementHandler) {
+        if (mutable) {
             finalise();
-        mutable = false;
-        this.mutationHandler = mutationHandler;
+            mutable = false;
+        }
+        this.replacementHandler = replacementHandler;
     }
 
     @Override
     @Synchronized
-    final public void proposeReplacement(Immutable proposed) {
-        mutationHandler.handleReplacement(this, proposed);
+    final public void proposeReplacement(EventuallyImmutable proposed) {
+        replacementHandler.handleReplacement(this, proposed);
     }
 
 }
