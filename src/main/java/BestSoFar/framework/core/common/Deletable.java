@@ -6,7 +6,7 @@ package BestSoFar.framework.core.common;
 public interface Deletable {
     /**
      * Delete this object.  For immutable objects in some kind of framework,
-     * this ensures the object will not be in subsequent versinos of the framework.
+     * this ensures the object will not be in subsequent versions of the framework.
      */
     void delete();
 
