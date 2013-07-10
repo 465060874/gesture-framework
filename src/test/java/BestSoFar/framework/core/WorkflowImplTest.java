@@ -4,6 +4,10 @@ import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * User: Sam Wright Date: 26/06/2013 Time: 20:17
  */
@@ -11,7 +15,6 @@ public class WorkflowImplTest {
     private static TypeData<String,String> stringType = new TypeData<>(String.class, String.class);
 
     public static class SimpleContainer extends AbstractWorkflowContainer<String,String> {
-
 
         public SimpleContainer(TypeData<String, String> typeData) {
             super(typeData);

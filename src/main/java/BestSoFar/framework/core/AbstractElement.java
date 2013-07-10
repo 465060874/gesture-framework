@@ -1,11 +1,8 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.core.common.ObservableProcess;
 import BestSoFar.framework.core.common.ProcessObserver;
 import BestSoFar.framework.core.helper.*;
-import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.immutables.common.EventuallyImmutable;
-import BestSoFar.framework.immutables.ImmutableVersion;
+import lombok.Delegate;
 import lombok.Getter;
 
 import java.util.*;
@@ -14,38 +11,38 @@ import java.util.*;
  * Abstract implementation of {@link Processor} for elemental Processors to extend,
  * which requires a one-to-one mapping of input data to output data (without training necessary).
  * <p/>
- * Concrete Element implementations can derive from this to let it handle the boilerplate code
- * (accessors for parent and {@link TypeData}, and {@link BestSoFar.framework.core.common.ProcessObserver} management).
+ * Concrete Element implementations can derive from this to let it handle parent management,
+ * the accessor for {@link TypeData}, and {@link ProcessObserver} management).
  */
 public abstract class AbstractElement<I, O> implements Element<I, O> {
     @Getter private Set<ProcessObserver<O>> observers;
     @Getter private final TypeData<I, O> typeData;
-    @Getter private ImmutableVersion version = new ImmutableVersion(this);
-    @Getter private boolean mutable, deleted;
     private final ParentManager<Element<?, ?>, Workflow<?, ?>> parentManager;
+
+    @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
+    private final MutabilityHelper mutabilityHelper;
 
     {
         parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this);
-        deleted = false;
     }
 
     public AbstractElement(TypeData<I, O> typeData) {
         this.typeData = typeData;
-        this.mutable = false;
+        mutabilityHelper = new MutabilityHelper(this, false);
         observers = Collections.emptySet();
     }
 
     @SuppressWarnings("unchecked")
     public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        this.mutable = true;
+        mutabilityHelper = new MutabilityHelper(this, true);
         this.observers = (Set<ProcessObserver<O>>) (Set<?>) oldAbstractElement.getObservers();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Element<I, O> withParent(Workflow<?, ?> parent) {
-        return (Element<I, O>) parentManager.withParent(parent);
+    public Element<I, O> withParent(Workflow<?, ?> newParent) {
+        return (Element<I, O>) parentManager.withParent(newParent);
     }
 
     @Override
@@ -58,41 +55,32 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
 
     @Override
     public void delete() {
-        deleted = true;
+        mutabilityHelper.delete();
         parentManager.delete();
     }
 
     @Override
     public void finalise(ImmutableVersion version) {
-        if (!isMutable())
-            throw new RuntimeException("Already finalised!");
+        if (isMutable()) {
+            parentManager.finalise(version);
 
-        this.version = version;
-        parentManager.finalise(version);
+            // Make mutable clone of observers set
+            observers = new HashSet<>(observers);
+            // Update observers to their latest versions
+            ImmutableVersion.updateAllToLatest(observers);
+        }
 
-        // Make mutable clone of observers set
-        observers = new HashSet<>(observers);
-        // Update observers to their latest versions
-        ImmutableVersion.updateAllToLatest(observers);
-
-        mutable = false;
+        mutabilityHelper.finalise(version);
     }
 
     @Override
-    public ObservableProcess<O> withObservers(Set<ProcessObserver<O>> newObservers) {
+    public Element<I, O> withObservers(Set<ProcessObserver<O>> newObservers) {
         if (isMutable()) {
             observers = Collections.unmodifiableSet(newObservers);
             return this;
         } else {
             return createMutableClone().withObservers(newObservers);
         }
-    }
-
-    @Override
-    public void replaceWith(EventuallyImmutable proposed) {
-        ImmutableVersion nextVersion = proposed.getVersion().withPrevious(this);
-        version = getVersion().withNext(proposed);
-        proposed.finalise(nextVersion);
     }
 
     @Override

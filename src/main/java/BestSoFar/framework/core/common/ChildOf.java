@@ -1,12 +1,23 @@
 package BestSoFar.framework.core.common;
 
-import BestSoFar.framework.core.ParentOf;
-
 /**
- * User: Sam Wright Date: 26/06/2013 Time: 18:43
+ * A child of the parent type {@code P}.
  */
 public interface ChildOf<P extends ParentOf<?>> {
+    /**
+     * Gets the parent that this child sits within.
+     * @return the parent that this child sits within.
+     */
     P getParent();
 
-    ChildOf<P> withParent(P parent);
+    /**
+     * Return a version of {@code this} with the given parent.
+     * <p/>
+     * If this object can be mutated it will be, with {@code this} being returned.
+     * Otherwise a clone of {@code this} will be created with the given parent.
+     *
+     * @param newParent the parent to be given to the returned object.
+     * @return a version of {@code this} with the given parent.
+     */
+    ChildOf<P> withParent(P newParent);
 }

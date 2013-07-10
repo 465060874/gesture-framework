@@ -3,12 +3,9 @@ package BestSoFar.framework.core.common;
 import BestSoFar.framework.core.helper.Mediator;
 
 import java.util.List;
-import java.util.Set;
 
 /**
- * User: Sam Wright
- * Date: 24/06/2013
- * Time: 12:00
+ * An object the observes the processing of data in a {@link BestSoFar.framework.core.Processor}.
  */
 public interface ProcessObserver<T> {
     /**

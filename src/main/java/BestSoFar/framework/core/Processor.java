@@ -1,9 +1,9 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.common.Deletable;
+import BestSoFar.framework.core.common.EventuallyImmutable;
 import BestSoFar.framework.core.helper.History;
 import BestSoFar.framework.core.helper.Mediator;
-import BestSoFar.framework.immutables.common.EventuallyImmutable;
 import BestSoFar.framework.core.helper.TypeData;
 
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.Set;
  * It can also be observed by {@link BestSoFar.framework.core.common.ProcessObserver} objects, which are notified when input data
  * (either individually or in a batch) has been processed (but before the output is returned).
  */
-public interface Processor<I,O> extends EventuallyImmutable, Deletable {
+public interface Processor<I,O> extends EventuallyImmutable {
 
     /**
      * Returns true iff the {@code process(input)} method can run.
@@ -119,30 +119,5 @@ public interface Processor<I,O> extends EventuallyImmutable, Deletable {
             List<Mediator<?>> completedOutputs,
             Set<Mediator<?>> successfulOutputs
     );
-
-    /**
-     * The most-concrete subclass must implement this method, and return: {@code return new
-     * ProcessorSubClass(this, dataType);}
-     * <p/>
-     * Eventually this method will be removed and proper dependency injection will be used instead.
-     *
-     * @return a copy of this {@code Processor}, with the given {@code TypeData}.
-     */
-//    <I2, O2> Processor<I2, O2> cloneAs(TypeData<I2, O2> typeData);
-
-    /**
-     * Replaces this object with the provided clone.
-     * <p/>
-     * For example, calling this method on a workflow will instruct its parent to replace it in
-     * its list of workflows with the clone, as well as instructing the workflow's children that
-     * they have a new parent.
-     * <p/>
-     * This can be called in response to this object being mutated.
-     *
-     * @param clone the clone to replace this with.
-     * @param <I2> the input type of the clone.
-     * @param <O2> the output type of the clone.
-     */
-//    <I2, O2> void replaceSelfWithClone(Processor<I2, O2> clone);
 
 }

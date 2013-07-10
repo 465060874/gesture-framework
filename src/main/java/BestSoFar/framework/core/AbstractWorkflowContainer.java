@@ -1,24 +1,18 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.helper.ChildrenManager;
+import BestSoFar.framework.core.helper.ImmutableVersion;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.immutables.ImmutableVersion;
-import BestSoFar.framework.immutables.common.EventuallyImmutable;
-import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Abstract implementation of {@link WorkflowContainer}.
  * <p/>
  * Concrete WorkflowContainer implementations can derive from this to let it handle the internal
- * list of {@link Workflow} objects (and all the cloning that comes from modifications to it),
- * along with boilerplate code (accessors for parent and {@link TypeData}, and
- * {@link BestSoFar.framework.core.common.ProcessObserver} management).
+ * list of {@link Workflow} objects, and everything found in {@link AbstractElement}.
  */
 public abstract class AbstractWorkflowContainer<I, O>
         extends AbstractElement<I, O> implements WorkflowContainer<I, O> {
@@ -48,8 +42,8 @@ public abstract class AbstractWorkflowContainer<I, O>
     }
 
     @Override
-    public WorkflowContainer<I, O> withParent(Workflow<?, ?> parent) {
-        return (WorkflowContainer<I, O>) super.withParent(parent);
+    public WorkflowContainer<I, O> withParent(Workflow<?, ?> newParent) {
+        return (WorkflowContainer<I, O>) super.withParent(newParent);
     }
 
     @Override
@@ -70,7 +64,9 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     @Override
     public void finalise(ImmutableVersion version) {
-        childrenManager.finalise(version);
+        if (isMutable())
+            childrenManager.finalise(version);
+
         super.finalise(version);
     }
 

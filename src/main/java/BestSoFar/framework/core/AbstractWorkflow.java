@@ -1,16 +1,11 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.core.helper.ChildrenManager;
-import BestSoFar.framework.core.helper.ParentManager;
-import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.immutables.ImmutableVersion;
-import BestSoFar.framework.immutables.common.EventuallyImmutable;
+import BestSoFar.framework.core.common.EventuallyImmutable;
+import BestSoFar.framework.core.helper.*;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,27 +14,26 @@ import java.util.List;
  */
 public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     @Getter @NonNull private final TypeData<I, O> typeData;
-    @Getter private ImmutableVersion version;
-    @Getter private boolean mutable, deleted;
     private final ParentManager<Workflow<I, O>, WorkflowContainer<I, O>> parentManager;
     private final ChildrenManager<Element<?, ?>, Workflow<?, ?>> childrenManager;
 
+    @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
+    private final MutabilityHelper mutabilityHelper;
+
     {
-        deleted = false;
-        version = new ImmutableVersion(this);
         parentManager = new ParentManager<>((Workflow<I, O>) this);
     }
 
     public AbstractWorkflow(TypeData<I, O> typeData) {
         this.typeData = typeData;
-        mutable = false;
+        mutabilityHelper = new MutabilityHelper(this, false);
         childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this);
     }
 
     @SuppressWarnings("unchecked")
     public AbstractWorkflow(AbstractWorkflow<I, O> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;
-        mutable = true;
+        mutabilityHelper = new MutabilityHelper(this, true);
         childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this, oldWorkflow.getChildren());
     }
 
@@ -61,8 +55,8 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Workflow<I, O> withParent(WorkflowContainer<I, O> parent) {
-        if (parent != null && !typeData.equals(getParent().getTypeData())) {
+    public Workflow<I, O> withParent(WorkflowContainer<I, O> newParent) {
+        if (newParent != null && !typeData.equals(getParent().getTypeData())) {
             String msg = String.format(
                     "Workflow%s must have same type data as WorkflowContainer%s",
                     typeData.toString(),
@@ -71,7 +65,7 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
             throw new ClassCastException(msg);
         }
 
-        return parentManager.withParent(parent);
+        return parentManager.withParent(newParent);
     }
 
     @Override
@@ -79,26 +73,17 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
 
     @Override
     public void delete() {
-        deleted = true;
+        mutabilityHelper.delete();
         parentManager.delete();
         childrenManager.delete();
     }
 
     @Override
-    public void replaceWith(EventuallyImmutable proposed) {
-        if (this == proposed)
-            return;
-
-        ImmutableVersion nextVersion = proposed.getVersion().withPrevious(this);
-        version = getVersion().withNext(proposed);
-        proposed.finalise(nextVersion);
-    }
-
-    @Override
     public void finalise(ImmutableVersion version) {
-        this.version = version;
-        parentManager.finalise(version);
-        childrenManager.finalise(version);
-        mutable = false;
+        if (isMutable()) {
+            parentManager.finalise(version);
+            childrenManager.finalise(version);
+        }
+        mutabilityHelper.finalise(version);
     }
 }

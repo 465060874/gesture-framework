@@ -1,7 +1,7 @@
-package BestSoFar.framework.immutables;
+package BestSoFar.framework.core.helper;
 
 import BestSoFar.framework.core.common.Deletable;
-import BestSoFar.framework.immutables.common.EventuallyImmutable;
+import BestSoFar.framework.core.common.EventuallyImmutable;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -14,10 +14,10 @@ import java.util.List;
 public class ImmutableVersion {
     @Getter private EventuallyImmutable next, previous;
     @Getter private int age;
-    final private EventuallyImmutable thisImmutable;
+    @Getter final private EventuallyImmutable immutable;
 
-    public ImmutableVersion(EventuallyImmutable thisImmutable) {
-        this.thisImmutable = thisImmutable;
+    public ImmutableVersion(EventuallyImmutable immutable) {
+        this.immutable = immutable;
         age = 0;
     }
 
@@ -25,7 +25,7 @@ public class ImmutableVersion {
         this.previous = toClone.previous;
         this.next = toClone.next;
         this.age = toClone.age;
-        this.thisImmutable = toClone.thisImmutable;
+        this.immutable = toClone.immutable;
     }
 
     public ImmutableVersion withNext(EventuallyImmutable replacement) {
@@ -43,7 +43,7 @@ public class ImmutableVersion {
 
     @SuppressWarnings("unchecked")
     public EventuallyImmutable getLatest() {
-        EventuallyImmutable next, pointer = thisImmutable;
+        EventuallyImmutable next, pointer = immutable;
         while (null != (next = pointer.getVersion().getNext()))
             pointer = next;
 
@@ -52,7 +52,7 @@ public class ImmutableVersion {
 
     @SuppressWarnings("unchecked")
     public EventuallyImmutable getEarliest() {
-        EventuallyImmutable previous, pointer = thisImmutable;
+        EventuallyImmutable previous, pointer = immutable;
         while (null != (previous = pointer.getVersion().getPrevious()))
             pointer = previous;
 
@@ -64,16 +64,13 @@ public class ImmutableVersion {
         List<E> newVersions = new LinkedList<>();
 
         for (E oldVersion : oldVersions) {
-            E newVersion = oldVersion;
-
-            if (oldVersion instanceof EventuallyImmutable)
-                newVersion = (E) ((EventuallyImmutable) oldVersion).getVersion().getLatest();
-
-            if (newVersion instanceof Deletable) {
-                if (! ((Deletable) newVersion).isDeleted() )
-                    newVersions.add(newVersion);
+            if (oldVersion instanceof EventuallyImmutable) {
+                EventuallyImmutable newVersion = (EventuallyImmutable) oldVersion;
+                newVersion = newVersion.getVersion().getLatest();
+                if (!newVersion.isDeleted())
+                    newVersions.add((E) newVersion);
             } else {
-                newVersions.add(newVersion);
+                newVersions.add(oldVersion);
             }
         }
 

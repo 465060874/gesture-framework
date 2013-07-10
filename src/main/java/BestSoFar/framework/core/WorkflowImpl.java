@@ -28,10 +28,10 @@ final public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
             return getTypeData().canBeEmptyContainer();
         } else {
 
-            if ( !getChildren().get(1).getTypeData().canBeAtStartOfContainer(getTypeData()) ||
-                    !getChildren().get(getChildren().size()-1).getTypeData().canBeAtEndOfContainer
+            if ( !getChildren().get(1).getTypeData().canBeAtStartOfWorkflow(getTypeData()) ||
+                    !getChildren().get(getChildren().size()-1).getTypeData().canBeAtEndOfWorkflow
                             (getTypeData()
-                    ) )
+                            ) )
                 return false;
 
             TypeData<?, ?> previousType = null;

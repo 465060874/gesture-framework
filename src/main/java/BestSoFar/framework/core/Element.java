@@ -1,18 +1,19 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.common.ChildOf;
-import BestSoFar.framework.core.common.ObservableProcess;
+import BestSoFar.framework.core.common.ProcessObserver;
+
+import java.util.Set;
 
 /**
  * An {@code Element} is a {@link Processor} which sits inside a {@link Workflow}.
- * <p/>
- * The parent {@code Workflow} is always up to date - eg. if the parent is replaced (because it
- * was modified) then this object's parent field is updated.  This doesn't affect data already
- * being processed inside this {@code Element} because the data is passed back to the original
- * parent when the {@code process(input)} method returns.
  */
 public interface Element<I, O>
-        extends Processor<I, O>, ObservableProcess<O>, ChildOf<Workflow<?, ?>> {
+        extends Processor<I, O>, ChildOf<Workflow<?, ?>> {
 
     Element<I, O> withParent(Workflow<?, ?> newParent);
+
+    Set<ProcessObserver<O>> getObservers();
+
+    Element<I, O> withObservers(Set<ProcessObserver<O>> newObservers);
 }

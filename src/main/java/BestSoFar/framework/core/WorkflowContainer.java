@@ -1,19 +1,22 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.core.common.ParentOf;
+
 import java.util.List;
 
 /**
- * A WorkflowContainer is an Element that contains one or more Workflows.
- *
- * When a WorkflowContainer is asked to process a mediator, it must choose one of its workflows and have it perform
- * the processing, so only one mediator is returned.
- *
- * Before being asked to process a mediator, it will first process a training batch.  A typical sequence that the
- * WorkflowContainer methods are called is:
- *      - notify(List<Mediator<O>>) : from observed Processors as they process the training batch
- *      - processTrainingBatch(..)  : when it's this object's turn to process the training batch
- *      - createBackwardMappingForTrainingBatch(..) : when the completed training batch is travelling backward over
- *                                                    the workflow that created it
+ * A {@code WorkflowContainer} is an {@code Element} that contains one or more {@code Workflow}
+ * objects.
+ * <p/>
+ * When a {@code WorkflowContainer} is asked to process a
+ * {@link BestSoFar.framework.core.helper.Mediator Mediator},
+ * it must choose one of its workflows and have it perform the processing,
+ * so only one {@code Mediator} is returned.
+ * <p/>
+ * When asked to process a training batch, the {@code WorkflowContainer} must process each input
+ * {@code Mediator} with every {@code Workflow} that could conceivably process it,
+ * creating an output {@code Mediator} for each {@code Workflow} and for each input
+ * {@code Mediator}.
  */
 public interface WorkflowContainer<I, O> extends Element<I, O>, ParentOf<Workflow<I, O>> {
 

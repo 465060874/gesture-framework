@@ -13,6 +13,7 @@
         <lombok-version>0.11.8</lombok-version>
         <org.aspectj-version>1.7.3</org.aspectj-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
     </properties>
 
     <dependencies>

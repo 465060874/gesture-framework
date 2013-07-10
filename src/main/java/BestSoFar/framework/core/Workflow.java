@@ -1,6 +1,7 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.common.ChildOf;
+import BestSoFar.framework.core.common.ParentOf;
 
 import java.util.List;
 
@@ -29,17 +30,6 @@ import java.util.List;
  * {@code Workflow} (and nowhere else).  Otherwise all {@code WorkflowContainers} would have to
  * worry about whether its {@code Workflows} match it's data types.  If this assertion is ever
  * broken, a {@code ClassCastException} is thrown.
- * <p/>
- * {@code Workflows} (like all {@code Processors}) are strictly immutable,
- * so "mutating" them (by changing their list of elements) in fact creates a copy with the desired
- * changes.  The old {@code Workflow} must then replace itself in its parent
- * {@code WorkflowContainer's} list of {@code Workflows} with this new version,
- * and inform its {@code Elements} of their new parent.
- * <p/>
- * As such, the parent field is always up to date - eg. if the parent is replaced (because it was
- * modified) then this object's parent field is updated.  This doesn't affect data already
- * being processed inside this {@code Workflow} because the data is passed back to the original
- * parent when the {@code process(input)} method returns.
  */
 public interface Workflow<I, O>
         extends Processor<I, O> , ChildOf<WorkflowContainer<I, O>>, ParentOf<Element<?, ?>> {
