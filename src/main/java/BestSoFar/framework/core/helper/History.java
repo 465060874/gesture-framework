@@ -21,27 +21,27 @@ public abstract class History {
     @Getter private final static History epoch = new HistoryImpl(null, null);
 
     /**
-     * Create a history object immediately after this one, created by 'creator'.
+     * Create a {@code History} object immediately after this one, created by 'creator'.
      *
-     * If the 'creator' already created a new History object from this one, it is
-     * returned instead (ie. h.createNext(p) == h.createNext(p) is always true).
+     * If the 'creator' already created a new {@code History} object from this one, it is
+     * returned instead (ie. {@code h.createNext(p) == h.createNext(p)} is always true).
      *
-     * @param creator the Processor that created the new object.
-     * @return the new History object.
+     * @param creator the {@code Processor} that created the new object.
+     * @return the new {@code History} object.
      */
     public abstract History createNext(Processor<?, ?> creator);
 
     /**
-     * Get the History object that immediately preceded this one.
+     * Get the {@code History} object that immediately preceded this one.
      *
-     * @return the History object that immediately preceded this one.
+     * @return the {@code History} object that immediately preceded this one.
      */
     public abstract History getPrevious();
 
     /**
-     * Get the Processor object that created this history object.
+     * Get the {@code Processor} object that created this {@code History} object.
      *
-     * @return the Processor object that created this history object.
+     * @return the {@code Processor} object that created this {@code History} object.
      */
     public abstract Processor<?, ?> getCreator();
 }

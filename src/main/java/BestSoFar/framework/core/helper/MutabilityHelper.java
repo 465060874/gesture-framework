@@ -6,12 +6,13 @@ import BestSoFar.framework.core.common.ParentOf;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * A helper object that manages an {@link EventuallyImmutable} object (which delegates to this).
  */
 public class MutabilityHelper implements EventuallyImmutable {
-    @Getter private VersionInfo versionInfo;
+    private VersionInfo versionInfo;
     @Getter @Setter private boolean mutable;
     @Getter private boolean deleted;
 
@@ -35,6 +36,11 @@ public class MutabilityHelper implements EventuallyImmutable {
     }
 
     @Override
+    public VersionInfo versionInfo() {
+        return versionInfo;
+    }
+
+    @Override
     public void fixAsVersion(@NonNull VersionInfo versionInfo) {
         this.versionInfo = versionInfo;
         this.mutable = false;
@@ -48,12 +54,12 @@ public class MutabilityHelper implements EventuallyImmutable {
             throw new RuntimeException("Cannot replace a mutable object - fix this first");
         if (versionInfo.getNext() != null)
             throw new RuntimeException("Already been replaced - discard the replacement first");
-        if (replacement.getVersionInfo().getPrevious() != null)
-            replacement.getVersionInfo().getPrevious().discardReplacement();
+        if (replacement.versionInfo().getPrevious() != null)
+            replacement.versionInfo().getPrevious().discardReplacement();
 
         versionInfo = versionInfo.withNext(replacement);
         VersionInfo nextVersionInfo =
-                replacement.getVersionInfo().withPrevious(versionInfo.getThisVersion());
+                replacement.versionInfo().withPrevious(versionInfo.getThisVersion());
         replacement.fixAsVersion(nextVersionInfo);
 
     }

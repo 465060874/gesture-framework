@@ -45,8 +45,9 @@ public interface EventuallyImmutable extends Deletable {
      * If this object is mutable, this method will make it immutable. In any case,
      * it will save the new version information.
      * <p/>
-     * Calling {@code replaceWith(replacement)} creates the new {@link BestSoFar.framework.core.helper.VersionInfo version}
-     * information and passes it to {@code replacement.fixAsVersion(version)}.
+     * Calling {@code replaceWith(replacement)} creates the new
+     * {@link BestSoFar.framework.core.helper.VersionInfo version} information and passes it to
+     * {@code replacement.fixAsVersion(version)}.
      *
      * @param versionInfo the new version information for this object.
      */
@@ -97,5 +98,5 @@ public interface EventuallyImmutable extends Deletable {
      *
      * @return the version information about this object.
      */
-    VersionInfo getVersionInfo();
+    VersionInfo versionInfo();
 }

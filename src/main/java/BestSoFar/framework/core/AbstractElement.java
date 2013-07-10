@@ -8,11 +8,12 @@ import lombok.Getter;
 import java.util.*;
 
 /**
- * Abstract implementation of {@link Processor} for elemental Processors to extend,
+ * Abstract implementation of {@link Element} for elemental processors to extend,
  * which requires a one-to-one mapping of input data to output data (without training necessary).
  * <p/>
- * Concrete Element implementations can derive from this to let it handle parent management,
- * the accessor for {@link TypeData}, and {@link ProcessObserver} management).
+ * Concrete {@code Element} implementations can derive from this to let it handle its parent
+ * {@link Workflow}, its {@link TypeData}, mutation management, and
+ * {@link ProcessObserver} management).
  */
 public abstract class AbstractElement<I, O> implements Element<I, O> {
     @Getter private Set<ProcessObserver<O>> observers;
@@ -72,7 +73,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
         if (isMutable()) {
-            parentManager.finalise(versionInfo);
+            parentManager.fixAsVersion(versionInfo);
 
             // Make mutable clone of observers set
             observers = new HashSet<>(observers);

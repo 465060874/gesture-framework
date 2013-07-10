@@ -33,25 +33,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${org.aspectj-version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjtools</artifactId>
-            <version>${org.aspectj-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <version>3.2.3.RELEASE</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
@@ -62,9 +43,6 @@
 
 
     <build>
-        <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
-        <testSourceDirectory>target/generated-test-sources/delombok
-        </testSourceDirectory>
 
         <plugins>
 
@@ -73,23 +51,8 @@
                 <version>1.4</version>
                 <executions>
                     <execution>
-                        <id>clean-delomboked-test-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <delete dir="${basedir}/target/generated-test-sources/delombok"/>
-                                <copy todir="${basedir}/target/generated-test-sources/delombok">
-                                    <fileset dir="${basedir}/src/test/java" includes="**/*"/>
-                                </copy>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>clean-delomboked-sources</id>
-                        <phase>generate-sources</phase>
+                        <phase>pre-site</phase>
                         <configuration>
                             <tasks>
                                 <delete dir="${basedir}/target/generated-sources/delombok"/>
@@ -104,44 +67,22 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.4</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjrt</artifactId>
-                        <version>${org.aspectj-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>${org.aspectj-version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <aspectLibraries>
-                        <aspectLibrary>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-aspects</artifactId>
-                        </aspectLibrary>
-                    </aspectLibraries>
-                    <source>${java-version}</source>
-                    <target>${java-version}</target>
-                    <Xlint>ignore</Xlint>
-                    <complianceLevel>${java-version}</complianceLevel>
-                    <forceAjcCompile>true</forceAjcCompile>
-                    <verbose>true</verbose>
-                </configuration>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>0.11.8.0</version>
                 <executions>
                     <execution>
+                        <id>delombok</id>
+                        <phase>pre-site</phase>
                         <goals>
-                            <goal>compile</goal>
-                            <goal>test-compile</goal>
+                            <goal>delombok</goal>
                         </goals>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>src/main/java</sourceDirectory>
+                        </configuration>
                     </execution>
                 </executions>
-
             </plugin>
 
             <plugin>
@@ -151,12 +92,7 @@
                 <configuration>
                     <source>${java-version}</source>
                     <target>${java-version}</target>
-                    <excludes>
-                        <exclude>**/*.java</exclude>
-                        <exclude>**/*.aj</exclude>
-                    </excludes>
                 </configuration>
-
             </plugin>
 
             <plugin>
@@ -166,36 +102,6 @@
                 <configuration>
                     <useFile>false</useFile>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok-maven-plugin</artifactId>
-                <version>0.11.8.0</version>
-                <executions>
-                    <execution>
-                        <id>delombok</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>delombok</goal>
-                        </goals>
-                        <configuration>
-                            <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>src/main/java</sourceDirectory>
-                        </configuration>
-                    </execution>
-                    <!--<execution>-->
-                        <!--<id>test-delombok</id>-->
-                        <!--<phase>generate-test-sources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>testDelombok</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<addOutputDirectory>false</addOutputDirectory>-->
-                            <!--<sourceDirectory>src/test/java</sourceDirectory>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                </executions>
             </plugin>
 
             <plugin>

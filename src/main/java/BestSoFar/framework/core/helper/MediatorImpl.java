@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 /**
- * Implementation of Mediator.  Don't use this - create via Mediator instead.
+ * Implementation of {@link Mediator}.  Don't use this - create via {@code Mediator} instead.
  */
 @AllArgsConstructor
 public class MediatorImpl<T> extends Mediator<T> {
@@ -24,14 +24,5 @@ public class MediatorImpl<T> extends Mediator<T> {
 
     public boolean isEmpty() {
         return previous == null;
-    }
-
-    public Mediator<?> getAncestorCreatedBy(Processor<?, ?> creator) {
-        Mediator<?> mediator = this;
-
-        while (mediator != null && mediator.getHistory().getCreator() != creator)
-            mediator = mediator.getPrevious();
-
-        return mediator;
     }
 }

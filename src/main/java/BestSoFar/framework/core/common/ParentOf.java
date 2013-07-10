@@ -9,6 +9,7 @@ public interface ParentOf<C extends ChildOf<? extends ParentOf<C>>> {
 
     /**
      * Gets the list of children of this parent.
+     *
      * @return the list of children of this parent.
      */
     List<C> getChildren();

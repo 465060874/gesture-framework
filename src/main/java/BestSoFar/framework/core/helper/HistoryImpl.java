@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of History.  Don't use this class - access it via History.
+ * Implementation of {@link History}.  Don't use this class - access it via {@code History}.
  */
 @RequiredArgsConstructor
 final public class HistoryImpl extends History {

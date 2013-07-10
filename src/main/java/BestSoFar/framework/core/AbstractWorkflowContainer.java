@@ -4,7 +4,6 @@ import BestSoFar.framework.core.helper.ChildrenManager;
 import BestSoFar.framework.core.helper.VersionInfo;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
-import BestSoFar.framework.core.helper.VersionInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +11,9 @@ import java.util.List;
 /**
  * Abstract implementation of {@link WorkflowContainer}.
  * <p/>
- * Concrete WorkflowContainer implementations can derive from this to let it handle the internal
- * list of {@link Workflow} objects, and everything found in {@link AbstractElement}.
+ * Concrete {@code WorkflowContainer} implementations can derive from this to let it handle the
+ * list of {@link Workflow} objects in this, along with everything handled in
+ * {@link AbstractElement}.
  */
 public abstract class AbstractWorkflowContainer<I, O>
         extends AbstractElement<I, O> implements WorkflowContainer<I, O> {
@@ -78,7 +78,7 @@ public abstract class AbstractWorkflowContainer<I, O>
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
         if (isMutable())
-            childrenManager.finalise(versionInfo);
+            childrenManager.fixAsVersion(versionInfo);
 
         super.fixAsVersion(versionInfo);
     }

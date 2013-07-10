@@ -36,7 +36,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
         }
 
         if (newParent != null)
-            newParent = (P) newParent.getVersionInfo().getLatest();
+            newParent = (P) newParent.versionInfo().getLatest();
 
         C childClone = (C) managedChild.createMutableClone();
         return (C) childClone.withParent(newParent);
@@ -59,7 +59,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called when the managed child is being finalised and is still mutable.
+     * Called when the managed child is being fixed and is still mutable.
      * <p/>
      * One of two scenarios caused this update
      * <p/>
@@ -67,10 +67,10 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      *     <p/>
      *     2. A property of the managed child was changed
      *
-     * @param versionInfo
+     * @param versionInfo the new version information.
      */
     @SuppressWarnings("unchecked")
-    public void finalise(VersionInfo versionInfo) {
+    public void fixAsVersion(VersionInfo versionInfo) {
         // In scenario 1, the parent is updating its children to point to the new version of the
         // parent.  There's nothing to do!
 

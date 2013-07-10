@@ -51,7 +51,7 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called when the managed parent is being finalised and is still mutable.
+     * Called when the managed parent is being fixed and is still mutable.
      * <p/>
      * One of four scenarios caused this update:
      * <p/>
@@ -66,7 +66,7 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      * @param versionInfo the new version information.
      */
     @SuppressWarnings("unchecked")
-    public void finalise(VersionInfo versionInfo) {
+    public void fixAsVersion(VersionInfo versionInfo) {
         List<C> latestChildren = new LinkedList<>(children);
 
         // Update all children to their latest versions, removing those that were deleted.

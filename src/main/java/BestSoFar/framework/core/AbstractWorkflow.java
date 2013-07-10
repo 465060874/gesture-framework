@@ -8,8 +8,8 @@ import lombok.NonNull;
 import java.util.List;
 
 /**
- * Abstract implementation of Workflow.  Manages parent, the list of elements in the workflow,
- * typedata, and mutation management.
+ * Abstract implementation of {@link Workflow}.  Manages its {@link WorkflowContainer} parent,
+ * the list of {@link Element} children in this, its {@link TypeData}, and mutation management.
  */
 public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     @Getter @NonNull private final TypeData<I, O> typeData;
@@ -92,8 +92,8 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
         if (isMutable()) {
-            parentManager.finalise(versionInfo);
-            childrenManager.finalise(versionInfo);
+            parentManager.fixAsVersion(versionInfo);
+            childrenManager.fixAsVersion(versionInfo);
         }
         mutabilityHelper.fixAsVersion(versionInfo);
     }

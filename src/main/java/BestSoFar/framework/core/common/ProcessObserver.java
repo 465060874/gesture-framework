@@ -1,26 +1,28 @@
 package BestSoFar.framework.core.common;
 
+import BestSoFar.framework.core.Processor;
 import BestSoFar.framework.core.helper.Mediator;
 
 import java.util.List;
 
 /**
- * An object the observes the processing of data in a {@link BestSoFar.framework.core.Processor}.
+ * An object the observes the processing of data in a {@link Processor}.
  */
 public interface ProcessObserver<T> {
     /**
-     * Notify this ProcessObserver that a Processor it observes is about to output
-     * a mediator object.
+     * Notify this {@code ProcessObserver} that a {@link Processor} it observes is about to output
+     * a {@link Mediator} object.
      *
-     * @param mediator the mediator the observed Processor is about to output.
+     * @param mediator the {@link Mediator} the observed {@link Processor} is about to output.
      */
     void notify(Mediator<T> mediator);
 
     /**
-     * Notify this ProcessObserver that a Processor it observes is about to output
-     * a batch of mediator objects (ie. a training batch).
+     * Notify this {@code ProcessObserver} that a {@link Processor} it observes is about to output
+     * a batch of {@link Mediator} objects (ie. a training batch).
      *
-     * @param mediators the batch of mediators the observed Processor is about to output.
+     * @param mediators the batch of {@link Mediator} objects the observed {@link Processor} is
+     *                  about to output.
      */
     void notify(List<Mediator<T>> mediators);
 }

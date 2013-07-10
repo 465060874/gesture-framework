@@ -1,16 +1,16 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.common.ParentOf;
+import BestSoFar.framework.core.helper.Mediator;
 
 import java.util.List;
 
 /**
- * A {@code WorkflowContainer} is an {@code Element} that contains one or more {@code Workflow}
+ * A {@code WorkflowContainer} is an {@link Element} that contains one or more {@link Workflow}
  * objects.
  * <p/>
- * When a {@code WorkflowContainer} is asked to process a
- * {@link BestSoFar.framework.core.helper.Mediator Mediator},
- * it must choose one of its workflows and have it perform the processing,
+ * When a {@code WorkflowContainer} is asked to process a {@link Mediator},
+ * it must choose one of its {@link Workflow} children to perform the processing,
  * so only one {@code Mediator} is returned.
  * <p/>
  * When asked to process a training batch, the {@code WorkflowContainer} must process each input

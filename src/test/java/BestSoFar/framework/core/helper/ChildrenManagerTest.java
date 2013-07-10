@@ -8,8 +8,8 @@ import org.mockito.Mock;
  * User: Sam Wright Date: 10/07/2013 Time: 12:30
  */
 public class ChildrenManagerTest {
-    @Mock
-    private Integer & String i;
+//    @Mock
+//    private Integer & String i;
 
     @Before
     public void setUp() throws Exception {

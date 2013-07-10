@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 /**
- * Implementation of VersionInfo - do not use this class.  Use VersionInfo instead.
+ * Implementation of {@link VersionInfo} - do not use this class.  Use {@code VersionInfo} instead.
  */
 @AllArgsConstructor
 public class VersionInfoImpl extends VersionInfo {
@@ -26,7 +26,7 @@ public class VersionInfoImpl extends VersionInfo {
         int age;
 
         if (previous != null)
-            age = previous.getVersionInfo().getVersionNumber() + 1;
+            age = previous.versionInfo().getVersionNumber() + 1;
         else
             age = this.versionNumber;
 
@@ -37,7 +37,7 @@ public class VersionInfoImpl extends VersionInfo {
     @SuppressWarnings("unchecked")
     public EventuallyImmutable getLatest() {
         EventuallyImmutable next, pointer = thisVersion;
-        while (null != (next = pointer.getVersionInfo().getNext()))
+        while (null != (next = pointer.versionInfo().getNext()))
             pointer = next;
 
         return pointer;
@@ -47,7 +47,7 @@ public class VersionInfoImpl extends VersionInfo {
     @SuppressWarnings("unchecked")
     public EventuallyImmutable getEarliest() {
         EventuallyImmutable previous, pointer = thisVersion;
-        while (null != (previous = pointer.getVersionInfo().getPrevious()))
+        while (null != (previous = pointer.versionInfo().getPrevious()))
             pointer = previous;
 
         return pointer;
