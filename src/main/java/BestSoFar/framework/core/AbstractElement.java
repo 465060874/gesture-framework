@@ -51,6 +51,11 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
+    public void discardReplacement() {
+        mutabilityHelper.discardReplacement();
+    }
+
+    @Override
     abstract public AbstractElement<I, O> createMutableClone();
 
     @Override
@@ -60,17 +65,17 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
-    public void finalise(ImmutableVersion version) {
+    public void fixAsVersion(VersionInfo versionInfo) {
         if (isMutable()) {
-            parentManager.finalise(version);
+            parentManager.finalise(versionInfo);
 
             // Make mutable clone of observers set
             observers = new HashSet<>(observers);
             // Update observers to their latest versions
-            ImmutableVersion.updateAllToLatest(observers);
+            VersionInfo.updateAllToLatest(observers);
         }
 
-        mutabilityHelper.finalise(version);
+        mutabilityHelper.fixAsVersion(versionInfo);
     }
 
     @Override

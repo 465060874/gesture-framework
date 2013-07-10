@@ -1,6 +1,5 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.core.common.EventuallyImmutable;
 import BestSoFar.framework.core.helper.*;
 import lombok.Delegate;
 import lombok.Getter;
@@ -72,6 +71,12 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     abstract public AbstractWorkflow<I, O> createMutableClone();
 
     @Override
+    public void discardReplacement() {
+        mutabilityHelper.discardReplacement();
+        childrenManager.discardReplacement();
+    }
+
+    @Override
     public void delete() {
         mutabilityHelper.delete();
         parentManager.delete();
@@ -79,11 +84,11 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     }
 
     @Override
-    public void finalise(ImmutableVersion version) {
+    public void fixAsVersion(VersionInfo versionInfo) {
         if (isMutable()) {
-            parentManager.finalise(version);
-            childrenManager.finalise(version);
+            parentManager.finalise(versionInfo);
+            childrenManager.finalise(versionInfo);
         }
-        mutabilityHelper.finalise(version);
+        mutabilityHelper.fixAsVersion(versionInfo);
     }
 }

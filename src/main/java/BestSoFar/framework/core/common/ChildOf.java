@@ -3,7 +3,7 @@ package BestSoFar.framework.core.common;
 /**
  * A child of the parent type {@code P}.
  */
-public interface ChildOf<P extends ParentOf<?>> {
+public interface ChildOf<P extends ParentOf<? extends ChildOf<P>>> {
     /**
      * Gets the parent that this child sits within.
      * @return the parent that this child sits within.

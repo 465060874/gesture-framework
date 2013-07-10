@@ -10,8 +10,7 @@ import lombok.NonNull;
  */
 @AllArgsConstructor
 public class MediatorImpl<T> extends Mediator<T> {
-    @Getter @NonNull
-    private final T data;
+    @Getter private final T data;
     @Getter @NonNull private final History history;
     @Getter private final Mediator<?> previous;
 
@@ -32,7 +31,6 @@ public class MediatorImpl<T> extends Mediator<T> {
 
         while (mediator != null && mediator.getHistory().getCreator() != creator)
             mediator = mediator.getPrevious();
-
 
         return mediator;
     }

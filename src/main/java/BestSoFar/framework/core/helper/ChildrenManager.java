@@ -1,7 +1,6 @@
 package BestSoFar.framework.core.helper;
 
 import BestSoFar.framework.core.common.ChildOf;
-import BestSoFar.framework.core.common.Deletable;
 import BestSoFar.framework.core.common.EventuallyImmutable;
 import BestSoFar.framework.core.common.ParentOf;
 import lombok.Getter;
@@ -64,18 +63,18 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      *     <p/>
      *     4. A new child has been added to this parent
      *
-     * @param version the new version information.
+     * @param versionInfo the new version information.
      */
     @SuppressWarnings("unchecked")
-    public void finalise(ImmutableVersion version) {
+    public void finalise(VersionInfo versionInfo) {
         List<C> latestChildren = new LinkedList<>(children);
 
         // Update all children to their latest versions, removing those that were deleted.
-        ImmutableVersion.updateAllToLatest(latestChildren);
+        VersionInfo.updateAllToLatest(latestChildren);
         children = new LinkedList<>();
 
         for (C child : latestChildren) {
-            if (child.getParent() == version.getPrevious()) {
+            if (child.getParent() == versionInfo.getPrevious()) {
                 // If the child still thinks of managedParent's previous version as its parent,
                 // create a version of the child with the managedParent as the parent
                 C newChild = (C) child.withParent(managedParent);
@@ -89,5 +88,14 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
         }
 
         children = Collections.unmodifiableList(children);
+    }
+
+    /**
+     * Called when the managed parent is having its replacement discarded,
+     * and discards all of its childrens' replacements.
+     */
+    public void discardReplacement() {
+        for (C child : children)
+            child.discardReplacement();
     }
 }

@@ -1,12 +1,13 @@
 package BestSoFar.framework.core.common;
 
-import BestSoFar.framework.core.helper.ImmutableVersion;
+import BestSoFar.framework.core.helper.VersionInfo;
+import BestSoFar.framework.core.helper.VersionInfo;
 
 /**
  * An object which eventually becomes immutable.
  * <p/>
  * It might be immutable from creation, or it might start as mutable and become immutable when
- * {@code finalise(..)} is called.
+ * {@code fixAsVersion(..)} is called.
  * <p/>
  * The convention to use is {@code X getX()} for accessors and
  * {@code EventuallyImmutable withX(newX)} for mutators.
@@ -20,9 +21,9 @@ import BestSoFar.framework.core.helper.ImmutableVersion;
  * {@code obj.createMutableClone()} with the mutations otherwise.
  * <p/>
  * Immutable objects are made aware of replacements ready to take their place with
- * {@code original.replaceWith(replacement)}.  It then updates its {@link ImmutableVersion}
- * information and generates the {@code ImmutableVersion} for the replacement,
- * which is passed in {@code replacement.finalise(version)} and ensures the replacement is
+ * {@code original.replaceWith(replacement)}.  It then updates its {@link BestSoFar.framework.core.helper.VersionInfo}
+ * information and generates the {@code Version} for the replacement,
+ * which is passed in {@code replacement.fixAsVersion(version)} and ensures the replacement is
  * finalised (i.e. immutable).
  * <p/>
  * An object may be finalised multiple times to update it with new version information.  No new
@@ -34,7 +35,7 @@ public interface EventuallyImmutable extends Deletable {
     /**
      * Create a mutable clone of this object.  It will remain mutable until passed as a
      * {@code replacement} to {@code replaceWith(replacement)}, at which point
-     * {@code finalise(..)} will be called to effect the change to an immutable object.
+     * {@code fixAsVersion(..)} will be called to effect the change to an immutable object.
      *
      * @return a mutable clone.
      */
@@ -44,12 +45,12 @@ public interface EventuallyImmutable extends Deletable {
      * If this object is mutable, this method will make it immutable. In any case,
      * it will save the new version information.
      * <p/>
-     * Calling {@code replaceWith(replacement)} creates the new {@link ImmutableVersion version}
-     * information and passes it to {@code replacement.finalise(version)}.
+     * Calling {@code replaceWith(replacement)} creates the new {@link BestSoFar.framework.core.helper.VersionInfo version}
+     * information and passes it to {@code replacement.fixAsVersion(version)}.
      *
-     * @param version the new version information for this object.
+     * @param versionInfo the new version information for this object.
      */
-    void finalise(ImmutableVersion version);
+    void fixAsVersion(VersionInfo versionInfo);
 
     /**
      * Returns true iff this object is mutable, meaning it was created as mutable and has not
@@ -85,11 +86,16 @@ public interface EventuallyImmutable extends Deletable {
     void discardReplacement();
 
     /**
-     * Gets the {@link ImmutableVersion} object that describes this object.  It contains
+     * Discard older versions of this, so they may be freed by the garbage collector.
+     */
+    void discardOlderVersions();
+
+    /**
+     * Gets the {@link BestSoFar.framework.core.helper.VersionInfo} object that describes this object.  It contains
      * information about this version of the {@code EventuallyImmutable} object,
      * and its earlier and later versions.
      *
      * @return the version information about this object.
      */
-    ImmutableVersion getVersion();
+    VersionInfo getVersionInfo();
 }

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * A Parent of the child type {@code C}.
  */
-public interface ParentOf<C extends ChildOf<?>> {
+public interface ParentOf<C extends ChildOf<? extends ParentOf<C>>> {
 
     /**
      * Gets the list of children of this parent.

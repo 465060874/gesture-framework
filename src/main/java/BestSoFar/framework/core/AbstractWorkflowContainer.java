@@ -1,9 +1,10 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.helper.ChildrenManager;
-import BestSoFar.framework.core.helper.ImmutableVersion;
+import BestSoFar.framework.core.helper.VersionInfo;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
+import BestSoFar.framework.core.helper.VersionInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,17 +58,23 @@ public abstract class AbstractWorkflowContainer<I, O>
     }
 
     @Override
+    public void discardReplacement() {
+        super.discardReplacement();
+        childrenManager.discardReplacement();
+    }
+
+    @Override
     public void delete() {
         super.delete();
         childrenManager.delete();
     }
 
     @Override
-    public void finalise(ImmutableVersion version) {
+    public void fixAsVersion(VersionInfo versionInfo) {
         if (isMutable())
-            childrenManager.finalise(version);
+            childrenManager.finalise(versionInfo);
 
-        super.finalise(version);
+        super.fixAsVersion(versionInfo);
     }
 
     @Override

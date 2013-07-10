@@ -4,15 +4,17 @@ import BestSoFar.framework.core.Processor;
 import lombok.Getter;
 
 /**
- * Each history object represents a unique sequence of Processors - ie. no two histories
- * share the same sequence of Processors (without being the same object).
- *
- * Each object contains a reference to the history object that came immediately before it,
- * and a list of references to the history objects which have come after it.
- *
+ * Each {@code History} object represents a unique sequence of {@link Processor} objects - ie. no
+ * two histories share the same sequence of {@code Processor} objects (without being the same
+ * object).
+ * <p/>
+ * Each {@code History} object contains a reference to the {@code History} object that came
+ * immediately before it, and a list of references to the {@code History} objects which have come
+ * after it.
+ * <p/>
  * Each history begins with the same epoch (which is a singleton).  To create a new history:
- *
- * History newHistory = History.getEpoch().createNext(creator);
+ * <p/>
+ * {@code History newHistory = History.getEpoch().createNext(creator);}
  */
 public abstract class History {
 

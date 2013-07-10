@@ -1,27 +1,29 @@
 package BestSoFar.framework.core.helper;
 
-import BestSoFar.framework.core.common.Deletable;
+import BestSoFar.framework.core.common.ChildOf;
 import BestSoFar.framework.core.common.EventuallyImmutable;
+import BestSoFar.framework.core.common.ParentOf;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
 /**
- * User: Sam Wright Date: 09/07/2013 Time: 19:52
+ * A helper object that manages an {@link EventuallyImmutable} object (which delegates to this).
  */
 public class MutabilityHelper implements EventuallyImmutable {
-    @Getter private ImmutableVersion version;
+    @Getter private VersionInfo versionInfo;
     @Getter @Setter private boolean mutable;
     @Getter private boolean deleted;
 
     public static interface ForManualDelegation {
-        void finalise(ImmutableVersion version);
+        void fixAsVersion(VersionInfo versionInfo);
         void delete();
         EventuallyImmutable createMutableClone();
+        void discardReplacement();
     }
 
     public MutabilityHelper(@NonNull EventuallyImmutable thisImmutable, boolean mutable) {
-        version = new ImmutableVersion(thisImmutable);
+        versionInfo = VersionInfo.createForFirst(thisImmutable);
         this.mutable = mutable;
         deleted = false;
     }
@@ -32,37 +34,46 @@ public class MutabilityHelper implements EventuallyImmutable {
     }
 
     @Override
-    public void finalise(@NonNull ImmutableVersion version) {
-        this.version = version;
+    public void fixAsVersion(@NonNull VersionInfo versionInfo) {
+        this.versionInfo = versionInfo;
         this.mutable = false;
     }
 
     @Override
     public void replaceWith(@NonNull EventuallyImmutable replacement) {
-        if (version.getImmutable() == replacement)
+        if (versionInfo.getThisVersion() == replacement)
             return;
         if (isMutable())
-            throw new RuntimeException("Cannot replace a mutable object - finalise this first");
-        if (version.getNext() != null)
+            throw new RuntimeException("Cannot replace a mutable object - fix this first");
+        if (versionInfo.getNext() != null)
             throw new RuntimeException("Already been replaced - discard the replacement first");
-        if (replacement.getVersion().getPrevious() != null)
-            replacement.getVersion().getPrevious().discardReplacement();
+        if (replacement.getVersionInfo().getPrevious() != null)
+            replacement.getVersionInfo().getPrevious().discardReplacement();
 
-        version = version.withNext(replacement);
-        ImmutableVersion nextVersion = replacement.getVersion().withPrevious(version.getImmutable());
-        replacement.finalise(nextVersion);
+        versionInfo = versionInfo.withNext(replacement);
+        VersionInfo nextVersionInfo =
+                replacement.getVersionInfo().withPrevious(versionInfo.getThisVersion());
+        replacement.fixAsVersion(nextVersionInfo);
 
     }
 
     @Override
     public void discardReplacement() {
-        version = version.withNext(null);
+        versionInfo = versionInfo.withNext(null);
         deleted = false;
     }
 
     @Override
+    public void discardOlderVersions() {
+        if (versionInfo.getPrevious() != null) {
+            versionInfo.getPrevious().discardReplacement();
+            versionInfo = versionInfo.withPrevious(null);
+        }
+    }
+
+    @Override
     public void delete() {
-        if (version.getNext() != null)
+        if (versionInfo.getNext() != null)
             throw new RuntimeException("Cannot delete - already been replaced.");
         if (isDeleted())
             throw new RuntimeException("Already been deleted.");

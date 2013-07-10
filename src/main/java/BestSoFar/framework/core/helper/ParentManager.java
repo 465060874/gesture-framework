@@ -1,7 +1,6 @@
 package BestSoFar.framework.core.helper;
 
 import BestSoFar.framework.core.common.ChildOf;
-import BestSoFar.framework.core.common.Deletable;
 import BestSoFar.framework.core.common.EventuallyImmutable;
 import BestSoFar.framework.core.common.ParentOf;
 import lombok.Getter;
@@ -37,7 +36,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
         }
 
         if (newParent != null)
-            newParent = (P) newParent.getVersion().getLatest();
+            newParent = (P) newParent.getVersionInfo().getLatest();
 
         C childClone = (C) managedChild.createMutableClone();
         return (C) childClone.withParent(newParent);
@@ -68,10 +67,10 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      *     <p/>
      *     2. A property of the managed child was changed
      *
-     * @param version
+     * @param versionInfo
      */
     @SuppressWarnings("unchecked")
-    public void finalise(ImmutableVersion version) {
+    public void finalise(VersionInfo versionInfo) {
         // In scenario 1, the parent is updating its children to point to the new version of the
         // parent.  There's nothing to do!
 
@@ -79,7 +78,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
         // parent given the updated list of children.
         if (getParent() != null && !getParent().isMutable()) {
             List<C> newSiblings = new LinkedList<>(getParent().getChildren());
-            ImmutableVersion.updateAllToLatest(newSiblings);
+            VersionInfo.updateAllToLatest(newSiblings);
             if (!newSiblings.contains(managedChild))
                 newSiblings.add(managedChild);
 
