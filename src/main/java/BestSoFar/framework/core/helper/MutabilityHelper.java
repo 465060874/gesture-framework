@@ -24,6 +24,13 @@ public class MutabilityHelper implements EventuallyImmutable {
         void discardOlderVersions();
     }
 
+    /**
+     * Construct a new {@code MutabilityHelper} to manage the given {@link EventuallyImmutable}
+     * with the given mutability.
+     *
+     * @param thisImmutable the object for this to manage.
+     * @param mutable the initial mutability of the object to manage.
+     */
     public MutabilityHelper(@NonNull EventuallyImmutable thisImmutable, boolean mutable) {
         versionInfo = VersionInfo.createForFirst(thisImmutable);
         this.mutable = mutable;

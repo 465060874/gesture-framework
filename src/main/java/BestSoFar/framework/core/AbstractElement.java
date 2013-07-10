@@ -1,6 +1,6 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.core.common.ProcessObserver;
+import BestSoFar.framework.core.common.ElementObserver;
 import BestSoFar.framework.core.helper.*;
 import lombok.Delegate;
 import lombok.Getter;
@@ -13,10 +13,10 @@ import java.util.*;
  * <p/>
  * Concrete {@code Element} implementations can derive from this to let it handle its parent
  * {@link Workflow}, its {@link TypeData}, mutation management, and
- * {@link ProcessObserver} management).
+ * {@link BestSoFar.framework.core.common.ElementObserver} management).
  */
 public abstract class AbstractElement<I, O> implements Element<I, O> {
-    @Getter private Set<ProcessObserver<O>> observers;
+    @Getter private Set<ElementObserver<O>> observers;
     @Getter private final TypeData<I, O> typeData;
     private final ParentManager<Element<?, ?>, Workflow<?, ?>> parentManager;
 
@@ -27,17 +27,31 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
         parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this);
     }
 
+    /**
+     * Constructs the initial (and immutable) {@code AbstractElement} with the given
+     * {@link TypeData}.
+     *
+     * @param typeData the input/output types of this object.
+     */
     public AbstractElement(TypeData<I, O> typeData) {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, false);
         observers = Collections.emptySet();
     }
 
+    /**
+     * Constructs a mutable clone of the given {@code AbstractElement} with the given
+     * {@link TypeData}.
+     *
+     * @param oldElement the {@code AbstractElement} to clone.
+     * @param typeData the input/output types of this object.
+     */
     @SuppressWarnings("unchecked")
-    public AbstractElement(AbstractElement<?, ?> oldAbstractElement, TypeData<I, O> typeData) {
+    public AbstractElement(AbstractElement<?, ?> oldElement, TypeData<I, O> typeData) {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, true);
-        this.observers = (Set<ProcessObserver<O>>) (Set<?>) oldAbstractElement.getObservers();
+        this.observers = (Set<ElementObserver<O>>) (Set<?>) oldElement.getObservers();
+        // TODO: use Set<ElementObserver<?>> observers. validation should include ? -> O check.
     }
 
     @Override
@@ -85,7 +99,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
-    public Element<I, O> withObservers(Set<ProcessObserver<O>> newObservers) {
+    public Element<I, O> withObservers(Set<ElementObserver<O>> newObservers) {
         if (isMutable()) {
             observers = Collections.unmodifiableSet(newObservers);
             return this;

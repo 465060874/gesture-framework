@@ -20,6 +20,11 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
     @Getter private P parent;
     private final C managedChild;
 
+    /**
+     * Create a {@code ParentManager} to manage the given child's parent.
+     *
+     * @param managedChild the child who's parent this will manage.
+     */
     public ParentManager(@NonNull C managedChild) {
         this.managedChild = managedChild;
     }

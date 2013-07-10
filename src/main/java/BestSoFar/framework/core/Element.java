@@ -1,7 +1,7 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.common.ChildOf;
-import BestSoFar.framework.core.common.ProcessObserver;
+import BestSoFar.framework.core.common.ElementObserver;
 
 import java.util.Set;
 
@@ -13,7 +13,7 @@ public interface Element<I, O>
 
     Element<I, O> withParent(Workflow<?, ?> newParent);
 
-    Set<ProcessObserver<O>> getObservers();
+    Set<ElementObserver<O>> getObservers();
 
-    Element<I, O> withObservers(Set<ProcessObserver<O>> newObservers);
+    Element<I, O> withObservers(Set<ElementObserver<O>> newObservers);
 }

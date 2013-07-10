@@ -23,12 +23,25 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
         parentManager = new ParentManager<>((Workflow<I, O>) this);
     }
 
+    /**
+     * Constructs the initial (and immutable) {@code AbstractWorkflow} with the given
+     * {@link TypeData}.
+     *
+     * @param typeData the input/output types of this object.
+     */
     public AbstractWorkflow(TypeData<I, O> typeData) {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, false);
         childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this);
     }
 
+    /**
+     * Constructs a mutable clone of the given {@code AbstractWorkflow} with the given
+     * {@link TypeData}.
+     *
+     * @param oldWorkflow the {@code AbstractWorkflow} to clone.
+     * @param typeData the input/output types of this object.
+     */
     @SuppressWarnings("unchecked")
     public AbstractWorkflow(AbstractWorkflow<I, O> oldWorkflow, TypeData<I, O> typeData) {
         this.typeData = typeData;

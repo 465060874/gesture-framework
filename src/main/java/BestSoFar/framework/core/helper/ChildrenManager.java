@@ -21,12 +21,24 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
     @Getter private List<C> children;
     private final P managedParent;
 
-    public ChildrenManager(@NonNull P managedParent) {
-        this.managedParent = managedParent;
+    /**
+     * Constructs a {@code ChildrenManager} with an empty children list.
+     *
+     * @param managedParent the parent who's children this will manage.
+     */
+    public ChildrenManager(P managedParent) {
+        this(managedParent, Collections.<C>emptyList());
     }
 
+    /**
+     * Constructs a {@code ChildrenManager} with the given children list.  The list won't be
+     * mutated (i.e. it is fine for children to be {@code Collections.unmodifiableList}).
+     *
+     * @param managedParent the parent who's children this will manage.
+     * @param children
+     */
     public ChildrenManager(@NonNull P managedParent, @NonNull List<C> children) {
-        this(managedParent);
+        this.managedParent = managedParent;
         this.children = children;
     }
 

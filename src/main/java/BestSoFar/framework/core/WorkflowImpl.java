@@ -8,15 +8,26 @@ import java.util.*;
 /**
  * Implementation of Workflow.
  */
-final public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
+public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
 
-
+    /**
+     * Constructs the initial (and immutable) {@code WorkflowImpl} with the given
+     * {@link TypeData}.
+     *
+     * @param typeData the input/output types of this object.
+     */
     public WorkflowImpl(TypeData<I, O> typeData) {
         super(typeData);
     }
 
-
-    private WorkflowImpl(WorkflowImpl<I, O> oldWorkflow,
+    /**
+     * Constructs a mutable clone of the given {@code WorkflowImpl} with the given
+     * {@link TypeData}.
+     *
+     * @param oldWorkflow the {@code WorkflowImpl} to clone.
+     * @param typeData the input/output types of this object.
+     */
+    public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow,
                         TypeData<I, O> typeData) {
         super(oldWorkflow, typeData);
     }

@@ -12,13 +12,12 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 final public class HistoryImpl extends History {
-    @Getter
-    private final History previous;
-    @Getter
-    private final Processor<?, ?> creator;
+    @Getter private final History previous;
+    @Getter private final Processor<?, ?> creator;
 
     private final Map<Processor<?, ?>, History> nextByCreator = new HashMap<>();
 
+    @Override
     public History createNext(Processor<?, ?> creator) {
         History next = nextByCreator.get(creator);
 

@@ -20,11 +20,24 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     private final ChildrenManager<Workflow<I, O>, WorkflowContainer<I, O>> childrenManager;
 
+    /**
+     * Constructs the initial (and immutable) {@code AbstractWorkflowContainer} with the given
+     * {@link TypeData}.
+     *
+     * @param typeData the input/output types of this object.
+     */
     public AbstractWorkflowContainer(TypeData<I, O> typeData) {
         super(typeData);
         childrenManager = new ChildrenManager<>((WorkflowContainer<I, O>) this);
     }
 
+    /**
+     * Constructs a mutable clone of the given {@code AbstractWorkflowContainer} with the given
+     * {@link TypeData}.
+     *
+     * @param oldWorkflowContainer the {@code AbstractWorkflowContainer} to clone.
+     * @param typeData the input/output types of this object.
+     */
     public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer,
                                      TypeData<I, O> typeData) {
         super(oldWorkflowContainer, typeData);

@@ -1,6 +1,5 @@
 package BestSoFar.framework.core;
 
-import BestSoFar.framework.core.common.Deletable;
 import BestSoFar.framework.core.common.EventuallyImmutable;
 import BestSoFar.framework.core.helper.History;
 import BestSoFar.framework.core.helper.Mediator;
@@ -34,7 +33,7 @@ import java.util.Set;
  * for example it might choose to process the data in a certain way that worked well during
  * training.
  * <p/>
- * It can also be observed by {@link BestSoFar.framework.core.common.ProcessObserver} objects, which are notified when input data
+ * It can also be observed by {@link BestSoFar.framework.core.common.ElementObserver} objects, which are notified when input data
  * (either individually or in a batch) has been processed (but before the output is returned).
  */
 public interface Processor<I,O> extends EventuallyImmutable {
