@@ -38,6 +38,7 @@ public interface EventuallyImmutable extends Deletable {
      * {@code fixAsVersion(..)} will be called to effect the change to an immutable object.
      *
      * @return a mutable clone.
+     * @throws RuntimeException if this object is still mutable.
      */
     EventuallyImmutable createMutableClone();
 
@@ -65,12 +66,15 @@ public interface EventuallyImmutable extends Deletable {
      * Propose a replacement for this object.  How this is handled is determined by the concrete
      * class implementing this.
      * <p/>
-     * If the replacement has already replaced another object, this tells that object to discard
-     * its replacement.  This means a sequence of versions between {@code EventuallyImmutable}
+     * This must have no next version, and the replacement must have no previous version -
+     * otherwise a RuntimeException is thrown.
+     * <p/>
+     * As an example, a sequence of versions between {@code EventuallyImmutable}
      * objects {@code start} and {@code end} can be contracted using
      *
      * <pre>{@code
-     * start.discardReplacement();
+     * start.discardNext();  // start.getNext() == null
+     * end.discardPrevious(); // end.getPrevious() == null
      * start.replaceWith(end);
      * }</pre>
      *
@@ -83,13 +87,15 @@ public interface EventuallyImmutable extends Deletable {
     /**
      * Discards any replacement to this object and ensures this object is not deleted,
      * therefore allowing for it to be replaced by another {@code EventuallyImmutable} object.
+     * In doing so, it makes the next version discard its previous version.
      */
-    void discardReplacement();
+    void discardNext();
 
     /**
-     * Discard older versions of this, so they may be freed by the garbage collector.
+     * Discard older versions of this, so they may be freed by the garbage collector.  In doing
+     * so it makes the previous version discard its next version.
      */
-    void discardOlderVersions();
+    void discardPrevious();
 
     /**
      * Gets the {@link BestSoFar.framework.core.helper.VersionInfo} object that describes this object.  It contains

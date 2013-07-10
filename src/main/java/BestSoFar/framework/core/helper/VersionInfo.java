@@ -37,14 +37,6 @@ public abstract class VersionInfo {
     public abstract EventuallyImmutable getThisVersion();
 
     /**
-     * Gets the version number of the {@link EventuallyImmutable} object (ie. the number of
-     * previous versions that have existed, including those which were discarded).
-     *
-     * @return the version number of the {@link EventuallyImmutable} object.
-     */
-    public abstract int getVersionNumber();
-
-    /**
      * Returns a clone of this, but with the given {@link EventuallyImmutable} as the next version.
      *
      * @param next the {@code EventuallyImmutable} object to be the next version in the returned
@@ -83,11 +75,11 @@ public abstract class VersionInfo {
      * Creates a {@code VersionInfo} object for the first version of an {@link EventuallyImmutable}
      * object (ie. without any previous or next versions, and with an age of zero).
      *
-     * @param firstVersion
-     * @return
+     * @param firstVersion the first version of an {@code EventuallyImmutable} object.
+     * @return the version information for the given object.
      */
     public static VersionInfo createForFirst(EventuallyImmutable firstVersion) {
-        return new VersionInfoImpl(firstVersion, 0, null, null);
+        return new VersionInfoImpl(firstVersion, null, null);
     }
 
     /**

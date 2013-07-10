@@ -13,15 +13,15 @@ import lombok.experimental.Accessors;
  */
 public class MutabilityHelper implements EventuallyImmutable {
     private VersionInfo versionInfo;
-    @Getter @Setter private boolean mutable;
+    @Getter private boolean mutable;
     @Getter private boolean deleted;
 
     public static interface ForManualDelegation {
         void fixAsVersion(VersionInfo versionInfo);
         void delete();
         EventuallyImmutable createMutableClone();
-        void discardReplacement();
-        void discardOlderVersions();
+        void discardNext();
+        void discardPrevious();
     }
 
     /**
@@ -56,13 +56,16 @@ public class MutabilityHelper implements EventuallyImmutable {
     @Override
     public void replaceWith(@NonNull EventuallyImmutable replacement) {
         if (versionInfo.getThisVersion() == replacement)
-            return;
+            throw new RuntimeException("Cannot replace object with itself");
         if (isMutable())
             throw new RuntimeException("Cannot replace a mutable object - fix this first");
+        if (isDeleted())
+            throw new RuntimeException("Cannot replace a deleted object - discard first.");
         if (versionInfo.getNext() != null)
             throw new RuntimeException("Already been replaced - discard the replacement first");
         if (replacement.versionInfo().getPrevious() != null)
-            replacement.versionInfo().getPrevious().discardReplacement();
+            throw new RuntimeException("Replacement has already replaced something else");
+
 
         versionInfo = versionInfo.withNext(replacement);
         VersionInfo nextVersionInfo =
@@ -72,16 +75,21 @@ public class MutabilityHelper implements EventuallyImmutable {
     }
 
     @Override
-    public void discardReplacement() {
-        versionInfo = versionInfo.withNext(null);
+    public void discardNext() {
+        if (versionInfo.getNext() != null) {
+            EventuallyImmutable oldNext = versionInfo.getNext();
+            versionInfo = versionInfo.withNext(null);
+            oldNext.discardPrevious();
+        }
         deleted = false;
     }
 
     @Override
-    public void discardOlderVersions() {
+    public void discardPrevious() {
         if (versionInfo.getPrevious() != null) {
-            versionInfo.getPrevious().discardReplacement();
+            EventuallyImmutable oldPrevious = versionInfo.getPrevious();
             versionInfo = versionInfo.withPrevious(null);
+            oldPrevious.discardNext();
         }
     }
 

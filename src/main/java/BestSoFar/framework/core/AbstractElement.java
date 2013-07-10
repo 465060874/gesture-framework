@@ -48,6 +48,8 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
      */
     @SuppressWarnings("unchecked")
     public AbstractElement(AbstractElement<?, ?> oldElement, TypeData<I, O> typeData) {
+        if (oldElement.isMutable())
+            throw new RuntimeException("Cannot clone an immutable object");
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, true);
         this.observers = (Set<ElementObserver<O>>) (Set<?>) oldElement.getObservers();
@@ -66,13 +68,13 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
-    public void discardReplacement() {
-        mutabilityHelper.discardReplacement();
+    public void discardNext() {
+        mutabilityHelper.discardNext();
     }
 
     @Override
-    public void discardOlderVersions() {
-        mutabilityHelper.discardOlderVersions();
+    public void discardPrevious() {
+        mutabilityHelper.discardPrevious();
     }
 
     @Override

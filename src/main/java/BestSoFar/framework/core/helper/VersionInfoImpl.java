@@ -12,25 +12,17 @@ import lombok.NonNull;
 public class VersionInfoImpl extends VersionInfo {
 
     @Getter @NonNull final private EventuallyImmutable thisVersion;
-    @Getter private int versionNumber;
-    @Getter private EventuallyImmutable next, previous;
+    @Getter private final EventuallyImmutable previous, next;
 
 
     @Override
     public VersionInfo withNext(EventuallyImmutable next) {
-        return new VersionInfoImpl(thisVersion, versionNumber, previous, next);
+        return new VersionInfoImpl(thisVersion, previous, next);
     }
 
     @Override
     public VersionInfo withPrevious(EventuallyImmutable previous) {
-        int age;
-
-        if (previous != null)
-            age = previous.versionInfo().getVersionNumber() + 1;
-        else
-            age = this.versionNumber;
-
-        return new VersionInfoImpl(thisVersion, age, previous, next);
+        return new VersionInfoImpl(thisVersion, previous, next);
     }
 
     @Override

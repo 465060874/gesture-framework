@@ -71,15 +71,15 @@ public abstract class AbstractWorkflowContainer<I, O>
     }
 
     @Override
-    public void discardReplacement() {
-        super.discardReplacement();
-        childrenManager.discardReplacement();
+    public void discardNext() {
+        super.discardNext();
+        childrenManager.discardNext();
     }
 
     @Override
-    public void discardOlderVersions() {
-        super.discardOlderVersions();
-        childrenManager.discardOlderVersions();
+    public void discardPrevious() {
+        super.discardPrevious();
+        childrenManager.discardPrevious();
     }
 
     @Override

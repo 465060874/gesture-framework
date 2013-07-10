@@ -44,6 +44,8 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
      */
     @SuppressWarnings("unchecked")
     public AbstractWorkflow(AbstractWorkflow<I, O> oldWorkflow, TypeData<I, O> typeData) {
+        if (oldWorkflow.isMutable())
+            throw new RuntimeException("Cannot clone an immutable object");
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, true);
         childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this, oldWorkflow.getChildren());
@@ -84,15 +86,15 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     abstract public AbstractWorkflow<I, O> createMutableClone();
 
     @Override
-    public void discardReplacement() {
-        mutabilityHelper.discardReplacement();
-        childrenManager.discardReplacement();
+    public void discardNext() {
+        mutabilityHelper.discardNext();
+        childrenManager.discardNext();
     }
 
     @Override
-    public void discardOlderVersions() {
-        mutabilityHelper.discardOlderVersions();
-        childrenManager.discardOlderVersions();
+    public void discardPrevious() {
+        mutabilityHelper.discardPrevious();
+        childrenManager.discardPrevious();
     }
 
     @Override
