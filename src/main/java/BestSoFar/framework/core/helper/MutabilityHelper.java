@@ -20,6 +20,7 @@ public class MutabilityHelper implements EventuallyImmutable {
         void delete();
         EventuallyImmutable createMutableClone();
         void discardReplacement();
+        void discardOlderVersions();
     }
 
     public MutabilityHelper(@NonNull EventuallyImmutable thisImmutable, boolean mutable) {

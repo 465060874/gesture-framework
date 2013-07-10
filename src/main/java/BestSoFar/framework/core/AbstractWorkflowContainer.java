@@ -64,6 +64,12 @@ public abstract class AbstractWorkflowContainer<I, O>
     }
 
     @Override
+    public void discardOlderVersions() {
+        super.discardOlderVersions();
+        childrenManager.discardOlderVersions();
+    }
+
+    @Override
     public void delete() {
         super.delete();
         childrenManager.delete();

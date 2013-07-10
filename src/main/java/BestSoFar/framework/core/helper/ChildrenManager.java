@@ -98,4 +98,13 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
         for (C child : children)
             child.discardReplacement();
     }
+
+    /**
+     * Called when the managed parent is having its older versions discarded,
+     * and discards all of its childrens' older versions.
+     */
+    public void discardOlderVersions() {
+        for (C child : children)
+            child.discardOlderVersions();
+    }
 }

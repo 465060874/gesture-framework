@@ -77,6 +77,12 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     }
 
     @Override
+    public void discardOlderVersions() {
+        mutabilityHelper.discardOlderVersions();
+        childrenManager.discardOlderVersions();
+    }
+
+    @Override
     public void delete() {
         mutabilityHelper.delete();
         parentManager.delete();

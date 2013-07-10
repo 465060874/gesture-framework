@@ -56,6 +56,11 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
+    public void discardOlderVersions() {
+        mutabilityHelper.discardOlderVersions();
+    }
+
+    @Override
     abstract public AbstractElement<I, O> createMutableClone();
 
     @Override
