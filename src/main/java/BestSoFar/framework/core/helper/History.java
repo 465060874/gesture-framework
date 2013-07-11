@@ -44,4 +44,12 @@ public abstract class History {
      * @return the {@code Processor} object that created this {@code History} object.
      */
     public abstract Processor<?, ?> getCreator();
+
+    /**
+     * Discards the {@code History} object created by the {@code creator} from this one.
+     *
+     * @param creator the {@link Processor} that created the {@code History} object from this one
+     *                to be deleted.
+     */
+    public abstract void discardFutureFrom(Processor<?, ?> creator);
 }

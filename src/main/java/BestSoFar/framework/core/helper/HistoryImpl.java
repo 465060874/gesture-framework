@@ -2,6 +2,7 @@ package BestSoFar.framework.core.helper;
 
 import BestSoFar.framework.core.Processor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ final public class HistoryImpl extends History {
     private final Map<Processor<?, ?>, History> nextByCreator = new HashMap<>();
 
     @Override
-    public History createNext(Processor<?, ?> creator) {
+    public History createNext(@NonNull Processor<?, ?> creator) {
         History next = nextByCreator.get(creator);
 
         if (next == null) {
@@ -27,5 +28,10 @@ final public class HistoryImpl extends History {
         }
 
         return next;
+    }
+
+    @Override
+    public void discardFutureFrom(Processor<?, ?> creator) {
+        nextByCreator.remove(creator);
     }
 }
