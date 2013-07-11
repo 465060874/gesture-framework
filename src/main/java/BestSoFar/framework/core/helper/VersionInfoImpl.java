@@ -28,21 +28,21 @@ public class VersionInfoImpl extends VersionInfo {
     @Override
     @SuppressWarnings("unchecked")
     public EventuallyImmutable getLatest() {
-        EventuallyImmutable next, pointer = thisVersion;
-        while (null != (next = pointer.versionInfo().getNext()))
-            pointer = next;
+        EventuallyImmutable next, latest = thisVersion;
+        while (null != (next = latest.versionInfo().getNext()))
+            latest = next;
 
-        return pointer;
+        return latest;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public EventuallyImmutable getEarliest() {
-        EventuallyImmutable previous, pointer = thisVersion;
-        while (null != (previous = pointer.versionInfo().getPrevious()))
-            pointer = previous;
+        EventuallyImmutable previous, earliest = thisVersion;
+        while (null != (previous = earliest.versionInfo().getPrevious()))
+            earliest = previous;
 
-        return pointer;
+        return earliest;
     }
 
 }
