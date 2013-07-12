@@ -1,6 +1,7 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.common.EventuallyImmutable;
+import BestSoFar.framework.core.helper.CompletedTrainingBatch;
 import BestSoFar.framework.core.helper.History;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
@@ -58,8 +59,8 @@ public interface Processor<I,O> extends EventuallyImmutable {
     /**
      * Given a list of input {@link Mediator} objects, produce all output {@code Mediator}
      * objects that this {@link Processor} could possibly produce.  The input data will be for
-     * training, and if this {@code Processor} expects to be notified of prior {@code Processors'}
-     * completions, it will be notified by the {@code notify(List<Mediator<?>>)} method,
+     * training, and if this {@code Processor} expects to be notified of prior {@code Processor}
+     * objects' completions, it will be notified by the {@code notify(List<Mediator<?>>)} method,
      * which contains all training data.
      * <p/>
      * For elemental {@code Processors}, this means applying {@code process(input)} on each
@@ -80,25 +81,27 @@ public interface Processor<I,O> extends EventuallyImmutable {
     TypeData<I, O> getTypeData();
 
     /**
-     * After the training batch has been processed to completion, this method is called to map
-     * this {@link Processor} object's output {@link Mediator} objects with their input
-     * {@code Mediators}.
+     * This method is called after a training batch has been processed to completion, and returns
+     * a rolled-back version of the supplied {@link CompletedTrainingBatch}.
      * <p/>
-     * Elemental {@code Processors} will need only to map each {@code Mediator m} with
-     * {@code m.getPrevious()} (see {@code Mediator.create1to1BackwardMapping(..)}).
+     * The supplied {@code completedTrainingBatch} object contains the {@code Mediator} objects
+     * returned from the last call to {@code processTrainingBatch(..)}, and which of those went on
+     * to be successful.
      * <p/>
-     * {@code Processors} containing multiple ways of processing the same input will have
+     * "Rolling-back" means reverting these output {@code Mediator<O>} objects to input
+     * {@code Mediator<I>} objects, and correctly marking which of those went on to be successful.
+     * <p/>
+     * {@code Processor} objects containing multiple ways of processing the same input will have
      * created multiple outputs per input, in which case this method must choose which output
-     * would have been created had the input been given to {@code process(Mediator)}.  Other
-     * outputs should not appear in the returned map, and to ensure this the returned map's
-     * values collection will be checked for duplicates.
+     * would have been created had the input been given to {@code process(input)}.  Only if this
+     * output was successful will its corresponding input mediator will be marked as successful.
      * <p/>
      * If this {@code Processor} needs training or optimising, this is the method to do it.
      * <p/>
      * If this {@code Processor} intends to train a classifier to be used in {Code process(input)}
      * to select the best strategy for each individual input data, it is advisable to create a
-     * classifier for each input {@code Mediator's} {@link History} object.  This means that data
-     * that is created differently is classified differently.
+     * classifier for each input {@code Mediator} object's {@link History} object.  This means
+     * that data that is created differently is classified differently.
      * <p/>
      * One approach would be to use a {@code Map<History, Classifier>} object that is queried in
      * the {@code process(input)} method to get the appropriate
@@ -106,17 +109,15 @@ public interface Processor<I,O> extends EventuallyImmutable {
      * {@code input.getHistory()} object.
      * <p/>
      * It is left to the concrete class to decide whether to do this or not (eg. the training set
-     * would be larger by not doing this).
+     * per classifier would be larger by not doing this).
      *
-     * @param completedOutputs the Mediator objects this object returned from the last call
-     *                         to 'processTrainingBatch'.
-     * @param successfulOutputs the Mediator objects in 'completedOutputs' which went on to
-     *                          be successful.
-     * @return backward mapping for the training batch.
+     * @param completedTrainingBatch the completed training batch, containing the {@link Mediator}
+     *                               objects returned from the last call to
+     *                               {@code processTrainingBatch(..)}, and which of those went on
+     *                               to be successful.
+     * @return the input {@code Mediator} objects that went on to be successful.
      */
-    Map<Mediator<O>, Mediator<I>> createBackwardMappingForTrainingBatch(
-            List<Mediator<?>> completedOutputs,
-            Set<Mediator<?>> successfulOutputs
-    );
+    CompletedTrainingBatch<I> processCompletedTrainingBatch(
+            CompletedTrainingBatch<?> completedTrainingBatch);
 
 }

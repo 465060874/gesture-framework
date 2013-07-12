@@ -18,7 +18,9 @@ import lombok.Getter;
  */
 public abstract class History {
 
-    @Getter private final static History epoch = new HistoryImpl(null, null);
+    public static History getEpoch() {
+        return HistoryImpl.getEpoch();
+    }
 
     /**
      * Create a {@code History} object immediately after this one, created by 'creator'.

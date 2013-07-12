@@ -112,12 +112,16 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Map<Mediator<O>, Mediator<I>> createBackwardMappingForTrainingBatch(List<Mediator<?>> completedOutputs,
-                                                                               Set<Mediator<?>> successfulOutputs) {
+    public CompletedTrainingBatch<I> processCompletedTrainingBatch(CompletedTrainingBatch<?> completedTrainingBatch) {
+        Set<Mediator<O>> allOutputs = (Set<Mediator<O>>) (Set<?>) completedTrainingBatch.getAll();
 
-        List<Mediator<O>> castedOutputs = (List<Mediator<O>>) (List<?>) completedOutputs;
-        return  Mediator.create1to1BackwardMapping(castedOutputs);
+        Set<Mediator<O>> successfulOutputs = (Set<Mediator<O>>) (Set<?>)
+                completedTrainingBatch.getSuccessful();
+
+        Set<Mediator<I>> allInputs = Mediator.rollbackMediators(allOutputs);
+        Set<Mediator<I>> successfulInputs = Mediator.rollbackMediators(successfulOutputs);
+
+        return new CompletedTrainingBatch<>(allInputs, successfulInputs);
     }
-
 
 }

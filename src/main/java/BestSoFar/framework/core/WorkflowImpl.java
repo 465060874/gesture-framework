@@ -1,5 +1,6 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.core.helper.CompletedTrainingBatch;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
 
@@ -77,42 +78,17 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
         return (List<Mediator<O>>) (List<?>) inputs;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<Mediator<O>, Mediator<I>> createBackwardMappingForTrainingBatch(List<Mediator<?>> completedOutputs,
-                                                                               Set<Mediator<?>> successfulOutputs) {
-
+    @SuppressWarnings("unchecked")
+    public CompletedTrainingBatch<I> processCompletedTrainingBatch(CompletedTrainingBatch<?> completedTrainingBatch) {
         ListIterator<Element<?, ?>> itr = getChildren().listIterator(getChildren().size());
-        Map<Mediator<?>, Mediator<?>> backwardMapping;
-        Map<Mediator<?>, Mediator<?>> totalBackwardMapping = new HashMap<>();
 
-        for (Mediator<?> m : completedOutputs)
-            totalBackwardMapping.put(m, m);
-
-        List<Mediator<?>> completedInputs;
-        Set<Mediator<?>> successfulInputs;
-
-        while(itr.hasPrevious()) {
-            backwardMapping = (Map<Mediator<?>, Mediator<?>>)
-                    itr.previous().createBackwardMappingForTrainingBatch(completedOutputs, successfulOutputs).entrySet();
-
-            completedInputs = new LinkedList<>();
-            successfulInputs = new HashSet<>();
-
-            Mediator.mapMediatorsBackward(completedOutputs, backwardMapping, completedInputs);
-            Mediator.mapMediatorsBackward(successfulOutputs, backwardMapping, successfulInputs);
-
-            completedOutputs = completedInputs;
-            successfulOutputs = successfulInputs;
-
-            for (Map.Entry<Mediator<?>, Mediator<?>> entry : totalBackwardMapping.entrySet()) {
-                Mediator<?> input = entry.getValue();
-                Mediator<?> earlierInput = backwardMapping.get(input);
-                entry.setValue(earlierInput);
-            }
+        while (itr.hasPrevious()) {
+            Processor child = itr.previous();
+            completedTrainingBatch = child.processCompletedTrainingBatch(completedTrainingBatch);
         }
 
-        return (Map<Mediator<O>, Mediator<I>>) (Map<?,?>) totalBackwardMapping;
+        return (CompletedTrainingBatch<I>) completedTrainingBatch;
     }
 
     @Override

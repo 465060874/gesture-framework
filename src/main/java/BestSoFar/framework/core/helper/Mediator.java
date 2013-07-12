@@ -80,89 +80,25 @@ public abstract class Mediator<T> {
     public abstract Mediator<?> getPrevious();
 
     /**
-     * Creates a backward mapping (ie. linking each {@code Mediator m} against
-     * {@code m.getPrevious()}) where each output {@code Mediator} came from a unique input
-     * {@code Mediator}.  If any two output {@code Mediator} objects came from the same input
-     * {@code Mediator}, this will throw an {@code AssertionError}.
+     * For every {@code Mediator m} in {@code mediators}, this returns {@code m.getPrevious()} in
+     * a set.
+     * <p/>
+     * NB. Since duplicates are not allowed in a set, if any {@code Mediator} objects in
+     * {@code mediators} share the same previous {@code Mediator}, it will appear only once in
+     * the returned set.
      *
-     * @param outputs the list of output {@code Mediator} objects to map backward.
-     * @param <I> the input data type.
-     * @param <O> the output data type.
-     * @return a backward mapping of the given output {@code Mediator} objects.
-     * @throws AssertionError if any two output {@code Mediator} objects share the same input
-     *                        mediator.
+     * @param mediators the {@code Mediator} objects to roll back to their previous
+     *                  {@code Mediator} objects.
+     * @param <I> the parameterised type of the previous {@code Mediator} objects.
+     * @param <O> the parameterised type of the supplied {@code Mediator} objects.
+     * @return the {@code Mediator} objects that preceded the supplied {@code mediators} set.
      */
     @SuppressWarnings("unchecked")
-    public static <I,O> Map<Mediator<O>, Mediator<I>> create1to1BackwardMapping(List<Mediator<O>> outputs) {
-        Map<Mediator<O>, Mediator<I>> map  = new HashMap<>();
+    public static <I,O> Set<Mediator<I>> rollbackMediators(Set<Mediator<O>> mediators) {
+        Set<Mediator<I>> previousMediators = new HashSet<>();
+        for (Mediator<O> mediator : mediators)
+            previousMediators.add((Mediator<I>) mediator.getPrevious());
 
-        for (Mediator<O> output : outputs) {
-            Mediator<I> commonAncestor = map.put(output, (Mediator<I>) output.getPrevious());
-            if (commonAncestor != null)
-                throw new AssertionError("Two mediators shared the same ancestor");
-        }
-
-        return map;
-    }
-
-    /**
-     * Creates a mapping going from the given list of output {@code Mediator} objects backward,
-     * but reversed (so that the mapping is from an input {@code Mediator} to all the output
-     * {@code Mediator} objects which came from it).
-     * <p/>
-     * This is the version of {@code create1to1BackwardMapping(..)} for when there might be a
-     * one-to-many relationship between input and output {@code Mediator} objects.  From the
-     * returned map, for each input {@code Mediator} an output {@code Mediator} can be chosen.
-     * A mapping can then be made from the output to the input {@code Mediator} objects,
-     * which can be used in {@link Processor}{@code .createBackwardMappingForTrainingBatch(..)}.
-     *
-     * @param outputs the list of output {@code Mediator} objects to map backward.
-     * @param <I> the input data type.
-     * @param <O> the output data type.
-     * @return mapping from input to the output {@code Mediator} objects they created (found in
-     *                 the given 'outputs' list).
-     */
-    @SuppressWarnings("unchecked")
-    public static <I, O> Map<Mediator<I>, List<Mediator<O>>> createReversedBackwardMapping(List<Mediator<O>> outputs) {
-        Map<Mediator<I>, List<Mediator<O>>> map = new HashMap<>();
-
-        for (Mediator<O> output : outputs) {
-            Mediator<I> input = (Mediator<I>) output.getPrevious();
-
-            List<Mediator<O>> outputsFromInput = map.get(input);
-            if (outputsFromInput == null) {
-                outputsFromInput = new LinkedList<>();
-                map.put(input, outputsFromInput);
-            }
-
-            outputsFromInput.add(output);
-        }
-
-        return map;
-    }
-
-    /**
-     * Map the given list of output {@code Mediator} objects back to their input {@code Mediator}
-     * objects using the given backward mapping, and add those inputs to the given 'inputs'
-     * collection.
-     * <p/>
-     * Output {@code Mediator} objects not found in the mapping are discarded.
-     *
-     * @param outputs the list of output {@code Mediator} objects to map backward if they are in
-     *                the given mapping.
-     * @param backwardMapping the mapping of output to input {@code Mediator} objects.
-     * @param inputs the {@link Collection} which mapped inputs are added to.
-     */
-    public static void mapMediatorsBackward(
-            Collection<Mediator<?>> outputs,
-            Map<Mediator<?>, Mediator<?>> backwardMapping,
-            Collection<Mediator<?>> inputs) {
-
-        for (Mediator<?> output : outputs) {
-            Mediator<?> input = backwardMapping.get(output);
-
-            if (input != null)
-                inputs.add(input);
-        }
+        return previousMediators;
     }
 }
