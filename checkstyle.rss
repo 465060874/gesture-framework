@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Gesture Recognition Workflow Framework - Checkstyle report</title>
+    <link>https://github.com/samwright/gesture-framework</link>
+    <description>Gesture Recognition Workflow Framework - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2013</copyright>
+    <item>
+      <title>File: 27,
+             Errors: 276,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>https://github.com/samwright/gesture-framework/checkstyle.html</link>
+      <description>
+        <p>Click <a href="https://github.com/samwright/gesture-framework/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.Element.java">BestSoFar/framework/core/Element.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.MediatorImpl.java">BestSoFar/framework/core/helper/MediatorImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.concretions.helper.Classifier.java">BestSoFar/framework/concretions/helper/Classifier.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.AbstractElement.java">BestSoFar/framework/core/AbstractElement.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.datatypes.InputImage.java">BestSoFar/framework/datatypes/InputImage.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.common.ParentOf.java">BestSoFar/framework/core/common/ParentOf.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.common.ElementObserver.java">BestSoFar/framework/core/common/ElementObserver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.VersionInfoImpl.java">BestSoFar/framework/core/helper/VersionInfoImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  17
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.WorkflowContainer.java">BestSoFar/framework/core/WorkflowContainer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  12
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.Workflow.java">BestSoFar/framework/core/Workflow.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  17
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.WorkflowImpl.java">BestSoFar/framework/core/WorkflowImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.common.Deletable.java">BestSoFar/framework/core/common/Deletable.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.common.ChildOf.java">BestSoFar/framework/core/common/ChildOf.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.MutabilityHelper.java">BestSoFar/framework/core/helper/MutabilityHelper.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  43
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.HistoryImpl.java">BestSoFar/framework/core/helper/HistoryImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.TypeData.java">BestSoFar/framework/core/helper/TypeData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  25
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.ChildrenManager.java">BestSoFar/framework/core/helper/ChildrenManager.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.common.EventuallyImmutable.java">BestSoFar/framework/core/common/EventuallyImmutable.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  24
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.VersionInfo.java">BestSoFar/framework/core/helper/VersionInfo.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.datatypes.TrainingSample.java">BestSoFar/framework/datatypes/TrainingSample.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  13
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.CompletedTrainingBatch.java">BestSoFar/framework/core/helper/CompletedTrainingBatch.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  11
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.History.java">BestSoFar/framework/core/helper/History.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  15
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.AbstractWorkflowContainer.java">BestSoFar/framework/core/AbstractWorkflowContainer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.ParentManager.java">BestSoFar/framework/core/helper/ParentManager.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.helper.Mediator.java">BestSoFar/framework/core/helper/Mediator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.AbstractWorkflow.java">BestSoFar/framework/core/AbstractWorkflow.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#BestSoFar.framework.core.Processor.java">BestSoFar/framework/core/Processor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  50
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
