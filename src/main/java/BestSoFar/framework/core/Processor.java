@@ -1,5 +1,6 @@
 package BestSoFar.framework.core;
 
+import BestSoFar.framework.core.common.ElementObserver;
 import BestSoFar.framework.core.common.EventuallyImmutable;
 import BestSoFar.framework.core.helper.CompletedTrainingBatch;
 import BestSoFar.framework.core.helper.History;
@@ -17,15 +18,16 @@ import java.util.Set;
  * inside another {@code Mediator}.
  * <p/>
  * Before being asked to process a {@code Mediator}, it will first process a training batch.  A
- * typical sequence that the {@code Processor} methods are called is:
+ * typical sequence that the {@code Processor} methods are called in is:
  *   <p/>
  *   - {@code notify(List<Mediator<O>>)} : from observed Processors as they process the
- *       training batch.  Features of the supplied data can be gathered here.
+ *       training batch.  Features of the supplied data can be gathered here. NB. this is only
+ *       called if the {@code Processor} is a {@link ElementObserver}.
  *   <p/>
  *   - {@code processTrainingBatch(..)} : when it's this object's turn to process the
  *     training batch.
  *   <p/>
- *   - {@code createBackwardMappingForTrainingBatch(..)} : when the completed training batch
+ *   - {@code processCompletedTrainingBatch(..)} : when the completed training batch
  *     is travelling backward over the workflow that created it. This is where the
  *     {@code Processor} may learn from the training batch (possibly correlated against
  *     previously-gathered data features).
@@ -33,9 +35,6 @@ import java.util.Set;
  * This sequence allows allows for the {@code Processor} to prepare itself,
  * for example it might choose to process the data in a certain way that worked well during
  * training.
- * <p/>
- * It can also be observed by {@link BestSoFar.framework.core.common.ElementObserver} objects, which are notified when input data
- * (either individually or in a batch) has been processed (but before the output is returned).
  */
 public interface Processor<I,O> extends EventuallyImmutable {
 

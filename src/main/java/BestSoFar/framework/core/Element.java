@@ -7,6 +7,9 @@ import java.util.Set;
 
 /**
  * An {@code Element} is a {@link Processor} which sits inside a {@link Workflow}.
+ *
+ * It can be observed by {@link ElementObserver} objects, which are registered with the
+ * {@code withObservers(newObservers)} method.
  */
 public interface Element<I, O>
         extends Processor<I, O>, ChildOf<Workflow<?, ?>> {
