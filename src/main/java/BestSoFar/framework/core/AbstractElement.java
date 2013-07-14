@@ -53,6 +53,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, true);
         this.observers = (Set<ElementObserver<O>>) (Set<?>) oldElement.getObservers();
+        parentManager.withParent(oldElement.getParent());
         // TODO: use Set<ElementObserver<?>> observers. validation should include ? -> O check.
     }
 

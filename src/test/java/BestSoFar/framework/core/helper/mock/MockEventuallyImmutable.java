@@ -21,7 +21,7 @@ public class MockEventuallyImmutable implements EventuallyImmutable {
         this(false);
     }
 
-    private MockEventuallyImmutable(boolean mutable) {
+    public MockEventuallyImmutable(boolean mutable) {
         this.mutabilityHelper = new MutabilityHelper(this, mutable);
     }
 
