@@ -13,6 +13,7 @@ public class ChildrenManagerTest {
     @Before
     public void setUp() throws Exception {
         parentChild = new MockImmutableParentChild();
+
     }
 
     @Test
