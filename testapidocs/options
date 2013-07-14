@@ -1,0 +1,26 @@
+-classpath
+'/Users/eatmuchpie/Dropbox/Birkbeck/IntelliJ/ProjectPlayground/target/classes:/Users/eatmuchpie/Dropbox/Birkbeck/IntelliJ/ProjectPlayground/target/test-classes:/Users/eatmuchpie/.m2/repository/org/mockito/mockito-all/1.9.5/mockito-all-1.9.5.jar:/Users/eatmuchpie/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/eatmuchpie/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/eatmuchpie/.m2/repository/org/projectlombok/lombok/0.11.8/lombok-0.11.8.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/Users/eatmuchpie/Dropbox/Birkbeck/IntelliJ/ProjectPlayground/src/test/java'
+-author
+-bottom
+'Copyright &#169; 2013. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/eatmuchpie/Dropbox/Birkbeck/IntelliJ/ProjectPlayground/target/site/testapidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Gesture Recognition Workflow Framework 1.0-SNAPSHOT Test API'
+-link
+'../apidocs'
+-linkoffline
+'http://docs.oracle.com/javase/7/docs/api' '/Users/eatmuchpie/Dropbox/Birkbeck/IntelliJ/ProjectPlayground/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'Gesture Recognition Workflow Framework 1.0-SNAPSHOT Test API'
