@@ -162,26 +162,6 @@
                     </execution>
                 </executions>
             </plugin>
-<!--   $baseURI/repos/$owner/$name/git/blobs                   -->
-            <!--<plugin>-->
-                <!--<groupId>com.github.github</groupId>-->
-                <!--<artifactId>site-maven-plugin</artifactId>-->
-                <!--<version>0.7</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>site</goal>-->
-                        <!--</goals>-->
-                        <!--<phase>site-deploy</phase>-->
-                        <!--<configuration>-->
-                            <!--<server>github</server>-->
-                            <!--<path>${project.version}</path>-->
-                            <!--<merge>true</merge>-->
-                            <!--<message>Site for version ${project.version}</message>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
