@@ -11,9 +11,9 @@
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> BestSoFar.framework.core;
 <a class="jxr_linenumber" name="2" href="#2">2</a>   
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> BestSoFar.framework.core.helper.ChildrenManager;
-<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> BestSoFar.framework.core.helper.VersionInfo;
-<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> BestSoFar.framework.core.helper.Mediator;
-<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> BestSoFar.framework.core.helper.TypeData;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> BestSoFar.framework.core.helper.Mediator;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> BestSoFar.framework.core.helper.TypeData;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> BestSoFar.framework.core.helper.VersionInfo;
 <a class="jxr_linenumber" name="7" href="#7">7</a>   
 <a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> java.util.ArrayList;
 <a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> java.util.List;
@@ -95,13 +95,13 @@
 <a class="jxr_linenumber" name="85" href="#85">85</a>      @Override
 <a class="jxr_linenumber" name="86" href="#86">86</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> delete() {
 <a class="jxr_linenumber" name="87" href="#87">87</a>          <strong class="jxr_keyword">super</strong>.delete();
-<a class="jxr_linenumber" name="88" href="#88">88</a>          childrenManager.delete();
+<a class="jxr_linenumber" name="88" href="#88">88</a>          childrenManager.afterDelete();
 <a class="jxr_linenumber" name="89" href="#89">89</a>      }
 <a class="jxr_linenumber" name="90" href="#90">90</a>  
 <a class="jxr_linenumber" name="91" href="#91">91</a>      @Override
 <a class="jxr_linenumber" name="92" href="#92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> fixAsVersion(<a href="../../../BestSoFar/framework/core/helper/VersionInfo.html">VersionInfo</a> versionInfo) {
 <a class="jxr_linenumber" name="93" href="#93">93</a>          <strong class="jxr_keyword">if</strong> (isMutable())
-<a class="jxr_linenumber" name="94" href="#94">94</a>              childrenManager.fixAsVersion(versionInfo);
+<a class="jxr_linenumber" name="94" href="#94">94</a>              childrenManager.beforeFixAsVersion(versionInfo);
 <a class="jxr_linenumber" name="95" href="#95">95</a>  
 <a class="jxr_linenumber" name="96" href="#96">96</a>          <strong class="jxr_keyword">super</strong>.fixAsVersion(versionInfo);
 <a class="jxr_linenumber" name="97" href="#97">97</a>      }
