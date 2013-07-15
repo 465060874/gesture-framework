@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -109,7 +109,7 @@ public class VersionInfoTest {
     public void testUpdateAllToLatest() throws Exception {
         List<EventuallyImmutable> immutables = new LinkedList<>(Arrays.asList(first, second, third));
         VersionInfo.updateAllToLatest(immutables);
-        Assert.assertEquals(Arrays.asList(third, third, third), immutables);
+        assertEquals(Arrays.asList(third, third, third), immutables);
     }
 
     @Test
@@ -120,6 +120,16 @@ public class VersionInfoTest {
 
         List<EventuallyImmutable> immutables = new LinkedList<>(Arrays.asList(first, deleted));
         VersionInfo.updateAllToLatest(immutables);
-        Assert.assertEquals(Arrays.asList(third), immutables);
+        assertEquals(Arrays.asList(third), immutables);
+    }
+
+    @Test
+    public void testUpdateNonVersionedObject() throws Exception {
+        List<String> original = Arrays.asList("hello", "goodbye");
+        List<String> nonVersioned = new LinkedList<>(original);
+        VersionInfo.updateAllToLatest(nonVersioned);
+        assertEquals(original, nonVersioned);
+
+
     }
 }

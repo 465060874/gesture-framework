@@ -5,12 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
-import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.TestCase.*;
+
 
 /**
  * User: Sam Wright Date: 12/07/2013 Time: 13:01
@@ -64,9 +62,8 @@ public class ChildrenManagerTest {
     public void testDiscardNext() throws Exception {
         testWithChildren();
 
-        parent = (MockImmutableParentChild) parent.versionInfo().getPrevious();
-        child1 = (MockImmutableParentChild) child1.versionInfo().getPrevious();
-        child2 = (MockImmutableParentChild) child2.versionInfo().getPrevious();
+        MockImmutableParentChild newChild1 = child1.withParent(null);
+        child1.replaceWith(newChild1);
 
         parent.discardNext();
         assertNull(parent.versionInfo().getNext());
@@ -82,5 +79,14 @@ public class ChildrenManagerTest {
         assertNull(parent.versionInfo().getPrevious());
         assertNull(child1.versionInfo().getPrevious());
         assertNull(child2.versionInfo().getPrevious());
+    }
+
+    @Test
+    public void testFixMultipleTimes() throws Exception {
+        testWithChildren();
+
+        List<MockImmutableParentChild> originalChildren = parent.getChildren();
+        parent.fixAsVersion(parent.versionInfo());
+        assertTrue(originalChildren == parent.getChildren());
     }
 }

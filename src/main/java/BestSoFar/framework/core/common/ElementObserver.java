@@ -5,7 +5,6 @@ import BestSoFar.framework.core.Processor;
 import BestSoFar.framework.core.helper.Mediator;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * An object the observes the processing of data in a {@link Element}.

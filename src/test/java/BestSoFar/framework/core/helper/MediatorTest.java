@@ -8,9 +8,9 @@ import org.mockito.Mock;
 import org.mockito.internal.util.collections.Sets;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.Set;
 
-import static org.junit.Assert.*;
+import static junit.framework.TestCase.*;
 
 /**
  * User: Sam Wright Date: 11/07/2013 Time: 13:50

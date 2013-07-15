@@ -1,7 +1,6 @@
 package BestSoFar.framework.core.helper;
 
 import BestSoFar.framework.core.common.EventuallyImmutable;
-import lombok.Getter;
 
 import java.util.Collection;
 import java.util.LinkedList;

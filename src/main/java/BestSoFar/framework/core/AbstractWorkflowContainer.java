@@ -1,9 +1,9 @@
 package BestSoFar.framework.core;
 
 import BestSoFar.framework.core.helper.ChildrenManager;
-import BestSoFar.framework.core.helper.VersionInfo;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
+import BestSoFar.framework.core.helper.VersionInfo;
 
 import java.util.ArrayList;
 import java.util.List;

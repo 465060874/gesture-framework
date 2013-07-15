@@ -4,7 +4,7 @@ import BestSoFar.framework.core.helper.mock.MockEventuallyImmutable;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static junit.framework.TestCase.*;
 
 /**
  * User: Sam Wright Date: 10/07/2013 Time: 17:16
@@ -108,9 +108,10 @@ public class MutabilityHelperTest {
         first.replaceWith(third);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testCannotReplaceSelf() throws Exception {
+    @Test
+    public void testCanReplaceSelf() throws Exception {
         first.replaceWith(first);
+        assertNull(first.versionInfo().getNext());
     }
 
     @Test
@@ -231,5 +232,10 @@ public class MutabilityHelperTest {
         first.discardNext();
         assertFalse(first.isDeleted());
         first.replaceWith(first.createMutableClone());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testCannotClone() throws Exception {
+        mutabilityHelper.createMutableClone();
     }
 }

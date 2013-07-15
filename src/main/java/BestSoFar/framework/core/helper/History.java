@@ -1,7 +1,6 @@
 package BestSoFar.framework.core.helper;
 
 import BestSoFar.framework.core.Processor;
-import lombok.Getter;
 
 /**
  * Each {@code History} object represents a unique sequence of {@link Processor} objects - ie. no

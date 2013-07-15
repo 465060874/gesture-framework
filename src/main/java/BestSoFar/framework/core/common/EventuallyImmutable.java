@@ -1,7 +1,6 @@
 package BestSoFar.framework.core.common;
 
 import BestSoFar.framework.core.helper.VersionInfo;
-import BestSoFar.framework.core.helper.VersionInfo;
 
 /**
  * An object which eventually becomes immutable.

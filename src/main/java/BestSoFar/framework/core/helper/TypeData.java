@@ -12,13 +12,18 @@ import lombok.NonNull;
  */
 @AllArgsConstructor()
 @EqualsAndHashCode
-public class TypeData<I, O> {
+final public class TypeData<I, O> {
     @Getter @NonNull private final Class<I> inputType;
     @Getter @NonNull private final Class<O> outputType;
 
     @Override
     public String toString() {
-        return "<" + inputType + " , " + outputType + ">";
+        return new StringBuilder("<")
+                .append(inputType.getSimpleName())
+                .append(",")
+                .append(outputType.getSimpleName())
+                .append(">")
+                .toString();
     }
 
     /**

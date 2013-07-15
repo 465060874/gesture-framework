@@ -1,12 +1,8 @@
 package BestSoFar.framework.core.helper;
 
-import BestSoFar.framework.core.common.ChildOf;
 import BestSoFar.framework.core.common.EventuallyImmutable;
-import BestSoFar.framework.core.common.ParentOf;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 /**
  * A helper object that manages an {@link EventuallyImmutable} object (which delegates to this).
@@ -56,7 +52,7 @@ public class MutabilityHelper implements EventuallyImmutable {
     @Override
     public void replaceWith(@NonNull EventuallyImmutable replacement) {
         if (versionInfo.getThisVersion() == replacement)
-            throw new RuntimeException("Cannot replace object with itself");
+            return;
         if (isMutable())
             throw new RuntimeException("Cannot replace a mutable object - fix this first");
         if (isDeleted())

@@ -7,8 +7,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotSame;
 
 /**
  * User: Sam Wright Date: 11/07/2013 Time: 13:13

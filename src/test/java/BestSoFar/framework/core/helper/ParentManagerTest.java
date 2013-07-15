@@ -6,9 +6,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.TestCase.*;
 
 /**
  * User: Sam Wright Date: 15/07/2013 Time: 09:24
@@ -68,6 +66,13 @@ public class ParentManagerTest {
     }
 
     @Test
+    public void testWithSameParent() throws Exception {
+        testWithParentBothChildren();
+
+        assertEquals(child1, child1.withParent(parent));
+    }
+
+    @Test
     public void testDelete() throws Exception {
         testWithParentBothChildren();
         child2.delete();
@@ -83,6 +88,7 @@ public class ParentManagerTest {
         assertEquals(Arrays.asList(newChild1), newParent.getChildren());
         assertNull(child2.versionInfo().getNext());
         assertTrue(child2.isDeleted());
-
     }
+
+
 }

@@ -5,7 +5,9 @@ import BestSoFar.framework.core.helper.*;
 import lombok.Delegate;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Abstract implementation of {@link Element} for elemental processors to extend,

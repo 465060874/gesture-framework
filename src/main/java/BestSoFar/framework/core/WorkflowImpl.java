@@ -4,7 +4,8 @@ import BestSoFar.framework.core.helper.CompletedTrainingBatch;
 import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
 
-import java.util.*;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Implementation of Workflow.

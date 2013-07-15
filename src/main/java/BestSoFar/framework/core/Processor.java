@@ -8,8 +8,6 @@ import BestSoFar.framework.core.helper.Mediator;
 import BestSoFar.framework.core.helper.TypeData;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The top-level interface for all parts of the workflow framework.

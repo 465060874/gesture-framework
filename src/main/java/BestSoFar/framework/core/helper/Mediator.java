@@ -2,7 +2,8 @@ package BestSoFar.framework.core.helper;
 
 import BestSoFar.framework.core.Processor;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Mediator objects contain data that was produced from a {@link Processor} object, and can

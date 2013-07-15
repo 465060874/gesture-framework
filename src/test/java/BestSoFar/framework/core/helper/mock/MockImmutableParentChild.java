@@ -58,10 +58,8 @@ public class MockImmutableParentChild extends MockEventuallyImmutable
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
-        if (isMutable()) {
-            parentManager.beforeFixAsVersion(versionInfo);
-            childrenManager.beforeFixAsVersion(versionInfo);
-        }
+        parentManager.beforeFixAsVersion(versionInfo);
+        childrenManager.beforeFixAsVersion(versionInfo);
 
         super.fixAsVersion(versionInfo);
     }
