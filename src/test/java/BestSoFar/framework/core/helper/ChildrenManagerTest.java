@@ -53,20 +53,11 @@ public class ChildrenManagerTest {
     @Test
     public void testDeleteChild() throws Exception {
         testWithChildren();
-        child2.delete();
+        parent.delete();
 
-        MockImmutableParentChild newChild1, newParent;
-
-        newParent = (MockImmutableParentChild) parent.versionInfo().getNext();
-        assertNull(newParent.versionInfo().getNext());
-
-        newChild1 = (MockImmutableParentChild) child1.versionInfo().getNext();
-        assertNull(newChild1.versionInfo().getNext());
-
-        assertEquals(Arrays.asList(newChild1), newParent.getChildren());
-        assertNull(child2.versionInfo().getNext());
+        assertTrue(parent.isDeleted());
+        assertTrue(child1.isDeleted());
         assertTrue(child2.isDeleted());
-
     }
 
     @Test
