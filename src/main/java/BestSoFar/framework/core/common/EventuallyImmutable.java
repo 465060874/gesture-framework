@@ -48,7 +48,7 @@ public interface EventuallyImmutable extends Deletable {
      * <p/>
      * Calling {@code replaceWith(replacement)} creates the new
      * {@link BestSoFar.framework.core.helper.VersionInfo version} information and passes it to
-     * {@code replacement.fixAsVersion(version)}.
+     * {@code replacement.beforeFixAsVersion(version)}.
      *
      * @param versionInfo the new version information for this object.
      */

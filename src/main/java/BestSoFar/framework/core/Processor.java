@@ -114,7 +114,7 @@ public interface Processor<I,O> extends EventuallyImmutable {
      *                               objects returned from the last call to
      *                               {@code processTrainingBatch(..)}, and which of those went on
      *                               to be successful.
-     * @return the input {@code Mediator} objects that went on to be successful.
+     * @return the rolled-back {@code CompletedTrainingBatch}.
      */
     CompletedTrainingBatch<I> processCompletedTrainingBatch(
             CompletedTrainingBatch<?> completedTrainingBatch);

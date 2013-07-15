@@ -23,10 +23,6 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
     private final MutabilityHelper mutabilityHelper;
 
-    {
-        parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this);
-    }
-
     /**
      * Constructs the initial (and immutable) {@code AbstractElement} with the given
      * {@link TypeData}.
@@ -37,6 +33,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, false);
         observers = Collections.emptySet();
+        parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this);
     }
 
     /**
@@ -53,7 +50,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, true);
         this.observers = (Set<ElementObserver<O>>) (Set<?>) oldElement.getObservers();
-        parentManager.withParent(oldElement.getParent());
+        parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this, oldElement.getParent());
         // TODO: use Set<ElementObserver<?>> observers. validation should include ? -> O check.
     }
 
@@ -84,14 +81,14 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     @Override
     public void delete() {
         mutabilityHelper.delete();
-        parentManager.delete();
+        parentManager.afterDelete();
     }
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
-        if (isMutable()) {
-            parentManager.fixAsVersion(versionInfo);
+        parentManager.beforeFixAsVersion(versionInfo);
 
+        if (isMutable()) {
             // Make mutable clone of observers set
             observers = new HashSet<>(observers);
             // Update observers to their latest versions

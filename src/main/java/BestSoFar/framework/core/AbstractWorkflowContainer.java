@@ -85,13 +85,13 @@ public abstract class AbstractWorkflowContainer<I, O>
     @Override
     public void delete() {
         super.delete();
-        childrenManager.delete();
+        childrenManager.afterDelete();
     }
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
         if (isMutable())
-            childrenManager.fixAsVersion(versionInfo);
+            childrenManager.beforeFixAsVersion(versionInfo);
 
         super.fixAsVersion(versionInfo);
     }

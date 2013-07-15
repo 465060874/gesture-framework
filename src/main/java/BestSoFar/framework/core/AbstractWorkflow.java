@@ -19,10 +19,6 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
     private final MutabilityHelper mutabilityHelper;
 
-    {
-        parentManager = new ParentManager<>((Workflow<I, O>) this);
-    }
-
     /**
      * Constructs the initial (and immutable) {@code AbstractWorkflow} with the given
      * {@link TypeData}.
@@ -33,6 +29,7 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, false);
         childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this);
+        parentManager = new ParentManager<>((Workflow<I, O>) this);
     }
 
     /**
@@ -49,7 +46,7 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, true);
         childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this, oldWorkflow.getChildren());
-        parentManager.withParent(oldWorkflow.getParent());
+        parentManager = new ParentManager<>((Workflow<I, O>) this, oldWorkflow.getParent());
     }
 
     @Override
@@ -101,16 +98,15 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     @Override
     public void delete() {
         mutabilityHelper.delete();
-        parentManager.delete();
-        childrenManager.delete();
+        parentManager.afterDelete();
+        childrenManager.afterDelete();
     }
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
-        if (isMutable()) {
-            parentManager.fixAsVersion(versionInfo);
-            childrenManager.fixAsVersion(versionInfo);
-        }
+        parentManager.beforeFixAsVersion(versionInfo);
+        childrenManager.beforeFixAsVersion(versionInfo);
+
         mutabilityHelper.fixAsVersion(versionInfo);
     }
 }

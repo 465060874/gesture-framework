@@ -55,15 +55,15 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called when the managed parent has been deleted to delete all its children..
+     * Called after the managed parent has been deleted, to delete all its children..
      */
-    public void delete() {
+    public void afterDelete() {
         for (C child : children)
             child.delete();
     }
 
     /**
-     * Called when the managed parent is being fixed and is still mutable.
+     * Called before the managed parent is being fixed.
      * <p/>
      * One of four scenarios caused this update:
      * <p/>
@@ -78,7 +78,10 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      * @param versionInfo the new version information.
      */
     @SuppressWarnings("unchecked")
-    public void fixAsVersion(VersionInfo versionInfo) {
+    public void beforeFixAsVersion(VersionInfo versionInfo) {
+        if (!managedParent.isMutable())
+            return;
+
         List<C> latestChildren = new LinkedList<>(children);
 
         // Update all children to their latest versions, removing those that were deleted.
@@ -86,16 +89,15 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
         children = new LinkedList<>();
 
         for (C child : latestChildren) {
-            if (child.getParent() == versionInfo.getPrevious()) {
-                // If the child still thinks of managedParent's previous version as its parent,
-                // create a version of the child with the managedParent as the parent
+            if (child.getParent() == managedParent) {
+                // The child has already been created pointing to managedParent as its
+                // parent, so keep it as is.
+                children.add(child);
+            } else {
+                // The child needs to have managedParent set as its parent.
                 C newChild = (C) child.withParent(managedParent);
                 child.replaceWith(newChild);
                 children.add(newChild);
-            } else if (child.getParent() == managedParent) {
-                // Otherwise the child has already been created pointing to managedParent as its
-                // parent, so keep it as is.
-                children.add(child);
             }
         }
 

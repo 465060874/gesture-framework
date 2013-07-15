@@ -21,12 +21,24 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
     private final C managedChild;
 
     /**
-     * Create a {@code ParentManager} to manage the given child's parent.
+     * Create a {@code ParentManager} to manage the given child's parent,
+     * which is initially set to null.
      *
      * @param managedChild the child who's parent this will manage.
      */
     public ParentManager(@NonNull C managedChild) {
+        this(managedChild, null);
+    }
+
+    /**
+     * Create a {@code ParentManage} to manage the given child's given {@code parent}.
+     *
+     * @param managedChild the child who's parent this will manage.
+     * @param parent the child's parent.
+     */
+    public ParentManager(@NonNull C managedChild, P parent) {
         this.managedChild = managedChild;
+        this.parent = parent;
     }
 
     @Override
@@ -48,13 +60,13 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called when the managed child has been deleted.
+     * Called after the managed child has been deleted.
      * <p/>
      * If the child has a parent that wasn't deleted, this method removes the child from it.
      */
     @SuppressWarnings("unchecked")
-    public void delete() {
-        if (getParent() != null && !getParent().isDeleted()) {
+    public void afterDelete() {
+        if (getParent() != null && !getParent().isDeleted() && !getParent().isMutable()) {
             List<C> siblings = new LinkedList<>(getParent().getChildren());
             siblings.remove(managedChild);
             P newParent = (P) getParent().createMutableClone();
@@ -64,7 +76,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called when the managed child is being fixed and is still mutable.
+     * Called before the managed child is fixed.
      * <p/>
      * One of two scenarios caused this update
      * <p/>
@@ -75,13 +87,13 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      * @param versionInfo the new version information.
      */
     @SuppressWarnings("unchecked")
-    public void fixAsVersion(VersionInfo versionInfo) {
+    public void beforeFixAsVersion(VersionInfo versionInfo) {
         // In scenario 1, the parent is updating its children to point to the new version of the
         // parent.  There's nothing to do!
 
         // In scenario 2, the parent remains its old, immutable version.  We must create a new
         // parent given the updated list of children.
-        if (getParent() != null && !getParent().isMutable()) {
+        if (getParent() != null && !getParent().isMutable() && managedChild.isMutable()) {
             List<C> newSiblings = new LinkedList<>(getParent().getChildren());
             VersionInfo.updateAllToLatest(newSiblings);
             if (!newSiblings.contains(managedChild))
