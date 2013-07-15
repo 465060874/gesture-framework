@@ -26,80 +26,70 @@ public class ChildrenManagerTest {
         parent = new MockImmutableParentChild();
     }
 
-    private void updateToNext() {
-        MockImmutableParentChild newParent, newChild1, newChild2;
-
-        if (parent != null) {
-            newParent = (MockImmutableParentChild) parent.versionInfo().getNext();
-            assertEquals(parent.versionInfo().getNext(), newParent);
-            assertNull(newParent.versionInfo().getNext());
-        } else {
-            newParent = null;
-        }
-
-        if (child1 != null) {
-            newChild1 = (MockImmutableParentChild) child1.versionInfo().getNext();
-            assertEquals(child1.versionInfo().getNext(), newChild1);
-            assertNull(newChild1.versionInfo().getNext());
-        } else {
-            newChild1 = null;
-        }
-
-        if (child2 != null) {
-            newChild2 = (MockImmutableParentChild) child2.versionInfo().getNext();
-            assertEquals(child2.versionInfo().getNext(), newChild2);
-            assertNull(newChild2.versionInfo().getNext());
-        } else {
-            newChild2 = null;
-        }
-
-        parent = newParent;
-        child1 = newChild1;
-        child2 = newChild2;
-    }
-
     @Test
     public void testWithChildren() throws Exception {
         MockImmutableParentChild newParent = parent.withChildren(Arrays.asList(child1, child2));
         parent.replaceWith(newParent);
-        updateToNext();
 
-        assertEquals(parent, child1.getParent());
-        assertEquals(parent, child2.getParent());
-        assertEquals(Arrays.asList(child1, child2), parent.getChildren());
+        MockImmutableParentChild newChild1, newChild2;
 
+        assertNull(newParent.versionInfo().getNext());
+
+        newChild1 = (MockImmutableParentChild) child1.versionInfo().getNext();
+        assertNull(newChild1.versionInfo().getNext());
+
+        newChild2 = (MockImmutableParentChild) child2.versionInfo().getNext();
+        assertNull(newChild2.versionInfo().getNext());
+
+        assertEquals(newParent, newChild1.getParent());
+        assertEquals(newParent, newChild2.getParent());
+        assertEquals(Arrays.asList(newChild1, newChild2), newParent.getChildren());
+
+        child1 = newChild1;
+        child2 = newChild2;
+        parent = newParent;
     }
 
     @Test
     public void testDeleteChild() throws Exception {
         testWithChildren();
         child2.delete();
-        MockImmutableParentChild deletedChild = child2;
-        child2 = null;
-        updateToNext();
 
-        assertEquals(Arrays.asList(child1), parent.getChildren());
-        assertTrue(deletedChild.isDeleted());
+        MockImmutableParentChild newChild1, newParent;
 
-    }
+        newParent = (MockImmutableParentChild) parent.versionInfo().getNext();
+        assertNull(newParent.versionInfo().getNext());
 
-    @Test
-    public void testFixAsVersion() throws Exception {
+        newChild1 = (MockImmutableParentChild) child1.versionInfo().getNext();
+        assertNull(newChild1.versionInfo().getNext());
+
+        assertEquals(Arrays.asList(newChild1), newParent.getChildren());
+        assertNull(child2.versionInfo().getNext());
+        assertTrue(child2.isDeleted());
 
     }
 
     @Test
     public void testDiscardNext() throws Exception {
+        testWithChildren();
 
+        parent = (MockImmutableParentChild) parent.versionInfo().getPrevious();
+        child1 = (MockImmutableParentChild) child1.versionInfo().getPrevious();
+        child2 = (MockImmutableParentChild) child2.versionInfo().getPrevious();
+
+        parent.discardNext();
+        assertNull(parent.versionInfo().getNext());
+        assertNull(child1.versionInfo().getNext());
+        assertNull(child2.versionInfo().getNext());
     }
 
     @Test
     public void testDiscardPrevious() throws Exception {
+        testWithChildren();
 
-    }
-
-    @Test
-    public void testGetChildren() throws Exception {
-
+        parent.discardPrevious();
+        assertNull(parent.versionInfo().getPrevious());
+        assertNull(child1.versionInfo().getPrevious());
+        assertNull(child2.versionInfo().getPrevious());
     }
 }
