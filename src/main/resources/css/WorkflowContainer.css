@@ -1,0 +1,15 @@
+#workflowContainer {
+    -fx-border-color: grey;
+    -fx-border-width: 2;
+}
+
+#workflowsBox {
+    -fx-border-color: lightgrey;
+    -fx-border-width: 2;
+    /*-fx-padding: 10;*/
+    -fx-spacing: 20;
+}
+
+/*#workflowsBox : hover {*/
+    /*-fx-background-color: purple;*/
+/*}*/

@@ -1,0 +1,9 @@
+#workflow {
+    -fx-border-color: cornflowerblue;
+    -fx-border-width: 2;
+}
+
+#elementsBox {
+    -fx-border-color: lightgrey;
+    -fx-border-width: 2;
+}

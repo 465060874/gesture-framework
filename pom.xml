@@ -15,9 +15,14 @@
         <lombok-version>0.11.8</lombok-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
+        <fx.home>${java.home}</fx.home>
         <github.global.server>github</github.global.server>
         <git.name>samwright</git.name>
     </properties>
+
+    <organization>
+        <name>Sam Wright</name>
+    </organization>
 
     <developers>
         <developer>
@@ -35,7 +40,6 @@
 
     <scm>
         <url>${project.url}</url>
-        <!--<connection>scm:git:git@github.com:samwright/gesture-framework.git</connection>-->
         <connection>scm:git:https://github.com/samwright/gesture-framework.git</connection>
         <developerConnection>scm:git:git@github.com:samwright/gesture-framework.git</developerConnection>
     </scm>
@@ -209,6 +213,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.3</version>
+            </plugin>
+
+            <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <mainClass>io.github.samwright.framework.MainApp</mainClass>
+                </configuration>
             </plugin>
 
         </plugins>

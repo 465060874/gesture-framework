@@ -30,7 +30,7 @@ import io.github.samwright.framework.model.helper.VersionInfo;
  *
  * @see io.github.samwright.framework.model.helper.MutabilityHelper MutabilityHelper
  */
-public interface EventuallyImmutable extends Deletable {
+public interface EventuallyImmutable extends Replaceable {
     /**
      * Create a mutable clone of this object.  It will remain mutable until passed as a
      * {@code replacement} to {@code replaceWith(replacement)}, at which point
@@ -61,47 +61,5 @@ public interface EventuallyImmutable extends Deletable {
      */
     boolean isMutable();
 
-    /**
-     * Propose a replacement for this object.  How this is handled is determined by the concrete
-     * class implementing this.
-     * <p/>
-     * This must have no next version, and the replacement must have no previous version -
-     * otherwise a RuntimeException is thrown.
-     * <p/>
-     * As an example, a sequence of versions between {@code EventuallyImmutable}
-     * objects {@code start} and {@code end} can be contracted using
-     *
-     * <pre>{@code
-     * start.discardNext();  // start.getNext() == null
-     * end.discardPrevious(); // end.getPrevious() == null
-     * start.replaceWith(end);
-     * }</pre>
-     *
-     * @param replacement the replacement to propose.
-     * @throws RuntimeException if this object is still mutable,
-     *                          or has already been replaced or deleted.
-     */
-    void replaceWith(EventuallyImmutable replacement);
 
-    /**
-     * Discards any replacement to this object and ensures this object is not deleted,
-     * therefore allowing for it to be replaced by another {@code EventuallyImmutable} object.
-     * In doing so, it makes the next version discard its previous version.
-     */
-    void discardNext();
-
-    /**
-     * Discard older versions of this, so they may be freed by the garbage collector.  In doing
-     * so it makes the previous version discard its next version.
-     */
-    void discardPrevious();
-
-    /**
-     * Gets the {@link VersionInfo} object that describes this object.  It contains
-     * information about this version of the {@code EventuallyImmutable} object,
-     * and its earlier and later versions.
-     *
-     * @return the version information about this object.
-     */
-    VersionInfo versionInfo();
 }

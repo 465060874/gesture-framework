@@ -47,6 +47,9 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     @Override
     public boolean isValid() {
+        if (getChildren().isEmpty())
+            return false;
+
         for (Workflow<I, O> workflow : getChildren()) {
             if (!workflow.isValid())
                 return false;

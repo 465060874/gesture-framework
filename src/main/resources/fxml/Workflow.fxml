@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--<AnchorPane id="AnchorPane" xmlns:fx="http://javafx.com/fxml">-->
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<fx:root fx:id="workflow" type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/Workflow.css">
+  <children>
+    <Label alignment="CENTER" text="Workflow" />
+    <HBox fx:id="elementsBox" />
+  </children>
+</fx:root>
