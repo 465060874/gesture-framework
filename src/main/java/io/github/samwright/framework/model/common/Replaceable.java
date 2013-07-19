@@ -63,15 +63,7 @@ public interface Replaceable {
      */
     boolean isDeleted();
 
-    /**
-     * Sets the {@link io.github.samwright.framework.controller.ModelController} for this object, which is notified when the its latest version
-     * is changed.
-     * <p/>
-     * The {@code ModelController} is set
-     * @param controller
-     */
-    void setController(ModelController controller);
-
+    void setController(ModelController modelController);
 
     ModelController getController();
 }

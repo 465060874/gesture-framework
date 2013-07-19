@@ -78,6 +78,18 @@ public interface Processor<I,O> extends EventuallyImmutable {
     TypeData<I, O> getTypeData();
 
     /**
+     * Return a clone of this with the given {@link TypeData}.  It will only work if this is
+     * immutable (since the parametric types must be set at instantiation).
+     *
+     * @param newTypeData the type data to put in the returned clone.
+     * @param <I2> the input type of the returned clone.
+     * @param <O2> the output type of the returned clone.
+     * @return a clone of this with the given {@code TypeData}.
+     * @throws RuntimeException if this is still mutable.
+     */
+    <I2, O2> Processor<I2, O2> withTypeData(TypeData<I2, O2> newTypeData);
+
+    /**
      * This method is called after a training batch has been processed to completion, and returns
      * a rolled-back version of the supplied {@link CompletedTrainingBatch}.
      * <p/>

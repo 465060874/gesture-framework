@@ -1,26 +1,21 @@
 package io.github.samwright.framework.controller;
 
-import io.github.samwright.framework.controller.helper.WorkflowLinkController;
-import io.github.samwright.framework.model.common.Replaceable;
-import javafx.fxml.FXML;
-import javafx.scene.layout.HBox;
-import lombok.NonNull;
+import io.github.samwright.framework.model.Element;
+import io.github.samwright.framework.model.Workflow;
 
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 21:15
  */
-public class WorkflowController extends AbstractModelController {
+abstract public class WorkflowController<I, O> extends ModelController<Workflow<I, O>> {
 
-    @FXML
-    private HBox elementsBox;
-
-    public WorkflowController(@NonNull Replaceable model) {
-        super("/fxml/Workflow.fxml", model);
+    public WorkflowController(String fxmlResource) {
+        super(fxmlResource);
     }
 
     @Override
-    public void notify(Replaceable model) {
-        super.notify(model);
-        elementsBox.getChildren().add(new WorkflowLinkController());
+    public void handleUpdatedModel() {
+        for (Element<?, ?> element : getModel().getChildren())
+            element.getController().handleUpdatedModel();
     }
+
 }

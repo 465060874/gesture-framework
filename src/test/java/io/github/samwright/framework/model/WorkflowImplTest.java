@@ -1,6 +1,5 @@
 package io.github.samwright.framework.model;
 
-import io.github.samwright.framework.model.AbstractWorkflowContainer;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 import org.junit.Test;
@@ -30,6 +29,11 @@ public class WorkflowImplTest {
         @Override
         public Mediator<String> process(Mediator<?> input) {
             return getChildren().get(0).process(input);
+        }
+
+        @Override
+        public <I2, O2> WorkflowContainer<I2, O2> withTypeData(TypeData<I2, O2> newTypeData) {
+            throw new RuntimeException("not implemented");
         }
     }
 

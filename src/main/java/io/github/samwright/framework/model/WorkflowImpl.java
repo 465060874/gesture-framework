@@ -29,7 +29,7 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
      * @param oldWorkflow the {@code WorkflowImpl} to clone.
      * @param typeData the input/output types of this object.
      */
-    public WorkflowImpl(WorkflowImpl<I, O> oldWorkflow,
+    public WorkflowImpl(WorkflowImpl<?, ?> oldWorkflow,
                         TypeData<I, O> typeData) {
         super(oldWorkflow, typeData);
     }
@@ -92,8 +92,9 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
         return (CompletedTrainingBatch<I>) completedTrainingBatch;
     }
 
+
     @Override
-    public WorkflowImpl<I, O> createMutableClone() {
-        return new WorkflowImpl<>(this, getTypeData());
+    public <I2, O2> Workflow<I2, O2> withTypeData(TypeData<I2, O2> newTypeData) {
+        return new WorkflowImpl<>(this, newTypeData);
     }
 }

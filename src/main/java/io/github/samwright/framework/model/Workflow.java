@@ -2,6 +2,7 @@ package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.common.ParentOf;
+import io.github.samwright.framework.model.helper.TypeData;
 
 import java.util.List;
 
@@ -34,9 +35,14 @@ import java.util.List;
 public interface Workflow<I, O>
         extends Processor<I, O> , ChildOf<WorkflowContainer<I, O>>, ParentOf<Element<?, ?>> {
 
+    @Override
     Workflow<I, O> withChildren(List<Element<?, ?>> newChildren);
 
+    @Override
     Workflow<I, O> withParent(WorkflowContainer<I, O> newParent);
+
+    @Override
+    <I2, O2> Workflow<I2, O2> withTypeData(TypeData<I2, O2> newTypeData);
 }
 
 

@@ -40,13 +40,14 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
      * @param typeData the input/output types of this object.
      */
     @SuppressWarnings("unchecked")
-    public AbstractWorkflow(AbstractWorkflow<I, O> oldWorkflow, TypeData<I, O> typeData) {
+    public AbstractWorkflow(AbstractWorkflow<?, ?> oldWorkflow, TypeData<I, O> typeData) {
         if (oldWorkflow.isMutable())
             throw new RuntimeException("Cannot clone an immutable object");
         this.typeData = typeData;
         mutabilityHelper = new MutabilityHelper(this, true);
         childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this, oldWorkflow.getChildren());
-        parentManager = new ParentManager<>((Workflow<I, O>) this, oldWorkflow.getParent());
+        parentManager = new ParentManager<Workflow<I,O>,WorkflowContainer<I, O>>
+                (this, (WorkflowContainer<I, O>) oldWorkflow.getParent());
     }
 
     @Override
@@ -68,20 +69,17 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
     @Override
     @SuppressWarnings("unchecked")
     public Workflow<I, O> withParent(WorkflowContainer<I, O> newParent) {
-        if (newParent != null && !typeData.equals(getParent().getTypeData())) {
-            String msg = String.format(
-                    "Workflow%s must have same type data as WorkflowContainer%s",
-                    typeData.toString(),
-                    getParent().getTypeData().toString()
-            );
-            throw new ClassCastException(msg);
-        }
-
-        return parentManager.withParent(newParent);
+        if (newParent != null && getParent() != null
+                && !typeData.equals(getParent().getTypeData()))
+            return withTypeData(newParent.getTypeData()).withParent(newParent);
+        else
+            return parentManager.withParent(newParent);
     }
 
     @Override
-    abstract public AbstractWorkflow<I, O> createMutableClone();
+    public AbstractWorkflow<I, O> createMutableClone() {
+        return (AbstractWorkflow<I, O>) withTypeData(getTypeData());
+    }
 
     @Override
     public void discardNext() {
@@ -104,8 +102,8 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
-        parentManager.beforeFixAsVersion(versionInfo);
         childrenManager.beforeFixAsVersion(versionInfo);
+        parentManager.beforeFixAsVersion(versionInfo);
 
         mutabilityHelper.fixAsVersion(versionInfo);
     }

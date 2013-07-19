@@ -38,11 +38,13 @@ public abstract class AbstractWorkflowContainer<I, O>
      * @param oldWorkflowContainer the {@code AbstractWorkflowContainer} to clone.
      * @param typeData the input/output types of this object.
      */
-    public AbstractWorkflowContainer(AbstractWorkflowContainer<I, O> oldWorkflowContainer,
+    @SuppressWarnings("unchecked")
+    public AbstractWorkflowContainer(AbstractWorkflowContainer<?, ?> oldWorkflowContainer,
                                      TypeData<I, O> typeData) {
         super(oldWorkflowContainer, typeData);
-        childrenManager = new ChildrenManager<>((WorkflowContainer<I, O>) this,
-                oldWorkflowContainer.getChildren());
+        childrenManager = new ChildrenManager<Workflow<I,O>, WorkflowContainer<I, O>>(
+                this,
+                (List<Workflow<I,O>>) (List<?>) oldWorkflowContainer.getChildren());
     }
 
     @Override
@@ -93,14 +95,20 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
-        if (isMutable())
+        System.out.println("fixasversion1");
+        if (isMutable()) {
+            System.out.println("fixasversion2");
             childrenManager.beforeFixAsVersion(versionInfo);
+        }
+        System.out.println("fixasversion3");
 
         super.fixAsVersion(versionInfo);
     }
 
     @Override
-    public abstract AbstractWorkflowContainer<I, O> createMutableClone();
+    public AbstractWorkflowContainer<I, O> createMutableClone() {
+        return (AbstractWorkflowContainer<I, O>) withTypeData(getTypeData());
+    }
 
     @Override
     public List<Workflow<I, O>> getChildren() {

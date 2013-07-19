@@ -1,0 +1,35 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="workflow" class="io.github.samwright.framework.model.WorkflowImpl">
+        <constructor-arg ref="defaultTypeData" />
+        <property name="controller" ref="workflowController"/>
+    </bean>
+
+    <bean id="topWorkflowContainer" class="io.github.samwright.framework.model.TopWorkflowContainer">
+        <constructor-arg ref="defaultTypeData"/>
+        <property name="controller" ref="workflowContainerController"/>
+    </bean>
+
+    <bean id="elementController" class="io.github.samwright.framework.controller.ElementControllerImpl">
+        <constructor-arg value="/fxml/Element.fxml" />
+    </bean>
+
+    <bean id="workflowController"
+          class="io.github.samwright.framework.controller.WorkflowControllerImpl">
+        <constructor-arg value="/fxml/Workflow.fxml"/>
+    </bean>
+
+    <bean id="defaultTypeData" class="io.github.samwright.framework.model.helper.TypeData">
+        <constructor-arg index="0" value="java.lang.Object"/>
+        <constructor-arg index="1" value="java.lang.Object"/>
+    </bean>
+
+    <bean id="workflowContainerController"
+          class="io.github.samwright.framework.controller.WorkflowContainerControllerImpl">
+        <constructor-arg value="/fxml/WorkflowContainer.fxml"/>
+    </bean>
+
+</beans>

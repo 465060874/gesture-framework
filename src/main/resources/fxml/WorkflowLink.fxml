@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="15.5" minWidth="40.0999755859375" prefHeight="15.5" prefWidth="40.0999755859375" xmlns:fx="http://javafx.com/fxml">-->
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Polygon?>
 <?import java.lang.*?>
-<fx:root fx:id="workflowLink" type="javafx.scene.layout.VBox"
+<fx:root fx:id="workflowLink" type="javafx.scene.layout.AnchorPane"
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/WorkflowLink.css"
-         maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50" minWidth="40"
-         prefHeight="50" prefWidth="40">
+         minHeight="50" minWidth="40">
+         <!--maxHeight="-Infinity" maxWidth="-Infinity" -->
+         <!--prefHeight="-Infinity" prefWidth="-Infinity" >-->
   <children>
     <Line startX="0" startY="-50" endX="40" endY="50" strokeWidth="3"
             fx:id="line"/>
-    <Polygon fx:id="triangle" fill="DODGERBLUE" layoutX="22.0" layoutY="18.0" rotate="90.0"
-             scaleX="0.15"
-              scaleY="0.15" scaleZ="0.15" stroke="BLACK" strokeType="INSIDE">
+    <Polygon fx:id="triangle" fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE">
       <points>
-        <Double fx:value="-50.0" />
-        <Double fx:value="40.0" />
-        <Double fx:value="50.0" />
-        <Double fx:value="40.0" />
+        <Double fx:value="-6.0" />
+        <Double fx:value="6.0" />
+        <Double fx:value="-6.0" />
+        <Double fx:value="-6.0" />
+        <Double fx:value="6.0" />
         <Double fx:value="0.0" />
-        <Double fx:value="-60.0" />
       </points>
     </Polygon>
   </children>

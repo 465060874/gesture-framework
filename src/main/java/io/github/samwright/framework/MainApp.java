@@ -5,11 +5,19 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 18:15
  */
 public class MainApp extends Application {
+
+    public final static BeanFactory beanFactory;
+
+    static{
+        beanFactory = new ClassPathXmlApplicationContext("/META-INF/beans.xml");
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -20,7 +28,7 @@ public class MainApp extends Application {
         Parent root = new MainWindowController();
         Scene scene = new Scene(root, 500, 600);
 
-        stage.setTitle("Transductive Workflow Manager");
+        stage.setTitle("Workflow Manager");
         stage.setScene(scene);
         stage.show();
     }

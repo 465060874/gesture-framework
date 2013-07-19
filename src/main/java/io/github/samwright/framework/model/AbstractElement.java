@@ -78,7 +78,9 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
-    abstract public AbstractElement<I, O> createMutableClone();
+    public AbstractElement<I, O> createMutableClone() {
+        return (AbstractElement<I, O>) withTypeData(getTypeData());
+    }
 
     @Override
     public void delete() {
@@ -123,5 +125,4 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
 
         return new CompletedTrainingBatch<>(allInputs, successfulInputs);
     }
-
 }

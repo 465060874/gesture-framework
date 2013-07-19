@@ -54,8 +54,11 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
 
         if (newParent != null)
             newParent = (P) newParent.versionInfo().getLatest();
+        System.out.println("ParentManager.withParent1");
 
         C childClone = (C) managedChild.createMutableClone();
+        System.out.println("ParentManager.withParent2: child.ismutable == " + childClone.isMutable());
+
         return (C) childClone.withParent(newParent);
     }
 
