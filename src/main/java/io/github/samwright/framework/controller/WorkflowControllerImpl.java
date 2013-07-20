@@ -19,27 +19,18 @@ public class WorkflowControllerImpl<I, O> extends WorkflowController<I, O> {
 
     public WorkflowControllerImpl(String fxmlResource) {
         super(fxmlResource);
-        System.out.println("fxml = " + fxmlResource);
-
-        System.out.println("workflow = " + workflow);
-        System.out.println("elementsBox = " + elementsBox);
     }
 
 
     @Override
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
-        System.out.println("workflow-controller:1");
         elementsBox.getChildren().clear();
-        System.out.println("workflow-controller:2");
         elementsBox.getChildren().add(new WorkflowLinkController());
-        System.out.println("workflow-controller:3");
 
         for (Element<?, ?> element : getModel().getChildren()) {
             elementsBox.getChildren().add(element.getController());
-            System.out.println("workflow-controller:4");
             elementsBox.getChildren().add(new WorkflowLinkController());
-            System.out.println("workflow-controller:5");
         }
     }
 }

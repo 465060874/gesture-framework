@@ -95,13 +95,7 @@ public abstract class AbstractWorkflowContainer<I, O>
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
-        System.out.println("fixasversion1");
-        if (isMutable()) {
-            System.out.println("fixasversion2");
-            childrenManager.beforeFixAsVersion(versionInfo);
-        }
-        System.out.println("fixasversion3");
-
+        childrenManager.beforeFixAsVersion(versionInfo);
         super.fixAsVersion(versionInfo);
     }
 

@@ -28,30 +28,9 @@ public class WorkflowContainerControllerImpl<I, O> extends WorkflowContainerCont
     @SuppressWarnings("unchecked")
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
-        System.out.println("workflow container controller:1");
 
         workflowsBox.getChildren().clear();
-        System.out.println("workflow container controller:2");
-        for (Workflow<I, O> workflow : getModel().getChildren()) {
-            System.out.println("workflow container controller:3 (workflow = " + workflow +
-                    " , controller = " + workflow.getController());
+        for (Workflow<I, O> workflow : getModel().getChildren())
             workflowsBox.getChildren().add(workflow.getController());
-            System.out.println("workflow container controller:4");
-        }
-
-
-//        spareWorkflow = new WorkflowImpl<>(getModel().getTypeData());
-
-//
-//        spareWorkflow = (Workflow<I, O>) MainApp.beanFactory.getBean("workflow");
-//        System.out.println("workflow container controller:1b");
-//        spareWorkflow = spareWorkflow.withTypeData(getModel().getTypeData());
-//
-//
-//        System.out.println("workflow container controller:2");
-//        ModelController controller = spareWorkflow.getController();
-//        System.out.println("workflow container controller:3 (controller = " + controller);
-//        workflowsBox.getChildren().add(controller);
-//        System.out.println("workflow container controller:4");
     }
 }

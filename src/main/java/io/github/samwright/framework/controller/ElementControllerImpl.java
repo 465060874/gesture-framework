@@ -14,8 +14,6 @@ public class ElementControllerImpl<I, O> extends ElementController<I, O> {
     public ElementControllerImpl(String fxmlString) {
 //        super("/fxml/Element.fxml", model);
         super(fxmlString);
-
-        System.out.println("element = " + element);
     }
 
     @Override

@@ -42,35 +42,16 @@ public class MutabilityHelper implements EventuallyImmutable {
     @Override
     @SuppressWarnings("unchecked")
     public void setController(ModelController controller) {
-        System.out.println("controller:0");
         if (this.controller != controller) {
-            EventuallyImmutable next = null;
-//            try {
+            EventuallyImmutable next = versionInfo.getNext();
             this.controller = controller;
-            System.out.println("controller:1");
-            next = versionInfo.getNext();
-            System.out.println("controller:2");
             if (next != null) {
-                System.out.println("controller:3");
                 next.setController(controller);
-                System.out.println("controller:4");
             } else if (controller != null) {
-                System.out.println("controller:5");
                 Replaceable model = versionInfo.getThisVersion();
-                System.out.println("controller:6 (controller = " + controller +", " +
-                        "model = "+model+ ")");
                 controller.setModel(model);
-                System.out.println("controller:7");
             }
-//            } catch (NullPointerException e) {
-//                System.out.println("controller = " + controller);
-//                System.out.println("next = " + next);
-//                System.out.println("thisVersion = " + versionInfo.getThisVersion());
-//                throw e;
-//            }
         }
-
-//        this.controller = controller;
     }
 
     @Override
@@ -87,9 +68,7 @@ public class MutabilityHelper implements EventuallyImmutable {
 
     @Override
     public void fixAsVersion(@NonNull VersionInfo versionInfo) {
-        System.out.println("enter...1");
         synchronized (writeLock) {
-            System.out.println("enter...2");
             this.versionInfo = versionInfo;
             this.mutable = false;
             if (versionInfo.getPrevious() != null) {
@@ -103,7 +82,7 @@ public class MutabilityHelper implements EventuallyImmutable {
     public void replaceWith(@NonNull EventuallyImmutable replacement) {
         if (versionInfo.getThisVersion() == replacement)
             return;
-
+        System.out.println(" ====== START replacing " + versionInfo.getThisVersion());
         synchronized (writeLock) {
             if (isMutable())
                 throw new RuntimeException("Cannot replace a mutable object - fix this first");
@@ -114,18 +93,15 @@ public class MutabilityHelper implements EventuallyImmutable {
             if (replacement.versionInfo().getPrevious() != null)
                 throw new RuntimeException("Replacement has already replaced something else");
 
-            Thread.holdsLock(writeLock);
-
             versionInfo = versionInfo.withNext(replacement);
             VersionInfo nextVersionInfo =
                     replacement.versionInfo().withPrevious(versionInfo.getThisVersion());
-            System.out.println("handling model");
             replacement.fixAsVersion(nextVersionInfo);
-            System.out.println("Setting controller: " + controller);
             replacement.setController(controller);
 
             if (controller != null)
                 controller.setModel(nextVersionInfo.getLatest());
+
         }
 
         if (!Thread.holdsLock(writeLock))
@@ -134,6 +110,7 @@ public class MutabilityHelper implements EventuallyImmutable {
 
     private void notifyTopController() {
         synchronized (writeLock) {
+            System.out.println("notifying top controller...");
             MainWindowController.getTopController().handleUpdatedModel();
         }
     }

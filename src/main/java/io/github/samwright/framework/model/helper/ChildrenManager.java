@@ -83,34 +83,20 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
             return;
 
         List<C> latestChildren = new LinkedList<>(children);
-        System.out.println("beforeFixAsVersion0");
 
         // Update all children to their latest versions, removing those that were deleted.
         VersionInfo.updateAllToLatest(latestChildren);
         children = new LinkedList<>();
-        System.out.println("beforeFixAsVersion1");
         for (C child : latestChildren) {
-            System.out.println("beforeFixAsVersion2");
-
             if (child.getParent() == managedParent) {
                 // The child has already been created pointing to managedParent as its
                 // parent, so keep it as is.
-                System.out.println("beforeFixAsVersion3a");
-
                 children.add(child);
-                System.out.println("beforeFixAsVersion3b");
-
             } else {
                 // The child needs to have managedParent set as its parent.
-                System.out.println("beforeFixAsVersion4a");
                 C newChild = (C) child.withParent(managedParent);
-
-                System.out.println("beforeFixAsVersion4b");
                 child.replaceWith(newChild);
-
-                System.out.println("beforeFixAsVersion4c");
                 children.add(newChild);
-
             }
         }
 
