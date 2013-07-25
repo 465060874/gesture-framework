@@ -1,14 +1,15 @@
 package io.github.samwright.framework.controller.helper;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 13:56
  */
-public class WorkflowLinkController extends AnchorPane {
+public class ElementLink extends Pane {
+
 
     @FXML
     private Line line;
@@ -16,11 +17,8 @@ public class WorkflowLinkController extends AnchorPane {
     @FXML
     private Polygon triangle;
 
-    public WorkflowLinkController() {
-        Controllers.bindViewToController("/fxml/WorkflowLink.fxml", this);
-
-        setPrefWidth(Double.MAX_VALUE);
-        setMaxWidth(Double.MAX_VALUE);
+    public ElementLink(String fxmlResource) {
+        Controllers.bindViewToController(fxmlResource, this);
 
         line.setStartX(0);
         line.endXProperty().bind(widthProperty());

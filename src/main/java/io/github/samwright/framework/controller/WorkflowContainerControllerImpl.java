@@ -18,10 +18,7 @@ public class WorkflowContainerControllerImpl<I, O> extends WorkflowContainerCont
     private Workflow<I, O> spareWorkflow;
 
     public WorkflowContainerControllerImpl(String fxmlResource) {
-//        super("/fxml/WorkflowContainer.fxml", model);
         super(fxmlResource);
-
-
     }
 
     @Override

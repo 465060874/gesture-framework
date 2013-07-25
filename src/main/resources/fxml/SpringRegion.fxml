@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--<fx:root fx:id="workflowLink" type="javafx.scene.layout.AnchorPane"-->
+<!--<fx:root fx:id="workflowLink" type="javafx.scene.Group"-->
+<!--<fx:root fx:id="workflowLink" type="javafx.scene.layout.Region"-->
+<?import javafx.scene.layout.HBox?>
+<fx:root fx:id="workflowLink" type="javafx.scene.layout.Region"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/WorkflowLink.css"
+         HBox.hgrow="ALWAYS"
+         minHeight="50"
+         prefWidth="40"
+         maxWidth="-1.0"
+        >
+<!--maxWidth="-Infinity"-->
+
+    <!--minWidth="-Infinity" -->
+        <!--prefWidth="Infinity" maxWidth="Infinity">-->
+
+
+</fx:root>

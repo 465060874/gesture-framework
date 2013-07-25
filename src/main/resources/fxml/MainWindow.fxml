@@ -13,7 +13,13 @@
           <!--AnchorPane.topAnchor="0.0" >-->
       <children>
         <ScrollPane id="scrollPanel" fx:id="mainScrollPanel" HBox.hgrow="ALWAYS"
-                    fitToHeight="true" fitToWidth="true"/>
+                    fitToHeight="true" fitToWidth="true">
+            <!--<content>-->
+                <!--<AnchorPane>-->
+
+                <!--</AnchorPane>-->
+            <!--</content>-->
+                    </ScrollPane>
         <Accordion HBox.hgrow="NEVER">
           <expandedPane>
             <TitledPane fx:id="x1" animated="false" text="untitled">

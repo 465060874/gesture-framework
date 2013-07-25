@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--<fx:root fx:id="workflowLink" type="javafx.scene.layout.AnchorPane"-->
+<!--<fx:root fx:id="workflowLink" type="javafx.scene.Group"-->
+<!--<fx:root fx:id="workflowLink" type="javafx.scene.layout.Region"-->
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Polygon?>
 <?import java.lang.*?>
-<fx:root fx:id="workflowLink" type="javafx.scene.layout.AnchorPane"
+<fx:root fx:id="workflowLink" type="javafx.scene.layout.Pane"
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/WorkflowLink.css"
-         minHeight="50" minWidth="40">
-         <!--maxHeight="-Infinity" maxWidth="-Infinity" -->
-         <!--prefHeight="-Infinity" prefWidth="-Infinity" >-->
+         HBox.hgrow="ALWAYS"
+         prefWidth="-1.0" minHeight="50" minWidth="40" maxWidth="-1.0">
+
   <children>
-    <Line startX="0" startY="-50" endX="40" endY="50" strokeWidth="3"
+    <Line startX="0" startY="25" endX="40" endY="25" strokeWidth="3"
             fx:id="line"/>
     <Polygon fx:id="triangle" fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE">
       <points>

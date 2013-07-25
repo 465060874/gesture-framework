@@ -32,4 +32,9 @@
         <constructor-arg value="/fxml/WorkflowContainer.fxml"/>
     </bean>
 
+    <bean id="elementLink"
+          class="io.github.samwright.framework.controller.helper.ElementLink">
+        <constructor-arg value="/fxml/WorkflowLink.fxml"/>
+    </bean>
+
 </beans>

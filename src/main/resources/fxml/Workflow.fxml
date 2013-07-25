@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.HBox?>
 <fx:root fx:id="workflow" type="javafx.scene.layout.VBox"
          xmlns:fx="http://javafx.com/fxml"
-         stylesheets="/css/Workflow.css">
+         stylesheets="/css/Workflow.css"
+         maxWidth="Infinity">
   <children>
     <Label alignment="CENTER" text="Workflow" />
     <HBox fx:id="elementsBox" />
