@@ -1,43 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="386.0" prefWidth="573.0" xmlns:fx="http://javafx.com/fxml">-->
-<?import javafx.scene.control.Accordion?>
+
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/MainWindow.css">
-  <!--<children>-->
-    <!--<HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"-->
-          <!--AnchorPane.topAnchor="0.0" >-->
       <children>
         <ScrollPane id="scrollPanel" fx:id="mainScrollPanel" HBox.hgrow="ALWAYS"
                     fitToHeight="true" fitToWidth="true">
-            <!--<content>-->
-                <!--<AnchorPane>-->
-
-                <!--</AnchorPane>-->
-            <!--</content>-->
-                    </ScrollPane>
-        <Accordion HBox.hgrow="NEVER">
-          <expandedPane>
-            <TitledPane fx:id="x1" animated="false" text="untitled">
-              <content>
-                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
-            </TitledPane>
-          </expandedPane>
-          <panes>
-            <TitledPane animated="false" text="untitled">
-              <content>
-                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
-            </TitledPane>
-            <fx:reference source="x1" />
-          </panes>
-        </Accordion>
+        </ScrollPane>
+        <!--<FlowPane fx:id="toolbox" HBox.hgrow="NEVER" prefWidth="200">-->
+        <!--</FlowPane>-->
       </children>
-    <!--</HBox>-->
-  <!--</children>-->
 </fx:root>

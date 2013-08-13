@@ -2,6 +2,7 @@ package io.github.samwright.framework.model.helper;
 
 import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.ModelController;
+import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.common.EventuallyImmutable;
 import io.github.samwright.framework.model.common.Replaceable;
 import lombok.Getter;
@@ -49,7 +50,7 @@ public class MutabilityHelper implements EventuallyImmutable {
                 next.setController(controller);
             } else if (controller != null) {
                 Replaceable model = versionInfo.getThisVersion();
-                controller.setModel(model);
+                controller.setModel((Processor) model);
             }
         }
     }
@@ -100,7 +101,7 @@ public class MutabilityHelper implements EventuallyImmutable {
             replacement.setController(controller);
 
             if (controller != null)
-                controller.setModel(nextVersionInfo.getLatest());
+                controller.setModel((Processor) nextVersionInfo.getLatest());
 
         }
 
@@ -127,7 +128,7 @@ public class MutabilityHelper implements EventuallyImmutable {
             deleted = false;
 
             if (controller != null)
-                controller.setModel(versionInfo.getThisVersion());
+                controller.setModel((Processor) versionInfo.getThisVersion());
         }
 
         if (!Thread.holdsLock(writeLock))

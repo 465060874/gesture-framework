@@ -10,7 +10,6 @@ import javafx.scene.shape.Polygon;
  */
 public class ElementLink extends Pane {
 
-
     @FXML
     private Line line;
 
