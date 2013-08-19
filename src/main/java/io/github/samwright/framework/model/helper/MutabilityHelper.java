@@ -79,6 +79,11 @@ public class MutabilityHelper implements EventuallyImmutable {
     }
 
     @Override
+    public void fix() {
+        fixAsVersion(versionInfo);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void replaceWith(@NonNull EventuallyImmutable replacement) {
         if (versionInfo.getThisVersion() == replacement)

@@ -129,4 +129,7 @@ public interface Processor<I,O> extends EventuallyImmutable {
     CompletedTrainingBatch<I> processCompletedTrainingBatch(
             CompletedTrainingBatch<?> completedTrainingBatch);
 
+    @Override
+    Processor createMutableClone();
+
 }

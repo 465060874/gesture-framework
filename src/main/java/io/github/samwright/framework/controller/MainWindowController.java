@@ -2,17 +2,11 @@ package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
-import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.TopWorkflowContainer;
-import io.github.samwright.framework.model.Workflow;
-import io.github.samwright.framework.model.helper.TypeData;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
-
-import java.util.Arrays;
 
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 18:55
@@ -22,11 +16,9 @@ public class MainWindowController extends HBox {
     @FXML
     private ScrollPane mainScrollPanel;
 
-    @FXML
-    private FlowPane toolbox;
-
     private static TopWorkflowContainer topModel;
     @Getter private static ModelController topController;
+    private static ToolboxController toolboxController;
 
     @SuppressWarnings("unchecked")
     public MainWindowController() {
@@ -36,32 +28,35 @@ public class MainWindowController extends HBox {
         mainScrollPanel.setContent(topModel.getController());
         topController = topModel.getController();
 
-        Workflow emptyWorkflow = (Workflow) MainApp.beanFactory.getBean("workflow");
+        toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
+        getChildren().add(toolboxController);
 
-
-        TypeData<String,String> typeData = new TypeData<>(String.class, String.class);
-
-        Element element1 = (Element) MainApp.beanFactory.getBean("mockElement1");
-        Element element2 = (Element) MainApp.beanFactory.getBean("mockElement2");
-        Element element3 = (Element) MainApp.beanFactory.getBean("mockElement1");
-        Element element4 = (Element) MainApp.beanFactory.getBean("mockElement2");
-
-
-        Workflow workflow = emptyWorkflow
-                .withTypeData(topModel.getTypeData())
-                .withParent(topModel)
-                .withChildren(Arrays.asList(element1, element2, element3, element4));
-
-        emptyWorkflow.replaceWith(workflow);
-
-
-        // Setup toolbox
-        element1 = (Element) MainApp.beanFactory.getBean("mockElement1");
-        element2 = (Element) MainApp.beanFactory.getBean("mockElement2");
-
-        toolbox.getChildren().addAll(Arrays.asList(
-                element1.getController(), element2.getController()
-        ));
+//        Workflow emptyWorkflow = (Workflow) MainApp.beanFactory.getBean("workflow");
+//
+//
+//        TypeData<String,String> typeData = new TypeData<>(String.class, String.class);
+//
+//        Element element1 = (Element) MainApp.beanFactory.getBean("mockElement1");
+//        Element element2 = (Element) MainApp.beanFactory.getBean("mockElement2");
+//        Element element3 = (Element) MainApp.beanFactory.getBean("mockElement1");
+//        Element element4 = (Element) MainApp.beanFactory.getBean("mockElement2");
+//
+//
+//        Workflow workflow = emptyWorkflow
+//                .withTypeData(topModel.getTypeData())
+//                .withParent(topModel)
+//                .withChildren(Arrays.asList(element1, element2, element3, element4));
+//
+//        emptyWorkflow.replaceWith(workflow);
+//
+//
+//        // Setup toolbox
+//        element1 = (Element) MainApp.beanFactory.getBean("mockElement1");
+//        element2 = (Element) MainApp.beanFactory.getBean("mockElement2");
+//
+//        toolbox.getChildren().addAll(Arrays.asList(
+//                element1.getController(), element2.getController()
+//        ));
 
 //        element1.getController().setOnDragDetected();
     }

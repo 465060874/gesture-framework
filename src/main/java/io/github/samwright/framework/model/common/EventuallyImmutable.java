@@ -54,6 +54,11 @@ public interface EventuallyImmutable extends Replaceable {
     void fixAsVersion(VersionInfo versionInfo);
 
     /**
+     * If this object is mutable, this method will make it immutable.
+     */
+    void fix();
+
+    /**
      * Returns true iff this object is mutable, meaning it was created as mutable and has not
      * been finalised.
      *
