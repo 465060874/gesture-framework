@@ -3,21 +3,20 @@ package io.github.samwright.framework.model.mock;
 import io.github.samwright.framework.model.AbstractElement;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.helper.Mediator;
-import io.github.samwright.framework.model.helper.TypeData;
 
 import java.util.List;
 
 /**
  * User: Sam Wright Date: 29/07/2013 Time: 10:36
  */
-public class MockElement extends AbstractElement<String, String> {
+public class MockElement extends AbstractElement {
 
-    public MockElement(TypeData<String, String> typeData, String suffixToAdd) {
-        super(typeData);
+    public MockElement() {
+        super();
     }
 
-    public MockElement(AbstractElement<?, ?> oldElement, TypeData<String, String> typeData) {
-        super(oldElement, typeData);
+    public MockElement(AbstractElement oldElement) {
+        super(oldElement);
     }
 
     @Override
@@ -27,19 +26,17 @@ public class MockElement extends AbstractElement<String, String> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Mediator<String> process(Mediator<?> input) {
-        Mediator<String> castedInput = (Mediator<String>) input;
-        return input.createNext(this, castedInput.getData() + "1");
+    public Mediator process(Mediator input) {
+        return input.createNext(this, input.getData() + "1");
     }
 
     @Override
-    public List<Mediator<String>> processTrainingBatch(List<Mediator<?>> inputs) {
+    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
         throw new RuntimeException("not implemented");
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <I2, O2> Element<I2, O2> withTypeData(TypeData<I2, O2> newTypeData) {
-        return (Element<I2, O2>) new MockElement(this, (TypeData<String, String>) newTypeData);
+    public Element createMutableClone() {
+        return new MockElement(this);
     }
 }

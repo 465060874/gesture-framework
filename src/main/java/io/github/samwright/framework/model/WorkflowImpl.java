@@ -10,16 +10,13 @@ import java.util.ListIterator;
 /**
  * Implementation of Workflow.
  */
-public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
+public class WorkflowImpl extends AbstractWorkflow {
 
     /**
-     * Constructs the initial (and immutable) {@code WorkflowImpl} with the given
-     * {@link TypeData}.
-     *
-     * @param typeData the input/output types of this object.
+     * Constructs the initial (and immutable) {@code WorkflowImpl}.
      */
-    public WorkflowImpl(TypeData<I, O> typeData) {
-        super(typeData);
+    public WorkflowImpl() {
+        super();
     }
 
     /**
@@ -27,11 +24,9 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
      * {@link TypeData}.
      *
      * @param oldWorkflow the {@code WorkflowImpl} to clone.
-     * @param typeData the input/output types of this object.
      */
-    public WorkflowImpl(WorkflowImpl<?, ?> oldWorkflow,
-                        TypeData<I, O> typeData) {
-        super(oldWorkflow, typeData);
+    public WorkflowImpl(WorkflowImpl oldWorkflow) {
+        super(oldWorkflow);
     }
 
 
@@ -47,9 +42,9 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
                             ) )
                 return false;
 
-            TypeData<?, ?> previousType = null;
+            TypeData previousType = null;
 
-            for (Element<?,?> e : getChildren()) {
+            for (Element e : getChildren()) {
                 if (previousType != null)
                     if ( !e.getTypeData().canComeAfter(previousType) )
                         return false;
@@ -61,40 +56,36 @@ public class WorkflowImpl<I, O> extends AbstractWorkflow<I, O> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Mediator<O> process(Mediator<?> input) {
-        for (Element<?,?> e : getChildren())
+    public Mediator process(Mediator input) {
+        for (Element e : getChildren())
             input = e.process(input);
 
-        return (Mediator<O>) input;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs) {
-        for (Element<?, ?> e : getChildren())
-            inputs = (List<Mediator<?>>) (List<?>) e.processTrainingBatch(inputs);
-
-        return (List<Mediator<O>>) (List<?>) inputs;
+        return input;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CompletedTrainingBatch<I> processCompletedTrainingBatch(CompletedTrainingBatch<?> completedTrainingBatch) {
-        ListIterator<Element<?, ?>> itr = getChildren().listIterator(getChildren().size());
+    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
+        for (Element e : getChildren())
+            inputs = e.processTrainingBatch(inputs);
+
+        return inputs;
+    }
+
+    @Override
+    public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
+        ListIterator<Element> itr = getChildren().listIterator(getChildren().size());
 
         while (itr.hasPrevious()) {
             Processor child = itr.previous();
             completedTrainingBatch = child.processCompletedTrainingBatch(completedTrainingBatch);
         }
 
-        return (CompletedTrainingBatch<I>) completedTrainingBatch;
+        return completedTrainingBatch;
     }
 
-
     @Override
-    public <I2, O2> Workflow<I2, O2> withTypeData(TypeData<I2, O2> newTypeData) {
-        return new WorkflowImpl<>(this, newTypeData);
+    public Workflow createMutableClone() {
+        return new WorkflowImpl(this);
     }
 }

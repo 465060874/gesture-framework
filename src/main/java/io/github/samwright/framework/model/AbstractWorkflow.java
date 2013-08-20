@@ -2,8 +2,6 @@ package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.helper.*;
 import lombok.Delegate;
-import lombok.Getter;
-import lombok.NonNull;
 
 import java.util.List;
 
@@ -11,25 +9,24 @@ import java.util.List;
  * Abstract implementation of {@link Workflow}.  Manages its {@link WorkflowContainer} parent,
  * the list of {@link Element} children in this, its {@link TypeData}, and mutation management.
  */
-public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
-    @Getter @NonNull private final TypeData<I, O> typeData;
-    private final ParentManager<Workflow<I, O>, WorkflowContainer<I, O>> parentManager;
-    private final ChildrenManager<Element<?, ?>, Workflow<?, ?>> childrenManager;
+public abstract class AbstractWorkflow implements Workflow {
+    private final ParentManager<Workflow, WorkflowContainer> parentManager;
+    private final ChildrenManager<Element, Workflow> childrenManager;
 
     @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
-    private final MutabilityHelper mutabilityHelper;
+    private final MutabilityHelper<Workflow> mutabilityHelper;
+
+    @Delegate
+    private final TypeDataManager<Workflow> typeDataManager;
 
     /**
-     * Constructs the initial (and immutable) {@code AbstractWorkflow} with the given
-     * {@link TypeData}.
-     *
-     * @param typeData the input/output types of this object.
+     * Constructs the initial (and immutable) {@code AbstractWorkflow}.
      */
-    public AbstractWorkflow(TypeData<I, O> typeData) {
-        this.typeData = typeData;
-        mutabilityHelper = new MutabilityHelper(this, false);
-        childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this);
-        parentManager = new ParentManager<>((Workflow<I, O>) this);
+    public AbstractWorkflow() {
+        typeDataManager = new TypeDataManager<Workflow>(this);
+        mutabilityHelper = new MutabilityHelper<>((Workflow) this, false);
+        childrenManager = new ChildrenManager<Element, Workflow>(this);
+        parentManager = new ParentManager<>((Workflow) this);
     }
 
     /**
@@ -37,48 +34,40 @@ public abstract class AbstractWorkflow<I, O> implements Workflow<I, O> {
      * {@link TypeData}.
      *
      * @param oldWorkflow the {@code AbstractWorkflow} to clone.
-     * @param typeData the input/output types of this object.
      */
-    @SuppressWarnings("unchecked")
-    public AbstractWorkflow(AbstractWorkflow<?, ?> oldWorkflow, TypeData<I, O> typeData) {
+    public AbstractWorkflow(AbstractWorkflow oldWorkflow) {
         if (oldWorkflow.isMutable())
             throw new RuntimeException("Cannot clone an immutable object");
-        this.typeData = typeData;
-        mutabilityHelper = new MutabilityHelper(this, true);
-        childrenManager = new ChildrenManager<Element<?, ?>, Workflow<?, ?>>(this, oldWorkflow.getChildren());
-        parentManager = new ParentManager<Workflow<I,O>,WorkflowContainer<I, O>>
-                (this, (WorkflowContainer<I, O>) oldWorkflow.getParent());
+
+        typeDataManager = new TypeDataManager<Workflow>(this, oldWorkflow.getTypeData());
+        mutabilityHelper = new MutabilityHelper<>((Workflow) this, true);
+        childrenManager = new ChildrenManager<Element, Workflow>(this, oldWorkflow.getChildren());
+        parentManager = new ParentManager<Workflow,WorkflowContainer>
+                (this, oldWorkflow.getParent());
     }
 
     @Override
-    public WorkflowContainer<I, O> getParent() {
+    public WorkflowContainer getParent() {
         return parentManager.getParent();
     }
 
     @Override
-    public List<Element<?, ?>> getChildren() {
+    public List<Element> getChildren() {
         return childrenManager.getChildren();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Workflow<I, O> withChildren(List<Element<?, ?>> newChildren) {
-        return (Workflow<I, O>) childrenManager.withChildren(newChildren);
+    public Workflow withChildren(List<Element> newChildren) {
+        return childrenManager.withChildren(newChildren);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Workflow<I, O> withParent(WorkflowContainer<I, O> newParent) {
+    public Workflow withParent(WorkflowContainer newParent) {
         if (newParent != null && getParent() != null
-                && !typeData.equals(getParent().getTypeData()))
+                && !getTypeData().equals(getParent().getTypeData()))
             return withTypeData(newParent.getTypeData()).withParent(newParent);
         else
             return parentManager.withParent(newParent);
-    }
-
-    @Override
-    public AbstractWorkflow<I, O> createMutableClone() {
-        return (AbstractWorkflow<I, O>) withTypeData(getTypeData());
     }
 
     @Override

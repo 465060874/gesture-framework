@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * An object the observes the processing of data in a {@link Element}.
  */
-public interface ElementObserver<T> {
+public interface ElementObserver {
 
     /**
      * Notify this {@code ElementObserver} that a {@link Processor} it observes is about to output
@@ -17,7 +17,7 @@ public interface ElementObserver<T> {
      *
      * @param mediator the {@link Mediator} the observed {@link Processor} is about to output.
      */
-    void notify(Mediator<T> mediator);
+    void notify(Mediator mediator);
 
     /**
      * Notify this {@code ElementObserver} that a {@link Processor} it observes is about to output
@@ -26,6 +26,6 @@ public interface ElementObserver<T> {
      * @param mediators the batch of {@link Mediator} objects the observed {@link Processor} is
      *                  about to output.
      */
-    void notify(List<Mediator<T>> mediators);
+    void notify(List<Mediator> mediators);
 
 }

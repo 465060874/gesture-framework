@@ -1,5 +1,6 @@
 package io.github.samwright.framework.controller;
 
+import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Workflow;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
@@ -7,7 +8,7 @@ import javafx.scene.layout.VBox;
 /**
  * User: Sam Wright Date: 18/07/2013 Time: 11:51
  */
-public class WorkflowContainerControllerImpl<I, O> extends WorkflowContainerController<I, O> {
+public class WorkflowContainerControllerImpl extends WorkflowContainerController {
 
     @FXML
     private VBox workflowContainer;
@@ -15,10 +16,19 @@ public class WorkflowContainerControllerImpl<I, O> extends WorkflowContainerCont
     @FXML
     private VBox workflowsBox;
 
-    private Workflow<I, O> spareWorkflow;
+    private Workflow spareWorkflow;
 
     public WorkflowContainerControllerImpl(String fxmlResource) {
         super(fxmlResource);
+    }
+
+    public WorkflowContainerControllerImpl(WorkflowContainerControllerImpl toClone) {
+        super(toClone);
+    }
+
+    @Override
+    public ModelController<Element> createClone() {
+        return new WorkflowContainerControllerImpl(this);
     }
 
     @Override
@@ -27,7 +37,7 @@ public class WorkflowContainerControllerImpl<I, O> extends WorkflowContainerCont
         super.handleUpdatedModel();
 
         workflowsBox.getChildren().clear();
-        for (Workflow<I, O> workflow : getModel().getChildren())
+        for (Workflow workflow : getModel().getChildren())
             workflowsBox.getChildren().add(workflow.getController());
     }
 }

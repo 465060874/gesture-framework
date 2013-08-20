@@ -3,25 +3,23 @@ package io.github.samwright.framework.model.helper;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 /**
  * User: Sam Wright Date: 15/07/2013 Time: 13:06
  */
 public class TypeDataTest {
-    private TypeData<Integer, Integer> intToInt;
-    private TypeData<Integer, String> intToString;
-    private TypeData<String, Integer> stringToInt;
-    private TypeData<String, String> stringToString;
+    private TypeData intToInt;
+    private TypeData intToString;
+    private TypeData stringToInt;
+    private TypeData stringToString;
 
     @Before
     public void setUp() throws Exception {
-        intToInt = new TypeData<>(Integer.class, Integer.class);
-        intToString = new TypeData<>(Integer.class, String.class);
-        stringToInt = new TypeData<>(String.class, Integer.class);
-        stringToString = new TypeData<>(String.class, String.class);
+        intToInt = new TypeData(Integer.class, Integer.class);
+        intToString = new TypeData(Integer.class, String.class);
+        stringToInt = new TypeData(String.class, Integer.class);
+        stringToString = new TypeData(String.class, String.class);
     }
 
     @Test

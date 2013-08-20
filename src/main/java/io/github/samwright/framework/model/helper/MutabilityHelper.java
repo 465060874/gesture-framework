@@ -2,7 +2,6 @@ package io.github.samwright.framework.model.helper;
 
 import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.ModelController;
-import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.common.EventuallyImmutable;
 import io.github.samwright.framework.model.common.Replaceable;
 import lombok.Getter;
@@ -11,13 +10,13 @@ import lombok.NonNull;
 /**
  * A helper object that manages an {@link EventuallyImmutable} object (which delegates to this).
  */
-public class MutabilityHelper implements EventuallyImmutable {
+public class MutabilityHelper<T extends EventuallyImmutable> implements EventuallyImmutable {
     private static final Object[] writeLock = new Object[0];
 
-    private VersionInfo versionInfo;
+    private VersionInfo<T> versionInfo;
     @Getter private boolean mutable;
     @Getter private boolean deleted;
-    @Getter private ModelController controller;
+    @Getter private ModelController<T> controller;
 
     public static interface ForManualDelegation {
 
@@ -34,7 +33,7 @@ public class MutabilityHelper implements EventuallyImmutable {
      * @param thisImmutable the object for this to manage.
      * @param mutable the initial mutability of the object to manage.
      */
-    public MutabilityHelper(@NonNull EventuallyImmutable thisImmutable, boolean mutable) {
+    public MutabilityHelper(@NonNull T thisImmutable, boolean mutable) {
         versionInfo = VersionInfo.createForFirst(thisImmutable);
         this.mutable = mutable;
         deleted = false;
@@ -49,25 +48,26 @@ public class MutabilityHelper implements EventuallyImmutable {
             if (next != null) {
                 next.setController(controller);
             } else if (controller != null) {
-                Replaceable model = versionInfo.getThisVersion();
-                controller.setModel((Processor) model);
+                T model = versionInfo.getThisVersion();
+                controller.setModel(model);
             }
         }
     }
 
     @Override
-    public EventuallyImmutable createMutableClone() {
+    public T createMutableClone() {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public VersionInfo versionInfo() {
+    public VersionInfo<T> versionInfo() {
         synchronized (writeLock) {
             return versionInfo;
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void fixAsVersion(@NonNull VersionInfo versionInfo) {
         synchronized (writeLock) {
             this.versionInfo = versionInfo;
@@ -85,10 +85,10 @@ public class MutabilityHelper implements EventuallyImmutable {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void replaceWith(@NonNull EventuallyImmutable replacement) {
+    public void replaceWith(@NonNull Replaceable replacement) {
         if (versionInfo.getThisVersion() == replacement)
             return;
-        System.out.println(" ====== START replacing " + versionInfo.getThisVersion());
+        System.out.println(" ====== START replacing " + versionInfo.getThisVersion().toString());
         synchronized (writeLock) {
             if (isMutable())
                 throw new RuntimeException("Cannot replace a mutable object - fix this first");
@@ -99,14 +99,14 @@ public class MutabilityHelper implements EventuallyImmutable {
             if (replacement.versionInfo().getPrevious() != null)
                 throw new RuntimeException("Replacement has already replaced something else");
 
-            versionInfo = versionInfo.withNext(replacement);
-            VersionInfo nextVersionInfo =
+            versionInfo = versionInfo.withNext((T) replacement);
+            VersionInfo<T> nextVersionInfo =
                     replacement.versionInfo().withPrevious(versionInfo.getThisVersion());
-            replacement.fixAsVersion(nextVersionInfo);
+            ((T) replacement).fixAsVersion(nextVersionInfo);
             replacement.setController(controller);
 
             if (controller != null)
-                controller.setModel((Processor) nextVersionInfo.getLatest());
+                controller.setModel(nextVersionInfo.getLatest());
 
         }
 
@@ -116,24 +116,23 @@ public class MutabilityHelper implements EventuallyImmutable {
 
     private void notifyTopController() {
         synchronized (writeLock) {
-            System.out.println("notifying top controller...");
-            MainWindowController.getTopController().handleUpdatedModel();
+            if (MainWindowController.getTopController() != null)
+                MainWindowController.getTopController().handleUpdatedModel();
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void discardNext() {
         synchronized (writeLock) {
             if (versionInfo.getNext() != null) {
-                EventuallyImmutable oldNext = versionInfo.getNext();
+                T oldNext = versionInfo.getNext();
                 versionInfo = versionInfo.withNext(null);
                 oldNext.discardPrevious();
             }
             deleted = false;
 
             if (controller != null)
-                controller.setModel((Processor) versionInfo.getThisVersion());
+                controller.setModel(versionInfo.getThisVersion());
         }
 
         if (!Thread.holdsLock(writeLock))
@@ -144,7 +143,7 @@ public class MutabilityHelper implements EventuallyImmutable {
     public void discardPrevious() {
         synchronized (writeLock) {
             if (versionInfo.getPrevious() != null) {
-                EventuallyImmutable oldPrevious = versionInfo.getPrevious();
+                T oldPrevious = versionInfo.getPrevious();
                 versionInfo = versionInfo.withPrevious(null);
                 oldPrevious.discardNext();
             }

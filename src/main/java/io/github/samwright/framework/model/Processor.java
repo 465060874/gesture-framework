@@ -34,7 +34,7 @@ import java.util.List;
  * for example it might choose to process the data in a certain way that worked well during
  * training.
  */
-public interface Processor<I,O> extends EventuallyImmutable {
+public interface Processor extends EventuallyImmutable {
 
     /**
      * Returns true iff the {@code process(input)} method can run.
@@ -51,7 +51,7 @@ public interface Processor<I,O> extends EventuallyImmutable {
      * @return result of processing the input data, inside a {@code Mediator<O>} object.
      * @throws ClassCastException if input cannot be cast to {@code Mediator<I>}.
      */
-    Mediator<O> process(Mediator<?> input);
+    Mediator process(Mediator input);
 
     /**
      * Given a list of input {@link Mediator} objects, produce all output {@code Mediator}
@@ -68,26 +68,24 @@ public interface Processor<I,O> extends EventuallyImmutable {
      * @return all output {@code Mediators} that this could possibly produce.
      * @throws ClassCastException if any input cannot be cast to {@code Mediator<I>}.
      */
-    List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs);
+    List<Mediator> processTrainingBatch(List<Mediator> inputs);
 
     /**
      * Gets the input/output {@link TypeData} required by this {@link Processor}.
      *
      * @return the input/output types required by this {@code Processor}.
      */
-    TypeData<I, O> getTypeData();
+    TypeData getTypeData();
 
     /**
      * Return a clone of this with the given {@link TypeData}.  It will only work if this is
      * immutable (since the parametric types must be set at instantiation).
      *
      * @param newTypeData the type data to put in the returned clone.
-     * @param <I2> the input type of the returned clone.
-     * @param <O2> the output type of the returned clone.
      * @return a clone of this with the given {@code TypeData}.
      * @throws RuntimeException if this is still mutable.
      */
-    <I2, O2> Processor<I2, O2> withTypeData(TypeData<I2, O2> newTypeData);
+    Processor withTypeData(TypeData newTypeData);
 
     /**
      * This method is called after a training batch has been processed to completion, and returns
@@ -126,8 +124,8 @@ public interface Processor<I,O> extends EventuallyImmutable {
      *                               to be successful.
      * @return the rolled-back {@code CompletedTrainingBatch}.
      */
-    CompletedTrainingBatch<I> processCompletedTrainingBatch(
-            CompletedTrainingBatch<?> completedTrainingBatch);
+    CompletedTrainingBatch processCompletedTrainingBatch(
+            CompletedTrainingBatch completedTrainingBatch);
 
     @Override
     Processor createMutableClone();

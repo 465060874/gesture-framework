@@ -9,10 +9,10 @@ import java.util.Set;
  * A completed training batch - containing the set of all output mediators and the subset of
  * those which went on to be successful.
  */
-public class CompletedTrainingBatch<O> {
-    @Getter private final Set<Mediator<O>> all, successful;
+public class CompletedTrainingBatch {
+    @Getter private final Set<Mediator> all, successful;
 
-    public CompletedTrainingBatch(Set<Mediator<O>> all, Set<Mediator<O>> successful) {
+    public CompletedTrainingBatch(Set<Mediator> all, Set<Mediator> successful) {
         this.all = Collections.unmodifiableSet(all);
         this.successful = Collections.unmodifiableSet(successful);
 

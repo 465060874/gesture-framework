@@ -12,7 +12,7 @@ import java.util.List;
  * <p/>
  * When a workflow processes an input, it has its {@code Element} objects process the data
  * sequentially, for example:
- * {@code input -> Element1 -> data1 -> Element2 -> data2 -> ... -> LastElement -> output}.
+ * {@code input -> lement1 -> data1 -> Element2 -> data2 -> ... -> LastElement -> output}.
  * <p/>
  * The {@code Workflow's} input and output types are independent of its {@code Elements},
  * and are set at the {@code workflow's} construction.
@@ -32,17 +32,19 @@ import java.util.List;
  * worry about whether its {@code Workflows} match it's data types.  If this assertion is ever
  * broken, a {@code ClassCastException} is thrown.
  */
-public interface Workflow<I, O>
-        extends Processor<I, O> , ChildOf<WorkflowContainer<I, O>>, ParentOf<Element<?, ?>> {
+public interface Workflow extends Processor, ChildOf<WorkflowContainer>, ParentOf<Element> {
 
     @Override
-    Workflow<I, O> withChildren(List<Element<?, ?>> newChildren);
+    Workflow withChildren(List<Element> newChildren);
 
     @Override
-    Workflow<I, O> withParent(WorkflowContainer<I, O> newParent);
+    Workflow withParent(WorkflowContainer newParent);
 
     @Override
-    <I2, O2> Workflow<I2, O2> withTypeData(TypeData<I2, O2> newTypeData);
+    Workflow withTypeData(TypeData newTypeData);
+
+    @Override
+    Workflow createMutableClone();
 }
 
 

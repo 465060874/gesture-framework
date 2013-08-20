@@ -18,12 +18,12 @@ import static junit.framework.TestCase.assertEquals;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CompletedTrainingBatchTest {
-    private CompletedTrainingBatch<Integer> batch;
-    private Mediator<Integer> one, two, three;
-    private Set<Mediator<Integer>> all, successful;
+    private CompletedTrainingBatch batch;
+    private Mediator one, two, three;
+    private Set<Mediator> all, successful;
 
     @Mock
-    private Processor<?,Integer> intProvider;
+    private Processor intProvider;
 
     @Before
     public void setUp() throws Exception {
@@ -33,7 +33,7 @@ public class CompletedTrainingBatchTest {
         all = new HashSet<>(Arrays.asList(one, two, three));
         successful = new HashSet<>(Arrays.asList(one, two));
 
-        batch = new CompletedTrainingBatch<>(all, successful);
+        batch = new CompletedTrainingBatch(all, successful);
     }
 
     @Test
@@ -48,6 +48,6 @@ public class CompletedTrainingBatchTest {
 
     @Test(expected = RuntimeException.class)
     public void testSuccessfulMustBeSubsetOfAll() throws Exception {
-        batch = new CompletedTrainingBatch<>(successful, all);
+        batch = new CompletedTrainingBatch(successful, all);
     }
 }

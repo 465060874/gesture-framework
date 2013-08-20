@@ -17,11 +17,11 @@ final public class HistoryImpl extends History {
     @Getter private final static History epoch = new HistoryImpl(null, null);
 
     @Getter private final History previous;
-    @Getter private final Processor<?, ?> creator;
-    private final Map<Processor<?, ?>, History> nextByCreator = new HashMap<>();
+    @Getter private final Processor creator;
+    private final Map<Processor, History> nextByCreator = new HashMap<>();
 
     @Override
-    public History createNext(@NonNull Processor<?, ?> creator) {
+    public History createNext(@NonNull Processor creator) {
         History next = nextByCreator.get(creator);
 
         if (next == null) {
@@ -33,7 +33,7 @@ final public class HistoryImpl extends History {
     }
 
     @Override
-    public void discardFutureFrom(@NonNull Processor<?, ?> creator) {
+    public void discardFutureFrom(@NonNull Processor creator) {
         nextByCreator.remove(creator);
     }
 }

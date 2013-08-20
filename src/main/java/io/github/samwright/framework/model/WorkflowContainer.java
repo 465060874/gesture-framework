@@ -19,14 +19,17 @@ import java.util.List;
  * creating an output {@code Mediator} for each {@code Workflow} and for each input
  * {@code Mediator}.
  */
-public interface WorkflowContainer<I, O> extends Element<I, O>, ParentOf<Workflow<I, O>> {
+public interface WorkflowContainer extends Element, ParentOf<Workflow> {
 
     @Override
-    WorkflowContainer<I, O> withChildren(List<Workflow<I, O>> newChildren);
+    WorkflowContainer withChildren(List<Workflow> newChildren);
 
     @Override
-    WorkflowContainer<I, O> withParent(Workflow<?, ?> newParent);
+    WorkflowContainer withParent(Workflow newParent);
 
     @Override
-    <I2, O2> WorkflowContainer<I2, O2> withTypeData(TypeData<I2, O2> newTypeData);
+    WorkflowContainer withTypeData(TypeData newTypeData);
+
+    @Override
+    WorkflowContainer createMutableClone();
 }

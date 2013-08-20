@@ -10,7 +10,7 @@ import java.util.List;
  * Each {@link EventuallyImmutable} object has one {@code VersionInfo} object which describes
  * tracks its earlier and later versions.
  */
-public abstract class VersionInfo {
+public abstract class VersionInfo<T extends EventuallyImmutable> {
 
     /**
      * Gets the next version of the {@link EventuallyImmutable} object.  If this describes the
@@ -18,7 +18,7 @@ public abstract class VersionInfo {
      *
      * @return the next version of the {@link EventuallyImmutable} object.
      */
-    public abstract EventuallyImmutable getNext();
+    public abstract T getNext();
 
     /**
      * Gets the previous version of the {@link EventuallyImmutable} object.  If this describes the
@@ -26,14 +26,14 @@ public abstract class VersionInfo {
      *
      * @return the previous version of the {@link EventuallyImmutable} object.
      */
-    public abstract EventuallyImmutable getPrevious();
+    public abstract T getPrevious();
 
     /**
      * Gets the version of the {@link EventuallyImmutable} object that this describes.
      *
      * @return the version of the {@link EventuallyImmutable} object that this describes.
      */
-    public abstract EventuallyImmutable getThisVersion();
+    public abstract T getThisVersion();
 
     /**
      * Returns a clone of this, but with the given {@link EventuallyImmutable} as the next version.
@@ -43,7 +43,7 @@ public abstract class VersionInfo {
      * @return a clone of this, but with the given {@code EventuallyImmutable} object as the next
      *             version.
      */
-    public abstract VersionInfo withNext(EventuallyImmutable next);
+    public abstract VersionInfo<T> withNext(T next);
 
     /**
      * Returns a clone of this, but with the given {@link EventuallyImmutable} as the previous
@@ -54,21 +54,21 @@ public abstract class VersionInfo {
      * @return a clone of this, but with the given {@code EventuallyImmutable} object as the
      *                 previous version.
      */
-    public abstract VersionInfo withPrevious(EventuallyImmutable previous);
+    public abstract VersionInfo<T> withPrevious(T previous);
 
     /**
      * Gets the latest version of the managed {@link EventuallyImmutable} object.
      *
      * @return the latest version of the managed {@link EventuallyImmutable} object.
      */
-    public abstract EventuallyImmutable getLatest();
+    public abstract T getLatest();
 
     /**
      * Gets the earliest version of the managed {@link EventuallyImmutable} object.
      *
      * @return the earliest version of the managed {@link EventuallyImmutable} object.
      */
-    public abstract EventuallyImmutable getEarliest();
+    public abstract T getEarliest();
 
     /**
      * Creates a {@code VersionInfo} object for the first version of an {@link EventuallyImmutable}
@@ -77,8 +77,8 @@ public abstract class VersionInfo {
      * @param firstVersion the first version of an {@code EventuallyImmutable} object.
      * @return the version information for the given object.
      */
-    public static VersionInfo createForFirst(EventuallyImmutable firstVersion) {
-        return new VersionInfoImpl(firstVersion, null, null);
+    public static <T2 extends EventuallyImmutable> VersionInfo<T2> createForFirst (T2 firstVersion) {
+        return new VersionInfoImpl<>(firstVersion, null, null);
     }
 
     /**

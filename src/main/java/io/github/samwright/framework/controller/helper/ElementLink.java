@@ -16,8 +16,8 @@ public class ElementLink extends Pane {
     @FXML
     private Polygon triangle;
 
-    public ElementLink(String fxmlResource) {
-        Controllers.bindViewToController(fxmlResource, this);
+    public ElementLink() {
+        Controllers.bindViewToController("/fxml/ElementLink.fxml", this);
 
         line.setStartX(0);
         line.endXProperty().bind(widthProperty());

@@ -24,41 +24,16 @@ public class MainWindowController extends HBox {
     public MainWindowController() {
         Controllers.bindViewToController("/fxml/MainWindow.fxml", this);
 
-        topModel = (TopWorkflowContainer) MainApp.beanFactory.getBean("topWorkflowContainer");
+        topModel = new TopWorkflowContainer();
         mainScrollPanel.setContent(topModel.getController());
         topController = topModel.getController();
 
         toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         getChildren().add(toolboxController);
 
-//        Workflow emptyWorkflow = (Workflow) MainApp.beanFactory.getBean("workflow");
-//
-//
-//        TypeData<String,String> typeData = new TypeData<>(String.class, String.class);
-//
-//        Element element1 = (Element) MainApp.beanFactory.getBean("mockElement1");
-//        Element element2 = (Element) MainApp.beanFactory.getBean("mockElement2");
-//        Element element3 = (Element) MainApp.beanFactory.getBean("mockElement1");
-//        Element element4 = (Element) MainApp.beanFactory.getBean("mockElement2");
-//
-//
-//        Workflow workflow = emptyWorkflow
-//                .withTypeData(topModel.getTypeData())
-//                .withParent(topModel)
-//                .withChildren(Arrays.asList(element1, element2, element3, element4));
-//
-//        emptyWorkflow.replaceWith(workflow);
-//
-//
-//        // Setup toolbox
-//        element1 = (Element) MainApp.beanFactory.getBean("mockElement1");
-//        element2 = (Element) MainApp.beanFactory.getBean("mockElement2");
-//
-//        toolbox.getChildren().addAll(Arrays.asList(
-//                element1.getController(), element2.getController()
-//        ));
-
-//        element1.getController().setOnDragDetected();
+        toolboxController.getChildren().add(new LabelledElementController("Element1"));
+        toolboxController.getChildren().add(new LabelledElementController("Element2"));
+        toolboxController.getChildren().add(new LabelledElementController("Element3"));
     }
 
 }

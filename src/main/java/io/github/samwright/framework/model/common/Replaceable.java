@@ -28,7 +28,7 @@ public interface Replaceable {
      * @throws RuntimeException if this object is still mutable,
      *                          or has already been replaced or deleted.
      */
-    void replaceWith(EventuallyImmutable replacement);
+    void replaceWith(Replaceable replacement);
 
     /**
      * Discards any replacement to this object and ensures this object is not deleted,

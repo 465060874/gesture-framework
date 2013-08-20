@@ -9,19 +9,19 @@ import javafx.scene.input.*;
  */
 public class ToolboxDragHandler implements EventHandler<MouseEvent> {
 
-    public static final DataFormat controller = new DataFormat("New Controller");
-
     private final ModelController handledNode;
+    private final DataFormat dataFormat;
 
-    public ToolboxDragHandler(ModelController handledNode) {
+    public ToolboxDragHandler(ModelController handledNode, DataFormat dataFormat) {
         this.handledNode = handledNode;
+        this.dataFormat = dataFormat;
     }
 
     @Override
     public void handle(MouseEvent mouseEvent) {
         Dragboard db = handledNode.startDragAndDrop(TransferMode.COPY);
         ClipboardContent cb = new ClipboardContent();
-        cb.put(controller, handledNode.duplicate());
+        cb.put(dataFormat, handledNode.createClone());
         db.setContent(cb);
 
         mouseEvent.consume();

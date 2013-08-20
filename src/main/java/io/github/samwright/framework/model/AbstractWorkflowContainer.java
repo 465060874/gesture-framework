@@ -15,36 +15,29 @@ import java.util.List;
  * list of {@link Workflow} objects in this, along with everything handled in
  * {@link AbstractElement}.
  */
-public abstract class AbstractWorkflowContainer<I, O>
-        extends AbstractElement<I, O> implements WorkflowContainer<I, O> {
+public abstract class AbstractWorkflowContainer
+        extends AbstractElement implements WorkflowContainer {
 
-    private final ChildrenManager<Workflow<I, O>, WorkflowContainer<I, O>> childrenManager;
+    private final ChildrenManager<Workflow, WorkflowContainer> childrenManager;
 
     /**
-     * Constructs the initial (and immutable) {@code AbstractWorkflowContainer} with the given
-     * {@link TypeData}.
-     *
-     * @param typeData the input/output types of this object.
+     * Constructs the initial (and immutable) {@code AbstractWorkflowContainer}.
      */
-    public AbstractWorkflowContainer(TypeData<I, O> typeData) {
-        super(typeData);
-        childrenManager = new ChildrenManager<>((WorkflowContainer<I, O>) this);
+    public AbstractWorkflowContainer() {
+        super();
+        childrenManager = new ChildrenManager<Workflow, WorkflowContainer>(this);
     }
 
     /**
-     * Constructs a mutable clone of the given {@code AbstractWorkflowContainer} with the given
-     * {@link TypeData}.
+     * Constructs a mutable clone of the given {@code AbstractWorkflowContainer}.
      *
      * @param oldWorkflowContainer the {@code AbstractWorkflowContainer} to clone.
-     * @param typeData the input/output types of this object.
      */
-    @SuppressWarnings("unchecked")
-    public AbstractWorkflowContainer(AbstractWorkflowContainer<?, ?> oldWorkflowContainer,
-                                     TypeData<I, O> typeData) {
-        super(oldWorkflowContainer, typeData);
-        childrenManager = new ChildrenManager<Workflow<I,O>, WorkflowContainer<I, O>>(
-                this,
-                (List<Workflow<I,O>>) (List<?>) oldWorkflowContainer.getChildren());
+    public AbstractWorkflowContainer(AbstractWorkflowContainer oldWorkflowContainer) {
+        super(oldWorkflowContainer);
+        childrenManager =
+                new ChildrenManager<Workflow, WorkflowContainer>
+                (this, oldWorkflowContainer.getChildren());
     }
 
     @Override
@@ -52,7 +45,7 @@ public abstract class AbstractWorkflowContainer<I, O>
         if (getChildren().isEmpty())
             return false;
 
-        for (Workflow<I, O> workflow : getChildren()) {
+        for (Workflow workflow : getChildren()) {
             if (!workflow.isValid())
                 return false;
         }
@@ -61,15 +54,15 @@ public abstract class AbstractWorkflowContainer<I, O>
     }
 
     @Override
-    public WorkflowContainer<I, O> withParent(Workflow<?, ?> newParent) {
-        return (WorkflowContainer<I, O>) super.withParent(newParent);
+    public WorkflowContainer withParent(Workflow newParent) {
+        return (WorkflowContainer) super.withParent(newParent);
     }
 
     @Override
-    public List<Mediator<O>> processTrainingBatch(List<Mediator<?>> inputs) {
-        List<Mediator<O>> outputs = new ArrayList<>();
+    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
+        List<Mediator> outputs = new ArrayList<>();
 
-        for (Workflow<I, O> workflow : getChildren())
+        for (Workflow workflow : getChildren())
             outputs.addAll(workflow.processTrainingBatch(inputs));
 
         return outputs;
@@ -100,17 +93,17 @@ public abstract class AbstractWorkflowContainer<I, O>
     }
 
     @Override
-    public AbstractWorkflowContainer<I, O> createMutableClone() {
-        return (AbstractWorkflowContainer<I, O>) withTypeData(getTypeData());
-    }
-
-    @Override
-    public List<Workflow<I, O>> getChildren() {
+    public List<Workflow> getChildren() {
         return childrenManager.getChildren();
     }
 
     @Override
-    public WorkflowContainer<I, O> withChildren(List<Workflow<I, O>> newChildren) {
+    public WorkflowContainer withChildren(List<Workflow> newChildren) {
         return childrenManager.withChildren(newChildren);
+    }
+
+    @Override
+    public WorkflowContainer withTypeData(TypeData typeData) {
+        return (WorkflowContainer) super.withTypeData(typeData);
     }
 }

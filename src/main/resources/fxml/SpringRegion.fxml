@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <fx:root fx:id="workflowLink" type="javafx.scene.layout.Region"
          xmlns:fx="http://javafx.com/fxml"
-         stylesheets="/css/WorkflowLink.css"
+         stylesheets="/css/ElementLink.css"
          HBox.hgrow="ALWAYS"
          minHeight="50"
          prefWidth="40"

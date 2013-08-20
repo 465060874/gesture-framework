@@ -30,7 +30,7 @@ public abstract class History {
      * @param creator the {@code Processor} that created the new object.
      * @return the new {@code History} object.
      */
-    public abstract History createNext(Processor<?, ?> creator);
+    public abstract History createNext(Processor creator);
 
     /**
      * Get the {@code History} object that immediately preceded this one.
@@ -44,7 +44,7 @@ public abstract class History {
      *
      * @return the {@code Processor} object that created this {@code History} object.
      */
-    public abstract Processor<?, ?> getCreator();
+    public abstract Processor getCreator();
 
     /**
      * Discards the {@code History} object created by the {@code creator} from this one.
@@ -52,5 +52,5 @@ public abstract class History {
      * @param creator the {@link Processor} that created the {@code History} object from this one
      *                to be deleted.
      */
-    public abstract void discardFutureFrom(Processor<?, ?> creator);
+    public abstract void discardFutureFrom(Processor creator);
 }

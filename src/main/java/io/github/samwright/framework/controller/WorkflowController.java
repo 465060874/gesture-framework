@@ -6,15 +6,19 @@ import io.github.samwright.framework.model.Workflow;
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 21:15
  */
-abstract public class WorkflowController<I, O> extends ModelController<Workflow<I, O>> {
+abstract public class WorkflowController extends ModelController<Workflow> {
 
     public WorkflowController(String fxmlResource) {
         super(fxmlResource);
     }
 
+    public WorkflowController(WorkflowController toClone) {
+        super(toClone);
+    }
+
     @Override
     public void handleUpdatedModel() {
-        for (Element<?, ?> element : getModel().getChildren())
+        for (Element element : getModel().getChildren())
             element.getController().handleUpdatedModel();
     }
 

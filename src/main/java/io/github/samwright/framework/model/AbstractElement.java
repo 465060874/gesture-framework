@@ -17,53 +17,49 @@ import java.util.Set;
  * {@link Workflow}, its {@link TypeData}, mutation management, and
  * {@link io.github.samwright.framework.model.common.ElementObserver} management).
  */
-public abstract class AbstractElement<I, O> implements Element<I, O> {
-    @Getter private Set<ElementObserver<O>> observers;
-    @Getter private final TypeData<I, O> typeData;
-    private final ParentManager<Element<?, ?>, Workflow<?, ?>> parentManager;
+public abstract class AbstractElement implements Element {
+    @Getter private Set<ElementObserver> observers;
+    private final ParentManager<Element, Workflow> parentManager;
 
     @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
-    private final MutabilityHelper mutabilityHelper;
+    private final MutabilityHelper<Element> mutabilityHelper;
+
+    @Delegate
+    private final TypeDataManager<Element> typeDataManager;
 
     /**
-     * Constructs the initial (and immutable) {@code AbstractElement} with the given
-     * {@link TypeData}.
-     *
-     * @param typeData the input/output types of this object.
+     * Constructs the initial (and immutable) {@code AbstractElement}.
      */
-    public AbstractElement(TypeData<I, O> typeData) {
-        this.typeData = typeData;
-        mutabilityHelper = new MutabilityHelper(this, false);
+    public AbstractElement() {
+        typeDataManager = new TypeDataManager<Element>(this);
+        mutabilityHelper = new MutabilityHelper<Element>(this, false);
         observers = Collections.emptySet();
-        parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this);
+        parentManager = new ParentManager<Element, Workflow>(this);
     }
 
     /**
-     * Constructs a mutable clone of the given {@code AbstractElement} with the given
-     * {@link TypeData}.
+     * Constructs a mutable clone of the given {@code AbstractElement}.
      *
      * @param oldElement the {@code AbstractElement} to clone.
-     * @param typeData the input/output types of this object.
      */
-    @SuppressWarnings("unchecked")
-    public AbstractElement(AbstractElement<?, ?> oldElement, TypeData<I, O> typeData) {
+    public AbstractElement(AbstractElement oldElement) {
         if (oldElement.isMutable())
             throw new RuntimeException("Cannot clone an immutable object");
-        this.typeData = typeData;
-        mutabilityHelper = new MutabilityHelper(this, true);
-        this.observers = (Set<ElementObserver<O>>) (Set<?>) oldElement.getObservers();
-        parentManager = new ParentManager<Element<?, ?>, Workflow<?, ?>>(this, oldElement.getParent());
+
+        typeDataManager = new TypeDataManager<Element>(this, oldElement.getTypeData());
+        mutabilityHelper = new MutabilityHelper<Element>(this, true);
+        this.observers = oldElement.getObservers();
+        parentManager = new ParentManager<Element, Workflow>(this, oldElement.getParent());
         // TODO: use Set<ElementObserver<?>> observers. validation should include ? -> O check.
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Element<I, O> withParent(Workflow<?, ?> newParent) {
-        return (Element<I, O>) parentManager.withParent(newParent);
+    public Element withParent(Workflow newParent) {
+        return parentManager.withParent(newParent);
     }
 
     @Override
-    public Workflow<?, ?> getParent() {
+    public Workflow getParent() {
         return parentManager.getParent();
     }
 
@@ -75,11 +71,6 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     @Override
     public void discardPrevious() {
         mutabilityHelper.discardPrevious();
-    }
-
-    @Override
-    public AbstractElement<I, O> createMutableClone() {
-        return (AbstractElement<I, O>) withTypeData(getTypeData());
     }
 
     @Override
@@ -103,7 +94,7 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
-    public Element<I, O> withObservers(Set<ElementObserver<O>> newObservers) {
+    public Element withObservers(Set<ElementObserver> newObservers) {
         if (isMutable()) {
             observers = Collections.unmodifiableSet(newObservers);
             return this;
@@ -113,16 +104,14 @@ public abstract class AbstractElement<I, O> implements Element<I, O> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CompletedTrainingBatch<I> processCompletedTrainingBatch(CompletedTrainingBatch<?> completedTrainingBatch) {
-        Set<Mediator<O>> allOutputs = (Set<Mediator<O>>) (Set<?>) completedTrainingBatch.getAll();
+    public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
+        Set<Mediator> allOutputs = completedTrainingBatch.getAll();
 
-        Set<Mediator<O>> successfulOutputs = (Set<Mediator<O>>) (Set<?>)
-                completedTrainingBatch.getSuccessful();
+        Set<Mediator> successfulOutputs = completedTrainingBatch.getSuccessful();
 
-        Set<Mediator<I>> allInputs = Mediator.rollbackMediators(allOutputs);
-        Set<Mediator<I>> successfulInputs = Mediator.rollbackMediators(successfulOutputs);
+        Set<Mediator> allInputs = Mediator.rollbackMediators(allOutputs);
+        Set<Mediator> successfulInputs = Mediator.rollbackMediators(successfulOutputs);
 
-        return new CompletedTrainingBatch<>(allInputs, successfulInputs);
+        return new CompletedTrainingBatch(allInputs, successfulInputs);
     }
 }

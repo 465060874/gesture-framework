@@ -1,29 +1,27 @@
 package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.helper.Mediator;
-import io.github.samwright.framework.model.helper.TypeData;
 
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 09:21
  */
-public class TopWorkflowContainer<I, O> extends AbstractWorkflowContainer<I, O> {
+public class TopWorkflowContainer extends AbstractWorkflowContainer {
 
-    public TopWorkflowContainer(TypeData<I, O> typeData) {
-        super(typeData);
+    public TopWorkflowContainer() {
+        super();
     }
 
-    public TopWorkflowContainer(TopWorkflowContainer<?, ?> oldWorkflowContainer,
-                                TypeData<I, O> typeData) {
-        super(oldWorkflowContainer, typeData);
+    public TopWorkflowContainer(TopWorkflowContainer oldWorkflowContainer) {
+        super(oldWorkflowContainer);
     }
 
     @Override
-    public Mediator<O> process(Mediator<?> input) {
+    public Mediator process(Mediator input) {
         return null; // Dummy implementation
     }
 
     @Override
-    public <I2, O2> TopWorkflowContainer<I2, O2> withTypeData(TypeData<I2, O2> newTypeData) {
-        return new TopWorkflowContainer<>(this, newTypeData);
+    public WorkflowContainer createMutableClone() {
+        return new TopWorkflowContainer(this);
     }
 }

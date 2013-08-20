@@ -12,6 +12,10 @@ abstract public class WorkflowContainerController extends ElementController {
         super(fxmlResource);
     }
 
+    public WorkflowContainerController(WorkflowContainerController toClone) {
+        super(toClone);
+    }
+
     @Override
     public WorkflowContainer getModel() {
         return (WorkflowContainer) super.getModel();
@@ -19,7 +23,6 @@ abstract public class WorkflowContainerController extends ElementController {
 
     @Override
     public void handleUpdatedModel() {
-
         for (Workflow workflow : getModel().getChildren())
             workflow.getController().handleUpdatedModel();
     }

@@ -22,7 +22,7 @@ public class MockEventuallyImmutable implements EventuallyImmutable {
     }
 
     public MockEventuallyImmutable(boolean mutable) {
-        this.mutabilityHelper = new MutabilityHelper(this, mutable);
+        this.mutabilityHelper = new MutabilityHelper<>(this, mutable);
     }
 
     @Override

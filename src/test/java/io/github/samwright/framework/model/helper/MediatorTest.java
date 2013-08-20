@@ -19,13 +19,13 @@ import static junit.framework.TestCase.*;
 public class MediatorTest {
 
     @Mock
-    private Processor<String, Integer> strToInt;
+    private Processor strToInt;
     @Mock
-    private Processor<?, String> stringProvider;
+    private Processor stringProvider;
 
-    private Mediator<?> empty1, empty2;
-    private Mediator<String> str1, str2;
-    private Mediator<Integer> int1, int2;
+    private Mediator empty1, empty2;
+    private Mediator str1, str2;
+    private Mediator int1, int2;
 
     private String stringData = "5";
     private Integer intData = 5;
@@ -79,7 +79,7 @@ public class MediatorTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRollbackMediators() throws Exception {
-        Set<Mediator<String>> rolledBack = Mediator.rollbackMediators(Sets.newSet(int1, int2));
+        Set<Mediator> rolledBack = Mediator.rollbackMediators(Sets.newSet(int1, int2));
         assertEquals(Sets.newSet(str1, str2), rolledBack);
     }
 
@@ -87,7 +87,7 @@ public class MediatorTest {
     @SuppressWarnings("unchecked")
     public void testRollbackSiblingMediators() throws Exception {
         int2 = str1.createNext(strToInt, intData);
-        Set<Mediator<String>> rolledBack = Mediator.rollbackMediators(Sets.newSet(int1, int2));
+        Set<Mediator> rolledBack = Mediator.rollbackMediators(Sets.newSet(int1, int2));
         assertEquals(Sets.newSet(str1), rolledBack);
     }
 }

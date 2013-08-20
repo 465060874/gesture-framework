@@ -12,9 +12,16 @@ import lombok.NonNull;
  */
 @AllArgsConstructor()
 @EqualsAndHashCode
-final public class TypeData<I, O> {
-    @Getter @NonNull private final Class<I> inputType;
-    @Getter @NonNull private final Class<O> outputType;
+final public class TypeData {
+
+    @Getter static private final TypeData defaultType;
+
+    static {
+        defaultType = new TypeData(Object.class, Object.class);
+    }
+
+    @Getter @NonNull private final Class inputType;
+    @Getter @NonNull private final Class outputType;
 
     @Override
     public String toString() {
@@ -32,6 +39,7 @@ final public class TypeData<I, O> {
      *
      * @return true if the input type can be casted to the output type.
      */
+    @SuppressWarnings("unchecked")
     public boolean canBeEmptyContainer() {
         return outputType.isAssignableFrom(inputType);
     }
@@ -40,11 +48,10 @@ final public class TypeData<I, O> {
      * Checks if this {@code Processor} can come before the other {@code Processor}.
      *
      * @param other the {@code TypeData} of the other {@code Processor}.
-     * @param <I2> the input type of the other {@code Processor}.
-     * @param <O2> the output type of the other {@code Processor}.
      * @return true iff this output type can be casted to the other's input type.
      */
-    public <I2, O2> boolean canComeBefore(TypeData<I2, O2> other) {
+    @SuppressWarnings("unchecked")
+    public boolean canComeBefore(TypeData other) {
         return other.inputType.isAssignableFrom(this.outputType);
     }
 
@@ -52,11 +59,10 @@ final public class TypeData<I, O> {
      * Checks if this {@code Processor} can come after the other {@code Processor}.
      *
      * @param other the {@code TypeData} of the other {@code Processor}.
-     * @param <I2> the input type of the other {@code Processor}.
-     * @param <O2> the output type of the other {@code Processor}.
      * @return true iff the other's output type can be casted to this input type.
      */
-    public <I2, O2> boolean canComeAfter(TypeData<I2, O2> other) {
+    @SuppressWarnings("unchecked")
+    public boolean canComeAfter(TypeData other) {
         return this.inputType.isAssignableFrom(other.outputType);
     }
 
@@ -65,11 +71,10 @@ final public class TypeData<I, O> {
      * {@link Workflow workflow}.
      *
      * @param workflow the {@code TypeData} of the {@code Workflow}.
-     * @param <I2> the input type of the {@code Workflow}.
-     * @param <O2> the output type of the {@code Workflow}.
      * @return true iff this output type can be casted to the workflow's output type.
      */
-    public <I2, O2> boolean canBeAtEndOfWorkflow(TypeData<I2, O2> workflow) {
+    @SuppressWarnings("unchecked")
+    public boolean canBeAtEndOfWorkflow(TypeData workflow) {
         return workflow.outputType.isAssignableFrom(this.outputType);
     }
 
@@ -78,11 +83,10 @@ final public class TypeData<I, O> {
      * {@link Workflow workflow}.
      *
      * @param workflow the {@code TypeData} of the {@code Workflow}.
-     * @param <I2> the input type of the {@code Workflow}.
-     * @param <O2> the output type of the {@code Workflow}.
      * @return true iff the workflow's input type can be casted to this input type.
      */
-    public <I2, O2> boolean canBeAtStartOfWorkflow(TypeData<I2, O2> workflow) {
+    @SuppressWarnings("unchecked")
+    public boolean canBeAtStartOfWorkflow(TypeData workflow) {
         return this.inputType.isAssignableFrom(workflow.inputType);
     }
 }
