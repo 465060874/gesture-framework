@@ -4,7 +4,9 @@
 <fx:root fx:id="element" type="javafx.scene.layout.VBox"
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/Element.css"
-         minHeight="50">
+         minHeight="50"
+         minWidth="70"
+         >
     <children>
         <Label alignment="CENTER" text="Element" fx:id="label" minWidth="-Infinity"/>
     </children>

@@ -3,46 +3,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="workflowContainerController"
-          class="io.github.samwright.framework.controller.WorkflowContainerControllerImpl"
-          scope="prototype">
-        <constructor-arg value="/fxml/WorkflowContainer.fxml"/>
-    </bean>
 
     <bean id="toolbox"
           class="io.github.samwright.framework.controller.ToolboxController"
     />
 
-    <!--Elements-->
 
-    <!--<bean id="mockElementController1"-->
-          <!--class="io.github.samwright.framework.controller.LabelledElementController"-->
-          <!--scope="prototype">-->
-        <!--<constructor-arg index="0" value="/fxml/LabelledElement.fxml"/>-->
-        <!--<constructor-arg index="1" value="Element 1"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="mockElementController2"-->
-          <!--class="io.github.samwright.framework.controller.LabelledElementController"-->
-          <!--scope="prototype">-->
-        <!--<constructor-arg index="0" value="/fxml/LabelledElement.fxml"/>-->
-        <!--<constructor-arg index="1" value="Element 2"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="mockElement1"-->
-          <!--class="io.github.samwright.framework.model.mock.MockElement"-->
-          <!--scope="prototype">-->
-        <!--<constructor-arg index="0" ref="defaultTypeData"/>-->
-        <!--<constructor-arg index="1" value="1"/>-->
-        <!--<property name="controller" ref="mockElementController1"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="mockElement2"-->
-          <!--class="io.github.samwright.framework.model.mock.MockElement"-->
-          <!--scope="prototype">-->
-        <!--<constructor-arg index="0" ref="defaultTypeData"/>-->
-        <!--<constructor-arg index="1" value="2"/>-->
-        <!--<property name="controller" ref="mockElementController2"/>-->
-    <!--</bean>-->
 
 </beans>

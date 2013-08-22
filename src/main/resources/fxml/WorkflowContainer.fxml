@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <fx:root fx:id="workflowContainer" type="javafx.scene.layout.VBox"
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/WorkflowContainer.css">
   <children>
-    <Label alignment="CENTER" text="WorkflowContainer" />
-    <VBox id="workflowsBox" fx:id="workflowsBox" />
-  </children>
+      <HBox>
+          <!--<VBox.vgrow>Never</VBox.vgrow>-->
+          <children>
+            <Label alignment="CENTER" text="WorkflowContainer"/>
+            <Button text="Add Workflow" fx:id="addButton" />
+        </children>
+      </HBox>
+
+      <VBox fx:id="workflowsBox" />
+
+    </children>
 </fx:root>

@@ -44,7 +44,7 @@ public abstract class AbstractElement implements Element {
      */
     public AbstractElement(AbstractElement oldElement) {
         if (oldElement.isMutable())
-            throw new RuntimeException("Cannot clone an immutable object");
+            throw new RuntimeException("Cannot clone a mutable object");
 
         typeDataManager = new TypeDataManager<Element>(this, oldElement.getTypeData());
         mutabilityHelper = new MutabilityHelper<Element>(this, true);
@@ -77,6 +77,17 @@ public abstract class AbstractElement implements Element {
     public void delete() {
         mutabilityHelper.delete();
         parentManager.afterDelete();
+    }
+
+    @Override
+    public Element createOrphanedDeepClone() {
+        if (isMutable())
+            throw new RuntimeException("Cannot clone mutable");
+
+        Element clone = createMutableClone().withParent(null);
+        this.replaceWith(clone);
+        this.discardNext();
+        return clone;
     }
 
     @Override

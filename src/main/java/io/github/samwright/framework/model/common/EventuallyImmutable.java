@@ -42,6 +42,15 @@ public interface EventuallyImmutable extends Replaceable {
     EventuallyImmutable createMutableClone();
 
     /**
+     * Create a deep clone of this object.  Everything inside this will also be deep-cloned and
+     * the clone will know nothing of this (or its children/parents/etc...).  The returned clone
+     * will be immutable, and will have no parent.
+     *
+     * @return an immutable deep clone of this.
+     */
+    EventuallyImmutable createOrphanedDeepClone();
+
+    /**
      * If this object is mutable, this method will make it immutable. In any case,
      * it will save the new version information.
      * <p/>
@@ -52,11 +61,6 @@ public interface EventuallyImmutable extends Replaceable {
      * @param versionInfo the new version information for this object.
      */
     void fixAsVersion(VersionInfo versionInfo);
-
-    /**
-     * If this object is mutable, this method will make it immutable.
-     */
-    void fix();
 
     /**
      * Returns true iff this object is mutable, meaning it was created as mutable and has not

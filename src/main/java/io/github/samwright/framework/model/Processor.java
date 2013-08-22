@@ -7,6 +7,7 @@ import io.github.samwright.framework.model.helper.History;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ import java.util.List;
  * for example it might choose to process the data in a certain way that worked well during
  * training.
  */
-public interface Processor extends EventuallyImmutable {
+public interface Processor extends EventuallyImmutable, Serializable {
 
     /**
      * Returns true iff the {@code process(input)} method can run.

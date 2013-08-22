@@ -45,6 +45,9 @@ public interface Workflow extends Processor, ChildOf<WorkflowContainer>, ParentO
 
     @Override
     Workflow createMutableClone();
+
+    @Override
+    Workflow createOrphanedDeepClone();
 }
 
 

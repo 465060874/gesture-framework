@@ -23,6 +23,7 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
         void fixAsVersion(VersionInfo versionInfo);
         void delete();
         EventuallyImmutable createMutableClone();
+        EventuallyImmutable createOrphanedDeepClone();
         void discardNext();
         void discardPrevious();
     }
@@ -60,6 +61,11 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
     }
 
     @Override
+    public EventuallyImmutable createOrphanedDeepClone() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
     public VersionInfo<T> versionInfo() {
         synchronized (writeLock) {
             return versionInfo;
@@ -79,35 +85,39 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
     }
 
     @Override
-    public void fix() {
-        fixAsVersion(versionInfo);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void replaceWith(@NonNull Replaceable replacement) {
-        if (versionInfo.getThisVersion() == replacement)
+        if (versionInfo.getThisVersion() == replacement) {
+            System.out.println("SKIPPING REPLACEMENT!!");
             return;
-        System.out.println(" ====== START replacing " + versionInfo.getThisVersion().toString());
+        }
+
+        System.out.println(" ====== START replacing " + versionInfo.getThisVersion().toString()
+                            + " with " + replacement);
         synchronized (writeLock) {
             if (isMutable())
                 throw new RuntimeException("Cannot replace a mutable object - fix this first");
             if (isDeleted())
                 throw new RuntimeException("Cannot replace a deleted object - discard first.");
-            if (versionInfo.getNext() != null)
-                throw new RuntimeException("Already been replaced - discard the replacement first");
             if (replacement.versionInfo().getPrevious() != null)
                 throw new RuntimeException("Replacement has already replaced something else");
+
+            if (versionInfo.getNext() != null)
+                throw new RuntimeException("Already been replaced - discard the replacement first");
+
+//            if (versionInfo.getNext() != null) {
+//                System.out.println("Already been replaced - discarding the replacement first");
+//                versionInfo.getThisVersion().discardNext();
+//            }
 
             versionInfo = versionInfo.withNext((T) replacement);
             VersionInfo<T> nextVersionInfo =
                     replacement.versionInfo().withPrevious(versionInfo.getThisVersion());
+
             ((T) replacement).fixAsVersion(nextVersionInfo);
-            replacement.setController(controller);
 
             if (controller != null)
-                controller.setModel(nextVersionInfo.getLatest());
-
+                controller.setModel((T) replacement);
         }
 
         if (!Thread.holdsLock(writeLock))
@@ -125,6 +135,8 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
     public void discardNext() {
         synchronized (writeLock) {
             if (versionInfo.getNext() != null) {
+//                System.out.println("Discarding from " + versionInfo.getThisVersion()
+//                        + " next " + versionInfo.getNext());
                 T oldNext = versionInfo.getNext();
                 versionInfo = versionInfo.withNext(null);
                 oldNext.discardPrevious();

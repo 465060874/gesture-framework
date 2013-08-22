@@ -89,6 +89,9 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     @SuppressWarnings("unchecked")
     public void beforeFixAsVersion(VersionInfo versionInfo) {
+        if (!managedChild.isMutable())
+            return;
+
         // In scenario 1, the parent is updating its children to point to the new version of the
         // parent.  There's nothing to do!
 

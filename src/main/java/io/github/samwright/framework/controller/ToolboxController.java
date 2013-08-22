@@ -14,11 +14,4 @@ public class ToolboxController extends FlowPane {
         setPrefWidth(200);
     }
 
-    private void addTool(ModelController controller) {
-        if (controller.getModel() == null)
-            throw new RuntimeException("ModelController's model is null");
-
-
-    }
-
 }

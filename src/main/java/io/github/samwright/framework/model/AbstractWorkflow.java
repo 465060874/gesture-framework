@@ -96,4 +96,12 @@ public abstract class AbstractWorkflow implements Workflow {
 
         mutabilityHelper.fixAsVersion(versionInfo);
     }
+
+    @Override
+    public Workflow createOrphanedDeepClone() {
+        Workflow clone = this.withParent(null);
+        this.replaceWith(clone);
+        this.discardNext();
+        return clone;
+    }
 }

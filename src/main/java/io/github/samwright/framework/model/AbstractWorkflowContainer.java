@@ -106,4 +106,9 @@ public abstract class AbstractWorkflowContainer
     public WorkflowContainer withTypeData(TypeData typeData) {
         return (WorkflowContainer) super.withTypeData(typeData);
     }
+
+    @Override
+    public WorkflowContainer createOrphanedDeepClone() {
+        return (WorkflowContainer) super.createOrphanedDeepClone();
+    }
 }
