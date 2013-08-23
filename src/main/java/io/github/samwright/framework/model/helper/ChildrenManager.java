@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
     @SuppressWarnings("unchecked")
     public P withChildren(@NonNull List<C> newChildren) {
         if (managedParent.isMutable()) {
+            if (new HashSet<>(newChildren).size() != newChildren.size())
+                throw new RuntimeException("Supplied children list contains duplicates");
+
             children = Collections.unmodifiableList(new LinkedList<>(newChildren));
             return managedParent;
         } else {

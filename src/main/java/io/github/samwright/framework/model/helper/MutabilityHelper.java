@@ -102,13 +102,8 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
             if (replacement.versionInfo().getPrevious() != null)
                 throw new RuntimeException("Replacement has already replaced something else");
 
-//            if (versionInfo.getNext() != null)
-//                throw new RuntimeException("Already been replaced - discard the replacement first");
-
-            if (versionInfo.getNext() != null) {
-                System.out.println("Already been replaced - discarding the replacement first");
+            if (versionInfo.getNext() != null)
                 versionInfo.getThisVersion().discardNext();
-            }
 
             versionInfo = versionInfo.withNext((T) replacement);
             VersionInfo<T> nextVersionInfo =

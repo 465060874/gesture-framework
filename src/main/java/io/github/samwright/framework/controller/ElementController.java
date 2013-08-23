@@ -8,7 +8,6 @@ import io.github.samwright.framework.model.common.ElementObserver;
 import javafx.event.EventHandler;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.TransferMode;
 import lombok.Getter;
 
 import java.util.HashSet;
@@ -29,8 +28,8 @@ abstract public class ElementController extends ModelController<Element> {
         setOnDragDone(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent dragEvent) {
-                if (dragEvent.getTransferMode() == TransferMode.MOVE && dragEvent.isDropCompleted())
-                    getModel().delete();
+//                if (dragEvent.getTransferMode() == TransferMode.MOVE && dragEvent.isDropCompleted())
+//                    getModel().delete();
 
                 DragHandler.clearDraggedNode();
                 dragEvent.consume();

@@ -10,12 +10,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -42,7 +44,14 @@ public class ElementLink extends Pane implements ElementObserver {
         triangle.translateXProperty().bind(widthProperty().divide(2));
         triangle.translateYProperty().bind(heightProperty().divide(2));
 
-        setOnDragOver(new DragOverHandler(this, ElementController.dataFormat));
+        setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+                if (dragEvent.getDragboard().hasContent(ElementController.dataFormat))
+                    dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                dragEvent.consume();
+            }
+        });
 
         setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
@@ -66,32 +75,87 @@ public class ElementLink extends Pane implements ElementObserver {
                 if (!dragEvent.getDragboard().hasContent(ElementController.dataFormat))
                     return;
 
-                ElementController newElementController = (ElementController)
+                ElementController draggedElementController = (ElementController)
                         DragHandler.getDraggedNode();
 
-//                Workflow workflow = controller.getModel().getParent();
+                if (draggedElementController == controller) {
+                    System.out.println("same controller!");
+                    dragEvent.setDropCompleted(true);
+                    dragEvent.consume();
+                    return;
+                }
+
                 Parent parent = getParent();
                 while (parent != null && !(parent instanceof WorkflowController))
                     parent = parent.getParent();
 
                 if (parent == null)
-                    throw new RuntimeException("Tried to drag to element link not in a workflow");
+                    throw new RuntimeException("Tried to drag to element not in a workflow");
 
                 Workflow workflow = ((WorkflowController) parent).getModel();
                 List<Element> newSiblings = new ArrayList<>(workflow.getChildren());
 
-                int myIndex;
-                if (controller == null)
-                    myIndex = -1;
-                else
-                    myIndex = newSiblings.indexOf(controller.getModel());
+                System.out.println("Siblings before cull: " + newSiblings);
+                for (Element sibling : newSiblings)
+                    System.out.println("\t" + sibling.versionInfo());
+                System.out.println("dragged element versionInfo: "
+                        + draggedElementController.getModel().versionInfo());
 
-                if (newElementController.getModel() == null)
+
+                // If moving, make sure the dragged element is not already in the workflow.
+                // If it's in another workflow, by adding it as a child here, it will be removed
+                // from that old workflow.
+                if (dragEvent.getTransferMode() == TransferMode.MOVE) {
+                    newSiblings.remove(draggedElementController.getModel());
+                    Element previous
+                            = (Element) draggedElementController.getModel().versionInfo().getPrevious();
+                    if (previous != null)
+                        newSiblings.remove(previous);
+                }
+
+
+
+                int newIndex;
+                if (controller == null) {
+                    newIndex = 0;
+                    System.out.println("Default element link");
+                } else {
+                    System.out.println("controller.getModel() versionInfo = " +
+                            controller.getModel().versionInfo());
+
+                    int myIndex = newSiblings.indexOf(controller.getModel());
+                    if (myIndex == -1)
+                        System.out.println("Couldn't find my controller!!!");
+                    newIndex = myIndex + 1;
+                    System.out.println("controller.getModel() = " + controller.getModel());
+                }
+
+                if (draggedElementController.getModel() == null)
                     throw new RuntimeException("Model is null!!!!");
 
-                newSiblings.add(myIndex + 1, newElementController.getModel());
+                newSiblings.add(newIndex, draggedElementController.getModel());
+
+                System.out.println("suggested siblings: " + newSiblings);
+
+                List<Workflow> parents = new LinkedList<>();
+                for (Element sibling : newSiblings)
+                    parents.add(sibling.getParent());
+
+                System.out.println("suggested siblings' parents: " + parents);
+
                 workflow.replaceWith(workflow.withChildren(newSiblings));
 
+                workflow = (Workflow) workflow.versionInfo().getNext();
+                System.out.println("new siblings: " + workflow.getChildren());
+
+                List<Workflow> newParents = new LinkedList<>();
+                for (Element sibling : workflow.getChildren())
+                    newParents.add(sibling.getParent());
+
+                System.out.println("new siblings' parents: " + newParents);
+                System.out.println("dragged element versionInfo = "
+                        + draggedElementController.getModel().versionInfo());
+                System.out.println("workflow versionInfo = " + workflow.versionInfo());
 
                 dragEvent.setDropCompleted(true);
                 dragEvent.consume();

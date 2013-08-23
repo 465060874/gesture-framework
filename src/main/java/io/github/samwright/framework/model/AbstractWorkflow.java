@@ -118,4 +118,11 @@ public abstract class AbstractWorkflow implements Workflow {
         this.discardNext();
         return clone;
     }
+
+
+    @Override
+    public String toString() {
+        String fullString = super.toString();
+        return fullString.substring(fullString.length() - 4);
+    }
 }

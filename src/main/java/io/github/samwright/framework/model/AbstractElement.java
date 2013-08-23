@@ -137,4 +137,11 @@ public abstract class AbstractElement implements Element {
 
         return new CompletedTrainingBatch(allInputs, successfulInputs);
     }
+
+
+    @Override
+    public String toString() {
+        String fullString = super.toString();
+        return fullString.substring(fullString.length() - 4);
+    }
 }

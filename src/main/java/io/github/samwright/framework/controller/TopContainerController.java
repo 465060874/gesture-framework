@@ -35,15 +35,11 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     @Override
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
-//        System.out.println("New top model = " + getModel());
         mainWindow.handleUpdatedModel();
-
-        System.out.println(getModel().versionInfo());
     }
 
     public void undo() {
         WorkflowContainer previousModel = (WorkflowContainer) getModel().versionInfo().getPrevious();
-        System.out.println("UNDO");
         getModel().undo();
 
         if (previousModel != getModel())
@@ -52,7 +48,6 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
 
     public void redo() {
         WorkflowContainer nextModel = (WorkflowContainer) getModel().versionInfo().getNext();
-        System.out.println("REDO");
         getModel().redo();
 
         if (nextModel != getModel())

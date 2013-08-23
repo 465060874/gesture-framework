@@ -35,13 +35,8 @@ public class DragHandler implements EventHandler<MouseEvent> {
         if (draggedNode != null)
             throw new RuntimeException("Can only drag one object at a time...");
 
-        draggedNode = handledNode.createClone();
-
         if (handledNode.getModel() == null)
             throw new RuntimeException("handled node has no model");
-
-        if (draggedNode.getModel() == null)
-            throw new RuntimeException("clone has no model");
 
         ToolboxController toolbox = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         TransferMode transferMode;
@@ -49,11 +44,18 @@ public class DragHandler implements EventHandler<MouseEvent> {
         if (toolbox.getChildren().contains(handledNode)) {
             transferMode = TransferMode.COPY;
         } else {
-            if (mouseEvent.isAltDown())
+            if (mouseEvent.isAltDown() || mouseEvent.isSecondaryButtonDown())
                 transferMode = TransferMode.COPY;
             else
                 transferMode = TransferMode.MOVE;
         }
+
+        if (transferMode == TransferMode.COPY)
+            draggedNode = handledNode.createClone();
+        else
+            draggedNode = handledNode;
+
+        System.out.println("Transfer mode: " + transferMode);
 
         Dragboard db = handledNode.startDragAndDrop(transferMode);
         ClipboardContent cb = new ClipboardContent();
