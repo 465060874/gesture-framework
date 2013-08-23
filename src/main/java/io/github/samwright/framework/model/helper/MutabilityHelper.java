@@ -90,8 +90,9 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
     @SuppressWarnings("unchecked")
     public void replaceWith(@NonNull Replaceable replacement) {
         if (versionInfo.getThisVersion() == replacement) {
-            System.out.println("SKIPPING REPLACEMENT!!");
-            return;
+//            System.out.println("SKIPPING REPLACEMENT!! Tried replacing with self: " + replacement);
+//            return;
+            throw new RuntimeException("SKIPPING REPLACEMENT!! Tried replacing with self: " + replacement);
         }
 
         synchronized (writeLock) {
@@ -104,6 +105,9 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
 
             if (versionInfo.getNext() != null)
                 versionInfo.getThisVersion().discardNext();
+
+            System.out.format("== replacing %s with %s%n", versionInfo.getThisVersion(),
+                    replacement);
 
             versionInfo = versionInfo.withNext((T) replacement);
             VersionInfo<T> nextVersionInfo =

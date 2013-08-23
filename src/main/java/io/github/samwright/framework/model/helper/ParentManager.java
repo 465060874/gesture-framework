@@ -97,7 +97,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
 
         // In scenario 2, the parent remains its old, immutable version.  We must create a new
         // parent given the updated list of children.
-        if (getParent() != null && !getParent().isMutable() && managedChild.isMutable()) {
+        if (getParent() != null && !getParent().isMutable()) {
             List<C> newSiblings = new LinkedList<>(getParent().getChildren());
             VersionInfo.updateAllToLatest(newSiblings);
             if (!newSiblings.contains(managedChild))

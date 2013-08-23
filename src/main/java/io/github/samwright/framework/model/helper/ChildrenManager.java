@@ -86,25 +86,34 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
         if (!managedParent.isMutable())
             return;
 
-        List<C> latestChildren = new LinkedList<>(children);
+        List<C> latestChildren = new LinkedList<>();
 
         // Update all children to their latest versions, removing those that were deleted.
-        VersionInfo.updateAllToLatest(latestChildren);
-        children = new LinkedList<>();
-        for (C child : latestChildren) {
-            if (child.getParent() == managedParent) {
-                // The child has already been created pointing to managedParent as its
-                // parent, so keep it as is.
-                children.add(child);
+//        VersionInfo.updateAllToLatest(latestChildren);
+
+//        children = new LinkedList<>();
+        for (C child : children) {
+            if (child.isDeleted())
+                continue;
+
+            C childNextVersion = (C) child.versionInfo().getNext();
+            if (childNextVersion == null) {
+                if (child.getParent() == managedParent) {
+                    // Child is a new addition to this parent - just need to add it to list.
+                    latestChildren.add(child);
+                } else {
+                    // Child has not been updated.  Grandfather it in to the new version:
+                    C newChild = (C) child.withParent(managedParent);
+                    child.replaceWith(newChild);
+                    latestChildren.add(newChild);
+                }
             } else {
-                // The child needs to have managedParent set as its parent.
-                C newChild = (C) child.withParent(managedParent);
-                child.replaceWith(newChild);
-                children.add(newChild);
+                // Child has been replaced and has been given to another parent,
+                // so don't include it.
             }
         }
 
-        children = Collections.unmodifiableList(children);
+        children = Collections.unmodifiableList(latestChildren);
     }
 
     /**

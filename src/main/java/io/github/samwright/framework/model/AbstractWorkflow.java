@@ -123,6 +123,6 @@ public abstract class AbstractWorkflow implements Workflow {
     @Override
     public String toString() {
         String fullString = super.toString();
-        return fullString.substring(fullString.length() - 4);
+        return getClass().getSimpleName() + fullString.substring(fullString.length() - 4);
     }
 }
