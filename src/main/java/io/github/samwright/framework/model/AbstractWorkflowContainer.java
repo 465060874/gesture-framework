@@ -81,6 +81,18 @@ public abstract class AbstractWorkflowContainer
     }
 
     @Override
+    public void redo() {
+        super.redo();
+        childrenManager.redo();
+    }
+
+    @Override
+    public void undo() {
+        super.undo();
+        childrenManager.undo();
+    }
+
+    @Override
     public void delete() {
         super.delete();
         childrenManager.afterDelete();

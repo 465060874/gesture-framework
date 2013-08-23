@@ -66,11 +66,23 @@ public abstract class AbstractElement implements Element {
     @Override
     public void discardNext() {
         mutabilityHelper.discardNext();
+        parentManager.discardNext();
     }
 
     @Override
     public void discardPrevious() {
         mutabilityHelper.discardPrevious();
+        parentManager.discardPrevious();
+    }
+
+    @Override
+    public void redo() {
+        mutabilityHelper.redo();
+    }
+
+    @Override
+    public void undo() {
+        mutabilityHelper.undo();
     }
 
     @Override

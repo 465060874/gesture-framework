@@ -26,6 +26,8 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
         EventuallyImmutable createOrphanedDeepClone();
         void discardNext();
         void discardPrevious();
+        void undo();
+        void redo();
     }
     /**
      * Construct a new {@code MutabilityHelper} to manage the given {@link EventuallyImmutable}
@@ -92,8 +94,6 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
             return;
         }
 
-        System.out.println(" ====== START replacing " + versionInfo.getThisVersion().toString()
-                            + " with " + replacement);
         synchronized (writeLock) {
             if (isMutable())
                 throw new RuntimeException("Cannot replace a mutable object - fix this first");
@@ -102,13 +102,13 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
             if (replacement.versionInfo().getPrevious() != null)
                 throw new RuntimeException("Replacement has already replaced something else");
 
-            if (versionInfo.getNext() != null)
-                throw new RuntimeException("Already been replaced - discard the replacement first");
+//            if (versionInfo.getNext() != null)
+//                throw new RuntimeException("Already been replaced - discard the replacement first");
 
-//            if (versionInfo.getNext() != null) {
-//                System.out.println("Already been replaced - discarding the replacement first");
-//                versionInfo.getThisVersion().discardNext();
-//            }
+            if (versionInfo.getNext() != null) {
+                System.out.println("Already been replaced - discarding the replacement first");
+                versionInfo.getThisVersion().discardNext();
+            }
 
             versionInfo = versionInfo.withNext((T) replacement);
             VersionInfo<T> nextVersionInfo =
@@ -172,5 +172,34 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
 
             deleted = true;
         }
+    }
+
+
+    @Override
+    public void undo() {
+        synchronized (writeLock) {
+            if (versionInfo.getPrevious() == null)
+                throw new RuntimeException("Cannot undo because there's no previous version");
+
+            if (controller != null)
+                controller.setModel(versionInfo.getPrevious());
+        }
+
+        if (!Thread.holdsLock(writeLock))
+            notifyTopController();
+    }
+
+    @Override
+    public void redo() {
+        synchronized (writeLock) {
+            if (versionInfo.getNext() == null)
+                throw new RuntimeException("Cannot redo because there's no next version");
+
+            if (controller != null)
+                controller.setModel(versionInfo.getNext());
+        }
+
+        if (!Thread.holdsLock(writeLock))
+            notifyTopController();
     }
 }

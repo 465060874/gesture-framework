@@ -108,4 +108,22 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
             oldParent.replaceWith(parent);
         }
     }
+
+    /**
+     * Called when the managed child is having its replacement discarded,
+     * and tells its parent to discard its replacement.
+     */
+    public void discardNext() {
+        if (parent != null && parent.versionInfo().getNext() != null)
+            parent.discardNext();
+    }
+
+    /**
+     * Called when the managed child is having its older versions discarded,
+     * and tells its parent to discard its older versions.
+     */
+    public void discardPrevious() {
+        if (parent != null && parent.versionInfo().getPrevious() != null)
+            parent.discardPrevious();
+    }
 }

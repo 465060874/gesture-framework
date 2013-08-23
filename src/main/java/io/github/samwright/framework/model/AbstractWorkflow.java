@@ -74,12 +74,26 @@ public abstract class AbstractWorkflow implements Workflow {
     public void discardNext() {
         mutabilityHelper.discardNext();
         childrenManager.discardNext();
+        parentManager.discardNext();
     }
 
     @Override
     public void discardPrevious() {
         mutabilityHelper.discardPrevious();
         childrenManager.discardPrevious();
+        parentManager.discardPrevious();
+    }
+
+    @Override
+    public void redo() {
+        mutabilityHelper.redo();
+        childrenManager.redo();
+    }
+
+    @Override
+    public void undo() {
+        mutabilityHelper.undo();
+        childrenManager.undo();
     }
 
     @Override

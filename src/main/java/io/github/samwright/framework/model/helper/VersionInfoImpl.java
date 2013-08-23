@@ -4,6 +4,8 @@ import io.github.samwright.framework.model.common.EventuallyImmutable;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.util.LinkedList;
+
 /**
  * Implementation of {@link VersionInfo} - do not use this class.  Use {@code VersionInfo} instead.
  */
@@ -48,4 +50,23 @@ public class VersionInfoImpl<T extends EventuallyImmutable> extends VersionInfo<
         return earliest;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public String toString() {
+        LinkedList<T> previousVersions = new LinkedList<>();
+
+        T pointer = thisVersion;
+        while (null != (pointer = (T) pointer.versionInfo().getPrevious()))
+            previousVersions.addFirst(pointer);
+
+
+        LinkedList<T> nextVersions = new LinkedList<>();
+
+        pointer = thisVersion;
+        while (null != (pointer = (T) pointer.versionInfo().getNext()))
+            nextVersions.addFirst(pointer);
+
+        return String.format("%s -> %s -> %s", previousVersions, thisVersion, nextVersions);
+
+    }
 }

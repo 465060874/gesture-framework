@@ -66,4 +66,8 @@ public interface Replaceable {
     void setController(ModelController modelController);
 
     ModelController getController();
+
+    void undo();
+
+    void redo();
 }

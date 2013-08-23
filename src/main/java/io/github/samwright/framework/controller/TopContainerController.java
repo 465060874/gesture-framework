@@ -4,17 +4,12 @@ import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.TopWorkflowContainer;
 import io.github.samwright.framework.model.WorkflowContainer;
 
-import java.util.Deque;
-import java.util.LinkedList;
-
 /**
  * User: Sam Wright Date: 20/08/2013 Time: 18:05
  */
 public class TopContainerController extends WorkflowContainerControllerImpl {
 
     private MainWindowController mainWindow;
-    private Deque<WorkflowContainer> redoStack = new LinkedList<>();
-    private boolean freezeRedoStack = false;
 
     {
         setOnDragDetected(null);
@@ -40,53 +35,37 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     @Override
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
-        System.out.println("New top model = " + getModel());
-
-        if (getModel().versionInfo().getNext() != null)
-            System.out.println("next version exists! " + getModel().versionInfo().getNext());
-
-        if (!freezeRedoStack && !redoStack.isEmpty() && redoStack.peek() != getModel())
-            redoStack.clear();
-
+//        System.out.println("New top model = " + getModel());
         mainWindow.handleUpdatedModel();
+
+        System.out.println(getModel().versionInfo());
     }
 
     public void undo() {
         WorkflowContainer previousModel = (WorkflowContainer) getModel().versionInfo().getPrevious();
-        if (previousModel == null)
-            throw new RuntimeException("no undo available!");
-        redoStack.push(getModel());
-        if (getModel().versionInfo().getNext() != null)
-            throw new RuntimeException("huh?");
-
-        System.out.format("Undoing to %s from %s%n", previousModel, getModel());
-        System.out.println("Redo stack after undo = " + redoStack);
-        freezeRedoStack = true;
-        previousModel.discardNext();
-        freezeRedoStack = false;
+        System.out.println("UNDO");
+        getModel().undo();
 
         if (previousModel != getModel())
             throw new RuntimeException("Didn't undo properly!");
     }
 
     public void redo() {
-        System.out.println("Redo stack before = " + redoStack);
-        WorkflowContainer nextModel = redoStack.poll();
-        System.out.format("Redoing from %s to %s%n", getModel(), nextModel);
-        freezeRedoStack = true;
-        getModel().replaceWith(nextModel);
-        freezeRedoStack = false;
-        System.out.println("Redo stack after = " + redoStack);
+        WorkflowContainer nextModel = (WorkflowContainer) getModel().versionInfo().getNext();
+        System.out.println("REDO");
+        getModel().redo();
 
         if (nextModel != getModel())
             throw new RuntimeException("Didn't redo properly!");
     }
 
     public boolean canRedo() {
-        return !redoStack.isEmpty();
+        return getModel().versionInfo().getNext() != null;
     }
 
     public boolean canUndo() {
         return getModel().versionInfo().getPrevious() != null;
     }
+
+
 }

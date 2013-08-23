@@ -109,7 +109,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     public void discardNext() {
         for (C child : children)
-            child.discardNext();
+            if (child.versionInfo().getNext() != null)
+                child.discardNext();
     }
 
     /**
@@ -118,6 +119,25 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     public void discardPrevious() {
         for (C child : children)
-            child.discardPrevious();
+            if (child.versionInfo().getPrevious() != null)
+                child.discardPrevious();
+    }
+
+    /**
+     * Called when the managed parent is undoing (ie. reverting to an older version),
+     * and tells its children to do the same.
+     */
+    public void undo() {
+        for (C child : children)
+            child.undo();
+    }
+
+    /**
+     * Called when the managed parent is redoing (ie. reverting to an newer version),
+     * and tells its children to do the same.
+     */
+    public void redo() {
+        for (C child : children)
+            child.redo();
     }
 }

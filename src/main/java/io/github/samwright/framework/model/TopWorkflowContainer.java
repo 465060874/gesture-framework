@@ -24,4 +24,10 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
     public WorkflowContainer createMutableClone() {
         return new TopWorkflowContainer(this);
     }
+
+    @Override
+    public String toString() {
+        String fullString = super.toString();
+        return fullString.substring(fullString.length() - 4);
+    }
 }
