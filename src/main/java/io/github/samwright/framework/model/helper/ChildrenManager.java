@@ -110,6 +110,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
             } else {
                 // Child has been replaced and has been given to another parent,
                 // so don't include it.
+                System.out.println(" == CHILD " + child + " WAS MOVED: from "
+                        + child.getParent() + " to " + childNextVersion.getParent());
             }
         }
 

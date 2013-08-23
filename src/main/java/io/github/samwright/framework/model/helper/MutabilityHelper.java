@@ -106,9 +106,6 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
             if (versionInfo.getNext() != null)
                 versionInfo.getThisVersion().discardNext();
 
-            System.out.format("== replacing %s with %s%n", versionInfo.getThisVersion(),
-                    replacement);
-
             versionInfo = versionInfo.withNext((T) replacement);
             VersionInfo<T> nextVersionInfo =
                     replacement.versionInfo().withPrevious(versionInfo.getThisVersion());

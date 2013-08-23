@@ -25,9 +25,6 @@ public class DragHandler implements EventHandler<MouseEvent> {
     public DragHandler(ModelController handledNode, DataFormat dataFormat) {
         this.handledNode = handledNode;
         this.dataFormat = dataFormat;
-
-//        if (handledNode.getModel() == null)
-//            throw new RuntimeException("handled node has no model");
     }
 
     @Override
@@ -54,8 +51,6 @@ public class DragHandler implements EventHandler<MouseEvent> {
             draggedNode = handledNode.createClone();
         else
             draggedNode = handledNode;
-
-        System.out.println("Transfer mode: " + transferMode);
 
         Dragboard db = handledNode.startDragAndDrop(transferMode);
         ClipboardContent cb = new ClipboardContent();
