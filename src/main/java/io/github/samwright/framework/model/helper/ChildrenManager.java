@@ -88,10 +88,6 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
 
         List<C> latestChildren = new LinkedList<>();
 
-        // Update all children to their latest versions, removing those that were deleted.
-//        VersionInfo.updateAllToLatest(latestChildren);
-
-//        children = new LinkedList<>();
         for (C child : children) {
             if (child.isDeleted())
                 continue;
@@ -101,11 +97,10 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
                 if (child.getParent() == managedParent) {
                     // Child is a new addition to this parent - just need to add it to list.
                     latestChildren.add(child);
-                    if (!child.isBeingFixed()) {
+                    if (!child.isBeingFixed())
                         // Being loaded from XML - I need to fix it myself.
-                        System.out.println("Child manager forcing child to fix");
                         child.fixAsVersion(child.versionInfo());
-                    }
+
                 } else {
                     // Child has not been updated.  Grandfather it in to the new version:
                     C newChild = (C) child.withParent(managedParent);
@@ -113,11 +108,11 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
                     latestChildren.add(newChild);
                 }
             } else {
-                // Child has been replaced and has been given to another parent,
-                // so don't include it.
-                System.out.println("Child adopted by another parent");
                 if (childNextVersion.getParent() == managedParent)
-                    System.out.println("A MATCH!!");
+                    // Child replaced itself from managedParent to managedParent.
+                    latestChildren.add(childNextVersion);
+                // Otherwise, Child has been replaced and has been given to another parent,
+                // so don't include it.
             }
         }
 
@@ -130,7 +125,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     public void discardNext() {
         for (C child : children)
-            child.discardNext();
+            if (child.versionInfo().getNext() != null)
+                child.discardNext();
     }
 
     /**
@@ -139,7 +135,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     public void discardPrevious() {
         for (C child : children)
-            child.discardPrevious();
+            if (child.versionInfo().getPrevious() != null)
+                child.discardPrevious();
     }
 
     /**
@@ -175,14 +172,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
 
         children = new ArrayList<>();
         Element childrenNode = XMLHelper.getFirstChildWithName(node, "Children");
-        System.out.println("Children node has tag = " + childrenNode.getTagName());
-
-        for (Element childNode : XMLHelper.iterator(childrenNode))
-            System.out.println("Found child node: " + childNode.getTagName());
-
 
         for (Element childNode : XMLHelper.iterator(childrenNode)) {
-            System.out.println("Loaded child with tag = " + childNode.getTagName());
             C child = (C) ModelLoader.getPrototypeModel(childNode);
             ((Processor) child).withXML(childNode, dictionary);
             child.withParent(managedParent);

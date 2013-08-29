@@ -62,12 +62,8 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
 
-        containerLabel.setText(String.valueOf(hashCode()));
-
         workflowsBox.getChildren().clear();
         for (Workflow workflow : getModel().getChildren()) {
-            workflowsBox.getChildren().add(new Label(String.valueOf(workflow.getController()
-                    .hashCode())));
             workflowsBox.getChildren().add(workflow.getController());
         }
     }

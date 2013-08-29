@@ -64,11 +64,9 @@ public class ModelLoader {
         if (prototypeModel.isMutable())
             throw new ModelLoadException("Cannot register mutable processor");
         prototypeModels.put(prototypeModel.getModelIdentifier(), prototypeModel);
-        System.out.println("Registering " + prototypeModel.getModelIdentifier());
     }
 
     public static Processor getPrototypeModel(Element xmlNode) {
-        System.out.println("Loaded prototype for xmlNode " + xmlNode.getTagName());
         // 1. Get modelClassName from tag
         String modelClassName = xmlNode.getAttribute("model");
 
@@ -81,9 +79,7 @@ public class ModelLoader {
     }
 
     public static Processor loadProcessor(Element xmlNode, boolean useExistingIfPossible) {
-        System.out.println("Trying to load " + xmlNode + " using existing? " +
-                useExistingIfPossible);
-        // 0. Check if processor already loaded
+        // Check if processor already loaded
         if (useExistingIfPossible) {
             String loadedUUIDString = xmlNode.getAttribute("UUID");
             UUID loadedUUID = UUID.fromString(loadedUUIDString);
@@ -94,11 +90,8 @@ public class ModelLoader {
 
         Processor prototypeModel = getPrototypeModel(xmlNode);
         Processor model = prototypeModel.withXML(xmlNode, new HashMap<UUID, Processor>());
-        System.out.println(" ===== (A) model:  " + model.versionInfo());
         prototypeModel.replaceWith(model);
-        System.out.println(" ===== (B) model:  " + model.versionInfo());
         model.discardPrevious();
-        System.out.println(" ===== (C) model:  " + model.versionInfo());
 
         return (Processor) model.versionInfo().getLatest();
     }

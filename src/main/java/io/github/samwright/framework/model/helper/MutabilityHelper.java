@@ -154,7 +154,6 @@ public class MutabilityHelper<T extends EventuallyImmutable>
 
     private void notifyTopController() {
         EventuallyImmutable topModel = getTopModel();
-        System.out.println("Notifying top controller: " + topModel);
         if (topModel.getController() != null)
             topModel.getController().handleUpdatedModel();
     }
@@ -268,7 +267,6 @@ public class MutabilityHelper<T extends EventuallyImmutable>
     }
 
     public Processor withXML(Element node, Map<UUID, Processor> dictionary) {
-        System.out.println("Mutability.withXML for " + versionInfo.getThisVersion());
         if (!(versionInfo.getThisVersion() instanceof Processor))
             throw new RuntimeException("Can only use XML on Processor");
         Processor thisProcessor = (Processor) versionInfo.getThisVersion();

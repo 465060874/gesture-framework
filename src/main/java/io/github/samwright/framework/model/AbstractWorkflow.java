@@ -45,8 +45,7 @@ public abstract class AbstractWorkflow implements Workflow {
         typeDataManager = new TypeDataManager<Workflow>(this, oldWorkflow.getTypeData());
         mutabilityHelper = new MutabilityHelper<>((Workflow) this, true);
         childrenManager = new ChildrenManager<Element, Workflow>(this, oldWorkflow.getChildren());
-        parentManager = new ParentManager<Workflow,WorkflowContainer>
-                (this, oldWorkflow.getParent());
+        parentManager = new ParentManager<Workflow,WorkflowContainer>(this, oldWorkflow.getParent());
     }
 
     @Override

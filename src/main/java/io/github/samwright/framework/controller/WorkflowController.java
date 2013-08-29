@@ -18,11 +18,6 @@ abstract public class WorkflowController extends ModelController<Workflow> {
 
     public WorkflowController(WorkflowController toClone) {
         super(toClone);
-
-//        for (Element element : toClone.getModel().getChildren())
-//            element.setController(element.getController().createClone());
-//        if (getModel() == null)
-//            throw new RuntimeException("why??");
     }
 
     @Override

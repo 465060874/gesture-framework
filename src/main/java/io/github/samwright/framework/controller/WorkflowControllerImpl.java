@@ -27,13 +27,11 @@ public class WorkflowControllerImpl extends WorkflowController {
         super("/fxml/Workflow.fxml");
         setModel(new WorkflowImpl());
         defaultElementLink = new ElementLink();
-//        defaultElementLink.setWorkflowController(this);
     }
 
     public WorkflowControllerImpl(WorkflowControllerImpl toClone) {
         super(toClone);
         defaultElementLink = toClone.getDefaultElementLink().createClone();
-//        defaultElementLink = new ElementLink();
     }
 
     @Override

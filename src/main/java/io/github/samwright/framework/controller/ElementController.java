@@ -10,6 +10,7 @@ import javafx.scene.input.*;
 import lombok.Getter;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -41,18 +42,13 @@ abstract public class ElementController extends ModelController<Element> {
                     else {
                         transferMode = TransferMode.MOVE;
                         setBeingDragged(true);
+                        elementLink.setBeingDragged(false);
                     }
                 }
 
-                System.out.println("Dragging model" + getModel().hashCode());
-                System.out.println("Element being dragged = " + ElementController.this.hashCode());
-
-                String xml = XMLHelper.writeProcessorToString(getModel());
-                System.out.format("====%n%n%s%n%n====", xml);
-
                 Dragboard db = startDragAndDrop(transferMode);
                 ClipboardContent cb = new ClipboardContent();
-                cb.put(dataFormat, xml);
+                cb.put(dataFormat, XMLHelper.writeProcessorToString(getModel()));
                 db.setContent(cb);
 
                 mouseEvent.consume();
@@ -80,7 +76,6 @@ abstract public class ElementController extends ModelController<Element> {
 
     public void setElementLink(ElementLink elementLink) {
 
-        ElementLink oldElementLink = this.elementLink;
         this.elementLink = elementLink;
         if (elementLink != null)
             elementLink.setController(this);
@@ -90,8 +85,12 @@ abstract public class ElementController extends ModelController<Element> {
         if (getModel() != null && !toolbox.getChildren().contains(this)) {
             Set<ElementObserver> newObservers = new HashSet<>(getModel().getObservers());
 
-            if (oldElementLink != null)
-                newObservers.remove(oldElementLink);
+            Iterator<ElementObserver> iterator = newObservers.iterator();
+            while(iterator.hasNext()) {
+                ElementObserver observer = iterator.next();
+                if (observer instanceof ElementLink)
+                    iterator.remove();
+            }
 
             if (elementLink != null)
                 newObservers.add(elementLink);
@@ -100,11 +99,6 @@ abstract public class ElementController extends ModelController<Element> {
             getModel().replaceWith(newModel);
         }
 
-    }
-
-    @Override
-    public void setModel(Element model) {
-        super.setModel(model);
     }
 
     @Override

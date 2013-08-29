@@ -42,7 +42,6 @@ public class ExElementController extends ElementController {
     }
 
     private void setupView() {
-
         clickButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

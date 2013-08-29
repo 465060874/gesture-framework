@@ -14,13 +14,6 @@ abstract public class WorkflowContainerController extends ElementController {
 
     public WorkflowContainerController(WorkflowContainerController toClone) {
         super(toClone);
-
-//        for (Workflow workflow : toClone.getModel().getChildren()) {
-//            workflow.setController(workflow.getController().createClone());
-//            if (getModel() == null)
-//                throw new RuntimeException("no model??");
-//            System.out.println("replacing controller for " + workflow);
-//        }
     }
 
     @Override

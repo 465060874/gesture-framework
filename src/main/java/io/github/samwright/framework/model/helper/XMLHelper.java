@@ -116,7 +116,6 @@ public class XMLHelper {
 
     public static Processor loadProcessorFromString(String xml, boolean useExistingIfPossible) {
         Document doc = getDocumentFromInput(new InputSource(new StringReader(xml)));
-        System.out.println("Got doc: " + doc);
         return loadProcessorFromDocument(doc, useExistingIfPossible);
     }
 

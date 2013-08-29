@@ -84,68 +84,47 @@ public class ElementLink extends Pane implements ElementObserver {
                         || isBeingDragged())
                     return;
 
-                Element draggedElement;
                 String xml = (String) dragEvent.getDragboard().getContent(ElementController.dataFormat);
                 boolean useExistingIfPossible = dragEvent.getTransferMode() == TransferMode.MOVE;
 
-                System.out.println("Got xml from dragboard: \n"+xml);
-
-                draggedElement = (Element) XMLHelper.loadProcessorFromString(xml, useExistingIfPossible);
-                System.out.println("Decoded element: " + draggedElement);
-                System.out.println(" === dragged element is mutable? " + draggedElement.isMutable
-                        ());
-                System.out.println(" === dragged element is latest? " + (draggedElement
-                        .versionInfo().getLatest() == draggedElement));
-
+                Element draggedElement =
+                        (Element) XMLHelper.loadProcessorFromString(xml, useExistingIfPossible);
                 Workflow parentModel = getWorkflowController().getModel();
                 List<Element> newSiblings = new ArrayList<>(parentModel.getChildren());
-                System.out.println("parent workflow = " + parentModel.getController().hashCode());
-                System.out.println("old siblings = " + newSiblings);
 
                 // If moving, make sure the dragged element is not already in the workflow.
                 // If it's in another workflow, by adding it as a child here, it will be removed
                 // from that old workflow.
                 if (dragEvent.getTransferMode() == TransferMode.MOVE) {
+                    if (draggedElement.getController() == controller) {
+                        dragEvent.consume();
+                        return;
+                    }
+
                     newSiblings.remove(draggedElement);
-//                    Element previous
-//                            = (Element) draggedElement.versionInfo().getPrevious();
-//                    if (previous != null)
-//                        newSiblings.remove(previous);
+
+                    Element orphanedElement = draggedElement.withParent(null);
+                    if (orphanedElement != draggedElement) {
+                        draggedElement.replaceWith(orphanedElement);
+                        draggedElement = orphanedElement;
+                    }
                 }
 
                 int newIndex;
                 if (controller == null) {
                     newIndex = 0;
                 } else {
-                    System.out.println("controller.getModel() versionInfo = " +
-                            controller.getModel().versionInfo());
-
                     int myIndex = newSiblings.indexOf(controller.getModel());
                     if (myIndex == -1)
                         throw new RuntimeException("Couldn't find my controller!!!");
                     newIndex = myIndex + 1;
                 }
-                System.out.println("after cull siblings = " + newSiblings);
-                System.out.println("New element's index = " + newIndex);
-
                 newSiblings.add(newIndex, draggedElement);
-                System.out.println("New siblings = " + newSiblings);
 
-
-                if (newSiblings.equals(parentModel.getChildren())) {
-                    System.out.println("Skipping because no change to siblings");
+                if (newSiblings.equals(parentModel.getChildren()))
                     return;
-                }
-
-                if (draggedElement.getParent() != null)
-                    System.out.print(" from " + draggedElement.getParent()
-                            .getController().hashCode());
-                System.out.println(" to " + parentModel.getController().hashCode());
 
                 parentModel.replaceWith(parentModel.withChildren(newSiblings));
-                System.out.println("Final siblings = " + getWorkflowController().getModel().getChildren());
-
-                System.out.println("Drag n Drop completed!");
                 dragEvent.setDropCompleted(true);
                 dragEvent.consume();
             }
@@ -160,11 +139,8 @@ public class ElementLink extends Pane implements ElementObserver {
 
     public WorkflowController getWorkflowController() {
         Parent parent = getParent();
-        System.out.format("Parent of %s is %s%n", this, getParent());
-        while (parent != null && !(parent instanceof WorkflowController)) {
+        while (parent != null && !(parent instanceof WorkflowController))
             parent = parent.getParent();
-            System.out.println("parent is " + parent);
-        }
         return (WorkflowController) parent;
     }
 

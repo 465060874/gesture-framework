@@ -6,6 +6,7 @@ import io.github.samwright.framework.controller.example.ExElementController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
+import io.github.samwright.framework.model.TopWorkflowContainer;
 import io.github.samwright.framework.model.helper.ModelLoader;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -39,6 +40,7 @@ public class MainWindowController extends VBox {
     public MainWindowController() {
         Controllers.bindViewToController("/fxml/MainWindow.fxml", this);
 
+        ModelLoader.registerPrototypeModel(new TopContainerController(this).getModel());
         topController = new TopContainerController(this);
         mainScrollPanel.setContent(topController);
 
@@ -48,7 +50,6 @@ public class MainWindowController extends VBox {
                 topController.undo();
             }
         });
-
         redoButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -66,7 +67,7 @@ public class MainWindowController extends VBox {
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
-            if (p instanceof Element)
+            if (p instanceof Element && !(p instanceof TopWorkflowContainer))
                 toolboxController.getChildren().add(p.getController());
     }
 
