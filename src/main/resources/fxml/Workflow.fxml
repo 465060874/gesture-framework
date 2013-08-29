@@ -7,12 +7,12 @@
          stylesheets="/css/Workflow.css"
          maxWidth="Infinity">
   <children>
-      <HBox>
+      <HBox >
           <children>
               <Label alignment="CENTER" text="Workflow"/>
           </children>
       </HBox>
 
-    <HBox fx:id="elementsBox" />
+    <HBox fx:id="elementsBox" fillHeight="false" alignment="CENTER" />
   </children>
 </fx:root>

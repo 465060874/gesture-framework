@@ -14,6 +14,13 @@ abstract public class WorkflowContainerController extends ElementController {
 
     public WorkflowContainerController(WorkflowContainerController toClone) {
         super(toClone);
+
+//        for (Workflow workflow : toClone.getModel().getChildren()) {
+//            workflow.setController(workflow.getController().createClone());
+//            if (getModel() == null)
+//                throw new RuntimeException("no model??");
+//            System.out.println("replacing controller for " + workflow);
+//        }
     }
 
     @Override
@@ -23,7 +30,19 @@ abstract public class WorkflowContainerController extends ElementController {
 
     @Override
     public void handleUpdatedModel() {
+        super.handleUpdatedModel();
         for (Workflow workflow : getModel().getChildren())
             workflow.getController().handleUpdatedModel();
+    }
+
+    @Override
+    abstract public WorkflowContainerController createClone();
+
+    @Override
+    public void setBeingDragged(boolean beingDragged) {
+        super.setBeingDragged(beingDragged);
+
+        for (Workflow workflow : getModel().getChildren())
+            workflow.getController().setBeingDragged(beingDragged);
     }
 }

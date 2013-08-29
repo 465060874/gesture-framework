@@ -1,5 +1,6 @@
 package io.github.samwright.framework.controller;
 
+import io.github.samwright.framework.controller.helper.ElementLink;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Workflow;
 import javafx.scene.input.DataFormat;
@@ -17,6 +18,11 @@ abstract public class WorkflowController extends ModelController<Workflow> {
 
     public WorkflowController(WorkflowController toClone) {
         super(toClone);
+
+//        for (Element element : toClone.getModel().getChildren())
+//            element.setController(element.getController().createClone());
+//        if (getModel() == null)
+//            throw new RuntimeException("why??");
     }
 
     @Override
@@ -25,4 +31,17 @@ abstract public class WorkflowController extends ModelController<Workflow> {
             element.getController().handleUpdatedModel();
     }
 
+    @Override
+    public void setBeingDragged(boolean beingDragged) {
+        super.setBeingDragged(beingDragged);
+
+        getDefaultElementLink().setBeingDragged(beingDragged);
+
+        for (Element element : getModel().getChildren())
+            element.getController().setBeingDragged(beingDragged);
+    }
+
+    abstract public void setDefaultElementLink(ElementLink defaultElementLink);
+
+    abstract public ElementLink getDefaultElementLink();
 }

@@ -1,6 +1,5 @@
 package io.github.samwright.framework.controller;
 
-import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.TopWorkflowContainer;
 import io.github.samwright.framework.model.WorkflowContainer;
 
@@ -28,7 +27,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     }
 
     @Override
-    public ModelController<Element> createClone() {
+    public TopContainerController createClone() {
         return new TopContainerController(this);
     }
 
@@ -40,7 +39,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
 
     public void undo() {
         WorkflowContainer previousModel = (WorkflowContainer) getModel().versionInfo().getPrevious();
-        getModel().undo();
+        previousModel.setAsCurrentVersion();
 
         if (previousModel != getModel())
             throw new RuntimeException("Didn't undo properly!");
@@ -48,7 +47,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
 
     public void redo() {
         WorkflowContainer nextModel = (WorkflowContainer) getModel().versionInfo().getNext();
-        getModel().redo();
+        nextModel.setAsCurrentVersion();
 
         if (nextModel != getModel())
             throw new RuntimeException("Didn't redo properly!");

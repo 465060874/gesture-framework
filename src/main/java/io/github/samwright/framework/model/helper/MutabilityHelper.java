@@ -1,36 +1,50 @@
 package io.github.samwright.framework.model.helper;
 
-import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.ModelController;
+import io.github.samwright.framework.model.Processor;
+import io.github.samwright.framework.model.Workflow;
+import io.github.samwright.framework.model.WorkflowContainer;
+import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.common.EventuallyImmutable;
+import io.github.samwright.framework.model.common.HasUUID;
 import io.github.samwright.framework.model.common.Replaceable;
 import lombok.Getter;
 import lombok.NonNull;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A helper object that manages an {@link EventuallyImmutable} object (which delegates to this).
  */
-public class MutabilityHelper<T extends EventuallyImmutable> implements EventuallyImmutable {
+public class MutabilityHelper<T extends EventuallyImmutable>
+        implements EventuallyImmutable, HasUUID {
     private static final Object[] writeLock = new Object[0];
+    private static MutabilityHelper mutationStarter;
 
     private VersionInfo<T> versionInfo;
-    @Getter private boolean mutable;
-    @Getter private boolean deleted;
+    @Getter private boolean mutable, deleted, beingFixed;
     @Getter private ModelController<T> controller;
+    private UUID uuid = ModelLoader.makeNewUUID();
 
     public static interface ForManualDelegation {
-
         void fixAsVersion(VersionInfo versionInfo);
         void delete();
-        EventuallyImmutable createMutableClone();
-        EventuallyImmutable createOrphanedDeepClone();
+        Processor createMutableClone();
         void discardNext();
         void discardPrevious();
-        void undo();
-        void redo();
+        void setAsCurrentVersion();
+        void afterVersionFixed();
+        Node getXMLForDocument(Document doc);
+        Processor withXML(Element node, Map<UUID, Processor> dictionary);
+        String getModelIdentifier();
     }
+
     /**
-     * Construct a new {@code MutabilityHelper} to manage the given {@link EventuallyImmutable}
+     * Construct a new {@code MutabilityHelper} to manage the given {@link Processor}
      * with the given mutability.
      *
      * @param thisImmutable the object for this to manage.
@@ -40,30 +54,28 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
         versionInfo = VersionInfo.createForFirst(thisImmutable);
         this.mutable = mutable;
         deleted = false;
+        beingFixed = false;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void setController(ModelController controller) {
-        if (this.controller != controller) {
-            EventuallyImmutable next = versionInfo.getNext();
-            this.controller = controller;
-            if (next != null) {
-                next.setController(controller);
-            } else if (controller != null) {
-                T model = versionInfo.getThisVersion();
-                controller.setModel(model);
+        synchronized (writeLock) {
+            if (this.controller != controller) {
+                EventuallyImmutable next = versionInfo.getNext();
+                this.controller = controller;
+                if (next != null) {
+                    next.setController(controller);
+                } else if (controller != null) {
+                    T model = versionInfo.getThisVersion();
+                    controller.setModel(model);
+                }
             }
         }
     }
 
     @Override
     public T createMutableClone() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public EventuallyImmutable createOrphanedDeepClone() {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -75,27 +87,47 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void fixAsVersion(@NonNull VersionInfo versionInfo) {
+    public void setBeingFixed() {
         synchronized (writeLock) {
-            this.versionInfo = versionInfo;
-            this.mutable = false;
-            if (versionInfo.getPrevious() != null) {
-                setController(versionInfo.getPrevious().getController());
-            }
+            beingFixed = true;
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void replaceWith(@NonNull Replaceable replacement) {
-        if (versionInfo.getThisVersion() == replacement) {
-//            System.out.println("SKIPPING REPLACEMENT!! Tried replacing with self: " + replacement);
-//            return;
-            throw new RuntimeException("SKIPPING REPLACEMENT!! Tried replacing with self: " + replacement);
+    public void fixAsVersion(@NonNull VersionInfo versionInfo) {
+        synchronized (writeLock) {
+            startMutation();
+
+            this.versionInfo = versionInfo;
+            this.mutable = false;
+            this.beingFixed = false;
+            if (versionInfo.getPrevious() != null) {
+                setController(versionInfo.getPrevious().getController());
+                setUUID(((Processor) versionInfo.getPrevious()).getUUID());
+            }
+
+            setAsCurrentVersion();
+            pauseMutationIfThisStartedIt();
         }
 
+        endMutationIfPaused();
+    }
+
+    @Override
+    public void afterVersionFixed() {
+        // Dummy implementation
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void replaceWith(@NonNull Replaceable replacement) {
         synchronized (writeLock) {
+            if (versionInfo.getThisVersion() == replacement)
+                throw new RuntimeException("SKIPPING REPLACEMENT!! Tried replacing with self: " + replacement);
+
+            startMutation();
+
             if (isMutable())
                 throw new RuntimeException("Cannot replace a mutable object - fix this first");
             if (isDeleted())
@@ -112,50 +144,85 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
 
             ((T) replacement).fixAsVersion(nextVersionInfo);
 
-            if (controller != null)
-                controller.setModel((T) replacement);
+            if (pauseMutationIfThisStartedIt())
+                getTopModel().afterVersionFixed();
         }
 
-        if (!Thread.holdsLock(writeLock))
-            notifyTopController();
+        endMutationIfPaused();
     }
 
     private void notifyTopController() {
-        synchronized (writeLock) {
-            if (MainWindowController.getTopController() != null)
-                MainWindowController.getTopController().handleUpdatedModel();
+        System.out.println("Notifying top controller: " + getTopModel());
+        getTopModel().getController().handleUpdatedModel();
+    }
+
+    private EventuallyImmutable getTopModel() {
+        EventuallyImmutable parent = versionInfo.getThisVersion();
+
+        while (parent instanceof ChildOf && ((ChildOf) parent).getParent() != null)
+            parent = (Processor) ((ChildOf) parent).getParent();
+
+        return parent;
+    }
+
+    private void startMutation() {
+        if (mutationStarter == null)
+            mutationStarter = this;
+    }
+
+    private boolean pauseMutationIfThisStartedIt() {
+        if (mutationStarter == this) {
+            mutationStarter = null;
+            return true;
+        }
+        return false;
+    }
+
+    private void endMutationIfPaused() {
+        if (!Thread.holdsLock(writeLock)) {
+            notifyTopController();
+        } else if (mutationStarter == null) {
+            mutationStarter = this;
         }
     }
 
     @Override
     public void discardNext() {
         synchronized (writeLock) {
+            startMutation();
+
             if (versionInfo.getNext() != null) {
-//                System.out.println("Discarding from " + versionInfo.getThisVersion()
-//                        + " next " + versionInfo.getNext());
                 T oldNext = versionInfo.getNext();
                 versionInfo = versionInfo.withNext(null);
                 oldNext.discardPrevious();
             }
             deleted = false;
+            pauseMutationIfThisStartedIt();
 
-            if (controller != null)
-                controller.setModel(versionInfo.getThisVersion());
+            versionInfo.getThisVersion().setAsCurrentVersion();
         }
 
-        if (!Thread.holdsLock(writeLock))
-            notifyTopController();
+        endMutationIfPaused();
     }
 
     @Override
     public void discardPrevious() {
         synchronized (writeLock) {
             if (versionInfo.getPrevious() != null) {
+                startMutation();
                 T oldPrevious = versionInfo.getPrevious();
                 versionInfo = versionInfo.withPrevious(null);
+                if (versionInfo.getNext() == null) {
+                    setUUID(ModelLoader.makeNewUUID());
+                    setController(oldPrevious.getController().createClone());
+                    versionInfo.getThisVersion().setAsCurrentVersion();
+                }
                 oldPrevious.discardNext();
+                pauseMutationIfThisStartedIt();
             }
         }
+
+        endMutationIfPaused();
     }
 
     @Override
@@ -170,32 +237,79 @@ public class MutabilityHelper<T extends EventuallyImmutable> implements Eventual
         }
     }
 
+    public Element getXMLForDocument(Document doc) {
+        if (!(versionInfo.getThisVersion() instanceof Processor))
+            throw new RuntimeException("Can only get XML of Processor");
+        Processor thisProcessor = (Processor) versionInfo.getThisVersion();
 
-    @Override
-    public void undo() {
-        synchronized (writeLock) {
-            if (versionInfo.getPrevious() == null)
-                throw new RuntimeException("Cannot undo because there's no previous version");
+        String processorString;
+        if (thisProcessor instanceof Workflow)
+            processorString = "Workflow";
+        else if (thisProcessor instanceof WorkflowContainer)
+            processorString = "WorkflowContainer";
+        else if (thisProcessor instanceof Element)
+            processorString = "Element";
+        else
+            processorString = "Processor";
 
-            if (controller != null)
-                controller.setModel(versionInfo.getPrevious());
-        }
+        Element element = doc.createElement(processorString);
+        element.setAttribute("model", thisProcessor.getModelIdentifier());
+        element.setAttribute("UUID", thisProcessor.getUUID().toString());
+        element.appendChild(thisProcessor.getTypeData().getXMLForDocument(doc));
 
-        if (!Thread.holdsLock(writeLock))
-            notifyTopController();
+        return element;
+    }
+
+    public Processor withXML(Element node, Map<UUID, Processor> dictionary) {
+        System.out.println("Mutability.withXML for " + versionInfo.getThisVersion());
+        if (!(versionInfo.getThisVersion() instanceof Processor))
+            throw new RuntimeException("Can only use XML on Processor");
+        Processor thisProcessor = (Processor) versionInfo.getThisVersion();
+
+        String uuidString = node.getAttribute("UUID");
+        dictionary.put(UUID.fromString(uuidString), thisProcessor);
+        return thisProcessor;
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
     @Override
-    public void redo() {
+    public void setUUID(UUID uuid) {
+        if (!this.uuid.equals(uuid)) {
+            this.uuid = uuid;
+            EventuallyImmutable next = versionInfo.getNext();
+            if (next != null && next instanceof HasUUID)
+                ((HasUUID) next).setUUID(uuid);
+        }
+    }
+
+    @Override
+    public String getModelIdentifier() {
+        return versionInfo.getThisVersion().getClass().getName();
+    }
+
+    @Override
+    public void setAsCurrentVersion() {
         synchronized (writeLock) {
-            if (versionInfo.getNext() == null)
-                throw new RuntimeException("Cannot redo because there's no next version");
+            startMutation();
+
+            if (!(versionInfo.getThisVersion() instanceof Processor))
+                throw new RuntimeException("Can only register Processor objects");
 
             if (controller != null)
-                controller.setModel(versionInfo.getNext());
+                controller.setModel(versionInfo.getThisVersion());
+            ModelLoader.registerProcessor((Processor) versionInfo.getThisVersion());
+
+            pauseMutationIfThisStartedIt();
         }
 
-        if (!Thread.holdsLock(writeLock))
-            notifyTopController();
+        endMutationIfPaused();
+    }
+
+    @Override
+    public boolean isCurrentVersion() {
+        return ModelLoader.getProcessor(getUUID()) == versionInfo.getThisVersion();
     }
 }

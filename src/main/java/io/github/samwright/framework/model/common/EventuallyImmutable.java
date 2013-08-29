@@ -42,15 +42,6 @@ public interface EventuallyImmutable extends Replaceable {
     EventuallyImmutable createMutableClone();
 
     /**
-     * Create a deep clone of this object.  Everything inside this will also be deep-cloned and
-     * the clone will know nothing of this (or its children/parents/etc...).  The returned clone
-     * will be immutable, and will have no parent.
-     *
-     * @return an immutable deep clone of this.
-     */
-    EventuallyImmutable createOrphanedDeepClone();
-
-    /**
      * If this object is mutable, this method will make it immutable. In any case,
      * it will save the new version information.
      * <p/>
@@ -63,6 +54,13 @@ public interface EventuallyImmutable extends Replaceable {
     void fixAsVersion(VersionInfo versionInfo);
 
     /**
+     * This is called after all relevant objects have been fixed, and presents the implementing
+     * class with the opportunity to perform last-minute changes to itself now that all related
+     * objects have also been fixed.
+     */
+    void afterVersionFixed();
+
+    /**
      * Returns true iff this object is mutable, meaning it was created as mutable and has not
      * been finalised.
      *
@@ -70,5 +68,18 @@ public interface EventuallyImmutable extends Replaceable {
      */
     boolean isMutable();
 
+    /**
+     * Returns true iff this object is mutable, but in the process of being fixed, ie. the
+     * {@code fixAsVersion(versionInfo)} method has been called but not yet returned.
+     *
+     * @return true iff this object is being fixed.
+     */
+    boolean isBeingFixed();
 
+    /**
+     * Sets this object as "being fixed" - ie. the {@code fixAsVersion(versionInfo)} method is
+     * about to be run.  It will automatically be reset to "not being fixed" when the method
+     * returns.
+     */
+    void setBeingFixed();
 }

@@ -2,8 +2,11 @@ package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.helper.*;
 import lombok.Delegate;
+import org.w3c.dom.Document;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Abstract implementation of {@link Workflow}.  Manages its {@link WorkflowContainer} parent,
@@ -85,15 +88,12 @@ public abstract class AbstractWorkflow implements Workflow {
     }
 
     @Override
-    public void redo() {
-        mutabilityHelper.redo();
-        childrenManager.redo();
-    }
-
-    @Override
-    public void undo() {
-        mutabilityHelper.undo();
-        childrenManager.undo();
+    public void setAsCurrentVersion() {
+        if (!isCurrentVersion()) {
+            mutabilityHelper.setAsCurrentVersion();
+            parentManager.setAsCurrentVersion();
+            childrenManager.setAsCurrentVersion();
+        }
     }
 
     @Override
@@ -105,24 +105,43 @@ public abstract class AbstractWorkflow implements Workflow {
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
+        setBeingFixed();
         childrenManager.beforeFixAsVersion(versionInfo);
         parentManager.beforeFixAsVersion(versionInfo);
-
         mutabilityHelper.fixAsVersion(versionInfo);
     }
 
     @Override
-    public Workflow createOrphanedDeepClone() {
-        Workflow clone = this.withParent(null);
-        this.replaceWith(clone);
-        this.discardNext();
-        return clone;
+    public void afterVersionFixed() {
+        childrenManager.afterVersionFixed();
     }
 
+    @Override
+    public Workflow withXML(org.w3c.dom.Element node, Map<UUID, Processor> map) {
+        if (!isMutable())
+            return (Workflow) createMutableClone().withXML(node, map);
+
+        mutabilityHelper.withXML(node, map);
+        withParent(null);
+        childrenManager.withXML(node, map);
+        return this;
+    }
+
+    @Override
+    public org.w3c.dom.Element getXMLForDocument(Document doc) {
+        org.w3c.dom.Element node = mutabilityHelper.getXMLForDocument(doc);
+        node.appendChild(childrenManager.getXMLForDocument(doc));
+        return node;
+    }
 
     @Override
     public String toString() {
         String fullString = super.toString();
         return getClass().getSimpleName() + fullString.substring(fullString.length() - 4);
+    }
+
+    @Override
+    public String getModelIdentifier() {
+        return Workflow.class.getName();
     }
 }

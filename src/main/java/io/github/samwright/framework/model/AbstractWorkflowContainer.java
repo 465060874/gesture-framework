@@ -4,9 +4,12 @@ import io.github.samwright.framework.model.helper.ChildrenManager;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 import io.github.samwright.framework.model.helper.VersionInfo;
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Abstract implementation of {@link WorkflowContainer}.
@@ -81,15 +84,11 @@ public abstract class AbstractWorkflowContainer
     }
 
     @Override
-    public void redo() {
-        super.redo();
-        childrenManager.redo();
-    }
-
-    @Override
-    public void undo() {
-        super.undo();
-        childrenManager.undo();
+    public void setAsCurrentVersion() {
+        if (!isCurrentVersion()) {
+            super.setAsCurrentVersion();
+            childrenManager.setAsCurrentVersion();
+        }
     }
 
     @Override
@@ -100,8 +99,14 @@ public abstract class AbstractWorkflowContainer
 
     @Override
     public void fixAsVersion(VersionInfo versionInfo) {
+        setBeingFixed();
         childrenManager.beforeFixAsVersion(versionInfo);
         super.fixAsVersion(versionInfo);
+    }
+
+    @Override
+    public void afterVersionFixed() {
+        childrenManager.afterVersionFixed();
     }
 
     @Override
@@ -120,7 +125,19 @@ public abstract class AbstractWorkflowContainer
     }
 
     @Override
-    public WorkflowContainer createOrphanedDeepClone() {
-        return (WorkflowContainer) super.createOrphanedDeepClone();
+    public WorkflowContainer withXML(org.w3c.dom.Element node, Map<UUID, Processor> map) {
+        WorkflowContainer clone = (WorkflowContainer) super.withXML(node, map);
+        if (clone != this)
+            return clone;
+
+        childrenManager.withXML(node, map);
+        return this;
+    }
+
+    @Override
+    public org.w3c.dom.Element getXMLForDocument(Document doc) {
+        org.w3c.dom.Element node = super.getXMLForDocument(doc);
+        node.appendChild(childrenManager.getXMLForDocument(doc));
+        return node;
     }
 }

@@ -4,10 +4,10 @@ import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.*;
 import lombok.Delegate;
 import lombok.Getter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Abstract implementation of {@link Element} for elemental processors to extend,
@@ -26,6 +26,9 @@ public abstract class AbstractElement implements Element {
 
     @Delegate
     private final TypeDataManager<Element> typeDataManager;
+
+    private Set<UUID> observerUUIDs;
+    private Map<UUID,Processor> dictionary;
 
     /**
      * Constructs the initial (and immutable) {@code AbstractElement}.
@@ -50,7 +53,6 @@ public abstract class AbstractElement implements Element {
         mutabilityHelper = new MutabilityHelper<Element>(this, true);
         this.observers = oldElement.getObservers();
         parentManager = new ParentManager<Element, Workflow>(this, oldElement.getParent());
-        // TODO: use Set<ElementObserver<?>> observers. validation should include ? -> O check.
     }
 
     @Override
@@ -76,13 +78,11 @@ public abstract class AbstractElement implements Element {
     }
 
     @Override
-    public void redo() {
-        mutabilityHelper.redo();
-    }
-
-    @Override
-    public void undo() {
-        mutabilityHelper.undo();
+    public void setAsCurrentVersion() {
+        if (!isCurrentVersion()) {
+            mutabilityHelper.setAsCurrentVersion();
+            parentManager.setAsCurrentVersion();
+        }
     }
 
     @Override
@@ -92,28 +92,27 @@ public abstract class AbstractElement implements Element {
     }
 
     @Override
-    public Element createOrphanedDeepClone() {
-        if (isMutable())
-            throw new RuntimeException("Cannot clone mutable");
-
-        Element clone = createMutableClone().withParent(null);
-        this.replaceWith(clone);
-        this.discardNext();
-        return clone;
+    public void fixAsVersion(VersionInfo versionInfo) {
+        setBeingFixed();
+        parentManager.beforeFixAsVersion(versionInfo);
+        mutabilityHelper.fixAsVersion(versionInfo);
     }
 
     @Override
-    public void fixAsVersion(VersionInfo versionInfo) {
-        parentManager.beforeFixAsVersion(versionInfo);
-
-        if (isMutable()) {
-            // Make mutable clone of observers set
+    public void afterVersionFixed() {
+        if (this.dictionary == null) {
             observers = new HashSet<>(observers);
-            // Update observers to their latest versions
             VersionInfo.updateAllToLatest(observers);
+        } else {
+            for (UUID uuid : observerUUIDs) {
+                Processor observer = dictionary.get(uuid);
+                if (observer == null)
+                    ModelLoader.getProcessor(uuid);
+                if (observer != null)
+                    observers.add((ElementObserver) observer);
+            }
+            this.dictionary = null;
         }
-
-        mutabilityHelper.fixAsVersion(versionInfo);
     }
 
     @Override
@@ -138,10 +137,52 @@ public abstract class AbstractElement implements Element {
         return new CompletedTrainingBatch(allInputs, successfulInputs);
     }
 
+    @Override
+    public org.w3c.dom.Element getXMLForDocument(Document doc) {
+        org.w3c.dom.Element observerNode, node = mutabilityHelper.getXMLForDocument(doc);
+
+        Node observersNode = doc.createElement("Observers");
+        node.appendChild(observersNode);
+
+        for (ElementObserver observer : observers)
+            if (observer instanceof Processor) {
+                observerNode = doc.createElement("observer");
+                UUID observerUUID = ((Processor) observer).getUUID();
+                observerNode.setAttribute("UUID", observerUUID.toString());
+                observersNode.appendChild(observerNode);
+            }
+
+        return node;
+    }
+
+    @Override
+    public Element withXML(org.w3c.dom.Element node, Map<UUID, Processor> map) {
+        if (!isMutable())
+            return (Element) createMutableClone().withXML(node, map);
+
+        this.dictionary = map;
+        withParent(null);
+
+        observerUUIDs = new HashSet<>();
+        org.w3c.dom.Element observersNode = XMLHelper.getFirstChildWithName(node, "Observers");
+
+        for (org.w3c.dom.Element observerNode : XMLHelper.iterator(observersNode)) {
+            String uuidString = observerNode.getAttribute("UUID");
+            observerUUIDs.add(UUID.fromString(uuidString));
+        }
+
+        return ((Element) mutabilityHelper.withXML(node, map))
+                .withTypeData(getTypeData().withXML(node, map));
+    }
 
     @Override
     public String toString() {
         String fullString = super.toString();
         return getClass().getSimpleName() + fullString.substring(fullString.length() - 4);
+    }
+
+    @Override
+    public String getModelIdentifier() {
+        return mutabilityHelper.getModelIdentifier();
     }
 }

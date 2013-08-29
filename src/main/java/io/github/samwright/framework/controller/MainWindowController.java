@@ -1,9 +1,12 @@
 package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
-import io.github.samwright.framework.controller.example.ExampleController;
+import io.github.samwright.framework.controller.example.ExContainerController;
+import io.github.samwright.framework.controller.example.ExElementController;
 import io.github.samwright.framework.controller.helper.Controllers;
-import io.github.samwright.framework.model.WorkflowContainer;
+import io.github.samwright.framework.model.Element;
+import io.github.samwright.framework.model.Processor;
+import io.github.samwright.framework.model.helper.ModelLoader;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -30,7 +33,6 @@ public class MainWindowController extends VBox {
     @FXML
     private Button redoButton;
 
-    private static WorkflowContainer topModel;
     @Getter private static TopContainerController topController;
     private static ToolboxController toolboxController;
 
@@ -39,7 +41,6 @@ public class MainWindowController extends VBox {
 
         topController = new TopContainerController(this);
         mainScrollPanel.setContent(topController);
-        topModel = topController.getModel();
 
         undoButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -58,9 +59,15 @@ public class MainWindowController extends VBox {
         toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         hBox.getChildren().add(toolboxController);
 
-        toolboxController.getChildren().add(new ExampleController("Element1"));
-        toolboxController.getChildren().add(new ExampleController("Element2"));
-        toolboxController.getChildren().add(new ExampleController("Element3"));
+        ModelLoader.registerPrototypeModel(new ExElementController("Element1").getModel());
+        ModelLoader.registerPrototypeModel(new ExElementController("Element2").getModel());
+        ModelLoader.registerPrototypeModel(new ExElementController("Element3").getModel());
+        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
+        ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
+
+        for (Processor p : ModelLoader.getAllProtoypeModels())
+            if (p instanceof Element)
+                toolboxController.getChildren().add(p.getController());
     }
 
     public void handleUpdatedModel() {

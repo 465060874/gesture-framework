@@ -1,12 +1,12 @@
 package io.github.samwright.framework.controller;
 
-import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Workflow;
 import io.github.samwright.framework.model.WorkflowContainer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -22,6 +22,9 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
 
     @FXML
     protected VBox workflowsBox;
+
+    @FXML
+    protected Label containerLabel;
 
     {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -41,7 +44,7 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
     }
 
     @Override
-    public ModelController<Element> createClone() {
+    public WorkflowContainerController createClone() {
         return new WorkflowContainerControllerImpl(this);
     }
 
@@ -59,8 +62,13 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
 
+        containerLabel.setText(String.valueOf(hashCode()));
+
         workflowsBox.getChildren().clear();
-        for (Workflow workflow : getModel().getChildren())
+        for (Workflow workflow : getModel().getChildren()) {
+            workflowsBox.getChildren().add(new Label(String.valueOf(workflow.getController()
+                    .hashCode())));
             workflowsBox.getChildren().add(workflow.getController());
+        }
     }
 }

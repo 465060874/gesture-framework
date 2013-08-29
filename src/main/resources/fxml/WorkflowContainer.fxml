@@ -9,9 +9,8 @@
          stylesheets="/css/WorkflowContainer.css">
   <children>
       <HBox>
-          <!--<VBox.vgrow>Never</VBox.vgrow>-->
           <children>
-            <Label alignment="CENTER" text="WorkflowContainer"/>
+            <Label alignment="CENTER" text="WorkflowContainer" fx:id="containerLabel"/>
             <Button text="Add Workflow" fx:id="addButton" />
         </children>
       </HBox>

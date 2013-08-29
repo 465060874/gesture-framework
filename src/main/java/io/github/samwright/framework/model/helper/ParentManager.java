@@ -99,7 +99,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
         // parent given the updated list of children.
         if (getParent() != null && !getParent().isMutable()) {
             List<C> newSiblings = new LinkedList<>(getParent().getChildren());
-            VersionInfo.updateAllToLatest(newSiblings);
+//            VersionInfo.updateAllToLatest(newSiblings);
             if (!newSiblings.contains(managedChild))
                 newSiblings.add(managedChild);
 
@@ -114,7 +114,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      * and tells its parent to discard its replacement.
      */
     public void discardNext() {
-        if (parent != null && parent.versionInfo().getNext() != null)
+        if (parent != null)
             parent.discardNext();
     }
 
@@ -123,7 +123,16 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      * and tells its parent to discard its older versions.
      */
     public void discardPrevious() {
-        if (parent != null && parent.versionInfo().getPrevious() != null)
+        if (parent != null)
             parent.discardPrevious();
+    }
+
+    /**
+     * Called when the managed child is being set as the current version, and instructs its
+     * parent to do the same.
+     */
+    public void setAsCurrentVersion() {
+        if (parent != null)
+            parent.setAsCurrentVersion();
     }
 }

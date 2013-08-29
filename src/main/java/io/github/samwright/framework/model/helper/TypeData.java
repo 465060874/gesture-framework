@@ -6,6 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * An object describing the input and output types of {@link Processor} objects.
@@ -88,5 +93,26 @@ final public class TypeData {
     @SuppressWarnings("unchecked")
     public boolean canBeAtStartOfWorkflow(TypeData workflow) {
         return this.inputType.isAssignableFrom(workflow.inputType);
+    }
+
+    public Element getXMLForDocument(Document doc) {
+        Element node = doc.createElement("TypeData");
+        XMLHelper.addDataUnderNode(node, "Input", inputType.getName());
+        XMLHelper.addDataUnderNode(node, "Output", inputType.getName());
+        return node;
+    }
+
+    public TypeData withXML(Element node, Map<UUID, Processor> dictionary) {
+        Element typeDataNode = XMLHelper.getFirstChildWithName(node, "TypeData");
+
+        String inputString = XMLHelper.getDataUnderNode(typeDataNode, "Input");
+        String outputString = XMLHelper.getDataUnderNode(typeDataNode, "Output");
+
+        try {
+            return new TypeData(Class.forName(inputString), Class.forName(outputString));
+        } catch (ClassNotFoundException e) {
+            throw new ModelLoader.ModelLoadException("Couldn't find class: " + inputString +
+                    " or " + outputString, e);
+        }
     }
 }

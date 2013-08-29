@@ -32,7 +32,4 @@ public interface WorkflowContainer extends Element, ParentOf<Workflow> {
 
     @Override
     WorkflowContainer createMutableClone();
-
-    @Override
-    WorkflowContainer createOrphanedDeepClone();
 }

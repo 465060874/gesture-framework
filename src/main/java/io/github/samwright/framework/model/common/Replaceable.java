@@ -63,11 +63,34 @@ public interface Replaceable {
      */
     boolean isDeleted();
 
+    /**
+     * Set the controller for this object, which is notified of replacements to this object.
+     *
+     * If future versions of this object already exist, they will all now use
+     * {@code modelController} as their controller, and the controller will use this as its
+     * current model.
+     *
+     * @param modelController the controller for this object.
+     */
     void setController(ModelController modelController);
 
+    /**
+     * Gets the controller for this object.
+     *
+     * @return the controller for this object.
+     */
     ModelController getController();
 
-    void undo();
+    /**
+     * Sets this object as the current version (along with objects associated with it),
+     * informing all relevant controllers and registers to the change.
+     */
+    void setAsCurrentVersion();
 
-    void redo();
+    /**
+     * Returns true iff this is the current version.
+     *
+     * @return true iff this is the current version.
+     */
+    boolean isCurrentVersion();
 }
