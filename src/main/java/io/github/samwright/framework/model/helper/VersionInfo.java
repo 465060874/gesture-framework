@@ -97,8 +97,7 @@ public abstract class VersionInfo<T extends EventuallyImmutable> {
             if (oldVersion instanceof EventuallyImmutable) {
                 EventuallyImmutable newVersion = (EventuallyImmutable) oldVersion;
                 newVersion = newVersion.versionInfo().getLatest();
-                if (!newVersion.isDeleted())
-                    newVersions.add((E) newVersion);
+                newVersions.add((E) newVersion);
             } else {
                 newVersions.add(oldVersion);
             }

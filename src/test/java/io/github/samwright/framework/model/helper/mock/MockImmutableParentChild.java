@@ -67,8 +67,6 @@ public class MockImmutableParentChild extends MockEventuallyImmutable
     @Override
     public void delete() {
         super.delete();
-        parentManager.afterDelete();
-        childrenManager.afterDelete();
     }
 
     @Override

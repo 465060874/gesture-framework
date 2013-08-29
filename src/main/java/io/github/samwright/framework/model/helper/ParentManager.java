@@ -3,9 +3,11 @@ package io.github.samwright.framework.model.helper;
 import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.common.EventuallyImmutable;
 import io.github.samwright.framework.model.common.ParentOf;
+import io.github.samwright.framework.model.common.Replaceable;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,22 +63,6 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called after the managed child has been deleted.
-     * <p/>
-     * If the child has a parent that wasn't deleted, this method removes the child from it.
-     */
-    @SuppressWarnings("unchecked")
-    public void afterDelete() {
-        if (getParent() != null && !getParent().isDeleted() && !getParent().isMutable()) {
-            List<C> siblings = new LinkedList<>(getParent().getChildren());
-            siblings.remove(managedChild);
-            P newParent = (P) getParent().createMutableClone();
-            newParent = (P) newParent.withChildren(siblings);
-            getParent().replaceWith(newParent);
-        }
-    }
-
-    /**
      * Called before the managed child is fixed.
      * <p/>
      * One of two scenarios caused this update
@@ -110,6 +96,12 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
             parent = (P) getParent().withChildren(newSiblings);
             oldParent.replaceWith(parent);
         }
+    }
+
+    public void delete() {
+        List<C> newChildren = new ArrayList<>(parent.getChildren());
+        newChildren.remove(managedChild);
+        parent.replaceWith((Replaceable) parent.withChildren(newChildren));
     }
 
     /**

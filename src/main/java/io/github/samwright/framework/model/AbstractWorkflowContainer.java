@@ -92,12 +92,6 @@ public abstract class AbstractWorkflowContainer
     }
 
     @Override
-    public void delete() {
-        super.delete();
-        childrenManager.afterDelete();
-    }
-
-    @Override
     public void fixAsVersion(VersionInfo versionInfo) {
         setBeingFixed();
         childrenManager.beforeFixAsVersion(versionInfo);

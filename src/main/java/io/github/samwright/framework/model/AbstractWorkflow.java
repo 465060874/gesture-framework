@@ -73,6 +73,11 @@ public abstract class AbstractWorkflow implements Workflow {
     }
 
     @Override
+    public void delete() {
+        parentManager.delete();
+    }
+
+    @Override
     public void discardNext() {
         mutabilityHelper.discardNext();
         childrenManager.discardNext();
@@ -93,13 +98,6 @@ public abstract class AbstractWorkflow implements Workflow {
             parentManager.setAsCurrentVersion();
             childrenManager.setAsCurrentVersion();
         }
-    }
-
-    @Override
-    public void delete() {
-        mutabilityHelper.delete();
-        parentManager.afterDelete();
-        childrenManager.afterDelete();
     }
 
     @Override

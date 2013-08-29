@@ -49,16 +49,6 @@ public class ChildrenManagerTest {
     }
 
     @Test
-    public void testDeleteChild() throws Exception {
-        testWithChildren();
-        parent.delete();
-
-        assertTrue(parent.isDeleted());
-        assertTrue(child1.isDeleted());
-        assertTrue(child2.isDeleted());
-    }
-
-    @Test
     public void testDiscardNext() throws Exception {
         testWithChildren();
 

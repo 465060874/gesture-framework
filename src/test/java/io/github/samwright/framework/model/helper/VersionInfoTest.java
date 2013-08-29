@@ -14,7 +14,6 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -36,10 +35,6 @@ public class VersionInfoTest {
         when(first.versionInfo()).thenReturn(firstInfo);
         when(second.versionInfo()).thenReturn(secondInfo);
         when(third.versionInfo()).thenReturn(thirdInfo);
-
-        when(first.isDeleted()).thenReturn(false);
-        when(second.isDeleted()).thenReturn(false);
-        when(third.isDeleted()).thenReturn(false);
     }
 
     @Test
@@ -110,17 +105,6 @@ public class VersionInfoTest {
         List<EventuallyImmutable> immutables = new LinkedList<>(Arrays.asList(first, second, third));
         VersionInfo.updateAllToLatest(immutables);
         assertEquals(Arrays.asList(third, third, third), immutables);
-    }
-
-    @Test
-    public void testUpdateAllToLatestWithDeleted() throws Exception {
-        EventuallyImmutable deleted = mock(EventuallyImmutable.class);
-        when(deleted.isDeleted()).thenReturn(true);
-        when(deleted.versionInfo()).thenReturn(VersionInfo.createForFirst(deleted));
-
-        List<EventuallyImmutable> immutables = new LinkedList<>(Arrays.asList(first, deleted));
-        VersionInfo.updateAllToLatest(immutables);
-        assertEquals(Arrays.asList(third), immutables);
     }
 
     @Test

@@ -26,16 +26,16 @@ public class MutabilityHelper<T extends EventuallyImmutable>
     private static MutabilityHelper mutationStarter;
 
     private VersionInfo<T> versionInfo;
-    @Getter private boolean mutable, deleted, beingFixed;
+    @Getter private boolean mutable, beingFixed;
     @Getter private ModelController<T> controller;
     private UUID uuid = ModelLoader.makeNewUUID();
 
     public static interface ForManualDelegation {
         void fixAsVersion(VersionInfo versionInfo);
-        void delete();
         Processor createMutableClone();
         void discardNext();
         void discardPrevious();
+        void delete();
         void setAsCurrentVersion();
         void afterVersionFixed();
         Node getXMLForDocument(Document doc);
@@ -53,7 +53,6 @@ public class MutabilityHelper<T extends EventuallyImmutable>
     public MutabilityHelper(@NonNull T thisImmutable, boolean mutable) {
         versionInfo = VersionInfo.createForFirst(thisImmutable);
         this.mutable = mutable;
-        deleted = false;
         beingFixed = false;
     }
 
@@ -116,6 +115,11 @@ public class MutabilityHelper<T extends EventuallyImmutable>
     }
 
     @Override
+    public void delete() {
+        // not implemented
+    }
+
+    @Override
     public void afterVersionFixed() {
         // Dummy implementation
     }
@@ -131,8 +135,6 @@ public class MutabilityHelper<T extends EventuallyImmutable>
 
             if (isMutable())
                 throw new RuntimeException("Cannot replace a mutable object - fix this first");
-            if (isDeleted())
-                throw new RuntimeException("Cannot replace a deleted object - discard first.");
             if (replacement.versionInfo().getPrevious() != null)
                 throw new RuntimeException("Replacement has already replaced something else");
 
@@ -192,15 +194,13 @@ public class MutabilityHelper<T extends EventuallyImmutable>
     public void discardNext() {
         synchronized (writeLock) {
             startMutation();
-
             if (versionInfo.getNext() != null) {
                 T oldNext = versionInfo.getNext();
                 versionInfo = versionInfo.withNext(null);
                 oldNext.discardPrevious();
             }
-            deleted = false;
-            pauseMutationIfThisStartedIt();
 
+            pauseMutationIfThisStartedIt();
             versionInfo.getThisVersion().setAsCurrentVersion();
         }
 
@@ -229,18 +229,6 @@ public class MutabilityHelper<T extends EventuallyImmutable>
         }
 
         endMutationIfPaused();
-    }
-
-    @Override
-    public void delete() {
-        synchronized (writeLock) {
-            if (versionInfo.getNext() != null)
-                throw new RuntimeException("Cannot delete - already been replaced.");
-            if (isDeleted())
-                throw new RuntimeException("Already been deleted.");
-
-            deleted = true;
-        }
     }
 
     public Element getXMLForDocument(Document doc) {

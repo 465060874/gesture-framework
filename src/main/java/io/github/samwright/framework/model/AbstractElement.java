@@ -66,6 +66,11 @@ public abstract class AbstractElement implements Element {
     }
 
     @Override
+    public void delete() {
+        parentManager.delete();
+    }
+
+    @Override
     public void discardNext() {
         mutabilityHelper.discardNext();
         parentManager.discardNext();
@@ -83,12 +88,6 @@ public abstract class AbstractElement implements Element {
             mutabilityHelper.setAsCurrentVersion();
             parentManager.setAsCurrentVersion();
         }
-    }
-
-    @Override
-    public void delete() {
-        mutabilityHelper.delete();
-        parentManager.afterDelete();
     }
 
     @Override

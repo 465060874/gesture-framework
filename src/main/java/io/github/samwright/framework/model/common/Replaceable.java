@@ -52,16 +52,9 @@ public interface Replaceable {
     VersionInfo versionInfo();
 
     /**
-     * Delete this object - meaning it is no longer in use and can not be replaced.
+     * Delete this object - meaning it is no longer in use.
      */
     void delete();
-
-    /**
-     * Returns true iff this object was deleted.
-     *
-     * @return true iff this object was deleted.
-     */
-    boolean isDeleted();
 
     /**
      * Set the controller for this object, which is notified of replacements to this object.

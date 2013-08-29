@@ -34,8 +34,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
                 startTransientUpdateMode();
                 for (ModelController toDelete : oldSelected) {
                     EventuallyImmutable latest = toDelete.getModel().versionInfo().getLatest();
-                    if (!latest.isDeleted())
-                        latest.delete();
+                    latest.delete();
                 }
                 endTransientUpdateMode();
             }
@@ -86,14 +85,16 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
 
     @Override
     public void handleUpdatedModel() {
-        super.handleUpdatedModel();
 
-        if (transientUpdateMode) {
-            getModel().setTransientUpdate(true);
-        } else {
+//        TODO: remove next line
+//        mainWindow.handleUpdatedModel();
+
+//        if (transientUpdateMode) {
+//            getModel().setTransientUpdate(true);
+//        } else {
             super.handleUpdatedModel();
             mainWindow.handleUpdatedModel();
-        }
+//        }
 
     }
 

@@ -59,14 +59,6 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called after the managed parent has been deleted, to delete all its children..
-     */
-    public void afterDelete() {
-        for (C child : children)
-            child.delete();
-    }
-
-    /**
      * Called before the managed parent is being fixed.
      * <p/>
      * One of four scenarios caused this update:
@@ -89,9 +81,6 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
         List<C> latestChildren = new LinkedList<>();
 
         for (C child : children) {
-            if (child.isDeleted())
-                continue;
-
             C childNextVersion = (C) child.versionInfo().getNext();
             if (childNextVersion == null) {
                 if (child.getParent() == managedParent) {
