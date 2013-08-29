@@ -88,8 +88,8 @@ public class MutabilityHelperTest {
         second.replaceWith(third);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testCannotReplaceAlreadyReplaced() throws Exception {
+    @Test
+    public void testCanReplaceAlreadyReplaced() throws Exception {
         second = first.createMutableClone();
         first.replaceWith(second);
         third = second.createMutableClone();
@@ -108,10 +108,9 @@ public class MutabilityHelperTest {
         first.replaceWith(third);
     }
 
-    @Test
-    public void testCanReplaceSelf() throws Exception {
+    @Test(expected = RuntimeException.class)
+    public void testCannotReplaceSelf() throws Exception {
         first.replaceWith(first);
-        assertNull(first.versionInfo().getNext());
     }
 
     @Test

@@ -104,7 +104,8 @@ public class MutabilityHelper<T extends EventuallyImmutable>
             this.beingFixed = false;
             if (versionInfo.getPrevious() != null) {
                 setController(versionInfo.getPrevious().getController());
-                setUUID(((Processor) versionInfo.getPrevious()).getUUID());
+                if (versionInfo.getPrevious() instanceof Processor)
+                    setUUID(((Processor) versionInfo.getPrevious()).getUUID());
             }
 
             setAsCurrentVersion();
@@ -152,15 +153,17 @@ public class MutabilityHelper<T extends EventuallyImmutable>
     }
 
     private void notifyTopController() {
-        System.out.println("Notifying top controller: " + getTopModel());
-        getTopModel().getController().handleUpdatedModel();
+        EventuallyImmutable topModel = getTopModel();
+        System.out.println("Notifying top controller: " + topModel);
+        if (topModel.getController() != null)
+            topModel.getController().handleUpdatedModel();
     }
 
     private EventuallyImmutable getTopModel() {
         EventuallyImmutable parent = versionInfo.getThisVersion();
 
         while (parent instanceof ChildOf && ((ChildOf) parent).getParent() != null)
-            parent = (Processor) ((ChildOf) parent).getParent();
+            parent = (EventuallyImmutable) ((ChildOf) parent).getParent();
 
         return parent;
     }
@@ -214,7 +217,11 @@ public class MutabilityHelper<T extends EventuallyImmutable>
                 versionInfo = versionInfo.withPrevious(null);
                 if (versionInfo.getNext() == null) {
                     setUUID(ModelLoader.makeNewUUID());
-                    setController(oldPrevious.getController().createClone());
+                    ModelController oldPreviousController = oldPrevious.getController();
+                    if (oldPreviousController == null)
+                        setController(null);
+                    else
+                        setController(oldPreviousController.createClone());
                     versionInfo.getThisVersion().setAsCurrentVersion();
                 }
                 oldPrevious.discardNext();
@@ -295,13 +302,11 @@ public class MutabilityHelper<T extends EventuallyImmutable>
         synchronized (writeLock) {
             startMutation();
 
-            if (!(versionInfo.getThisVersion() instanceof Processor))
-                throw new RuntimeException("Can only register Processor objects");
-
-            if (controller != null)
-                controller.setModel(versionInfo.getThisVersion());
-            ModelLoader.registerProcessor((Processor) versionInfo.getThisVersion());
-
+            if (versionInfo.getThisVersion() instanceof Processor) {
+                if (controller != null)
+                    controller.setModel(versionInfo.getThisVersion());
+                ModelLoader.registerProcessor((Processor) versionInfo.getThisVersion());
+            }
             pauseMutationIfThisStartedIt();
         }
 
