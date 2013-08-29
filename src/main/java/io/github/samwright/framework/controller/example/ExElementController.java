@@ -26,22 +26,7 @@ public class ExElementController extends ElementController {
     @FXML
     private Label clicksLabel;
 
-
-    public ExElementController(String labelString) {
-        super("/fxml/LabelledElement.fxml");
-        label.setText(labelString);
-        setModel(new ExElement(labelString));
-        setElementLink(new ElementLink());
-        setupView();
-    }
-
-    public ExElementController(ExElementController toClone) {
-        super(toClone);
-        label.setText(toClone.label.getText());
-        setupView();
-    }
-
-    private void setupView() {
+    {
         clickButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -50,6 +35,21 @@ public class ExElementController extends ElementController {
                 getModel().replaceWith(newModel);
             }
         });
+    }
+
+
+    public ExElementController(String labelString) {
+        super("/fxml/LabelledElement.fxml");
+        label.setText(labelString);
+        setModel(new ExElement(labelString));
+        setElementLink(new ElementLink());
+        handleUpdatedModel();
+    }
+
+    public ExElementController(ExElementController toClone) {
+        super(toClone);
+        label.setText(toClone.label.getText());
+//        handleUpdatedModel();
     }
 
     @Override

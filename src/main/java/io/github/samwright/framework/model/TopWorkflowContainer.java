@@ -1,11 +1,15 @@
 package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.helper.Mediator;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 09:21
  */
 public class TopWorkflowContainer extends AbstractWorkflowContainer {
+
+    @Getter @Setter private boolean transientUpdate = false;
 
     public TopWorkflowContainer() {
         super();
@@ -23,5 +27,23 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
     @Override
     public WorkflowContainer createMutableClone() {
         return new TopWorkflowContainer(this);
+    }
+
+    public TopWorkflowContainer getPrevious() {
+        TopWorkflowContainer pointer;
+        do
+            pointer = (TopWorkflowContainer) versionInfo().getPrevious();
+        while(pointer != null && pointer.isTransientUpdate());
+
+        return pointer;
+    }
+
+    public TopWorkflowContainer getNext() {
+        TopWorkflowContainer pointer;
+        do
+            pointer = (TopWorkflowContainer) versionInfo().getNext();
+        while (pointer != null && pointer.isTransientUpdate());
+
+        return pointer;
     }
 }

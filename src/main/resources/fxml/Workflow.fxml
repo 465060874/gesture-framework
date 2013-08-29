@@ -9,7 +9,7 @@
   <children>
       <HBox >
           <children>
-              <Label alignment="CENTER" text="Workflow"/>
+              <Label alignment="CENTER" text="Workflow" minWidth="-Infinity"/>
           </children>
       </HBox>
 

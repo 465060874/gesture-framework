@@ -27,6 +27,7 @@ public class WorkflowControllerImpl extends WorkflowController {
         super("/fxml/Workflow.fxml");
         setModel(new WorkflowImpl());
         defaultElementLink = new ElementLink();
+        handleUpdatedModel();
     }
 
     public WorkflowControllerImpl(WorkflowControllerImpl toClone) {

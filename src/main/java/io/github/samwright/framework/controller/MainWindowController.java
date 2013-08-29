@@ -59,7 +59,9 @@ public class MainWindowController extends VBox {
 
         toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         hBox.getChildren().add(toolboxController);
-
+        topController.handleUpdatedModel();
+        topController.addNewWorkflow();
+        setOnKeyPressed(topController.getKeyPressHandler());
         ModelLoader.registerPrototypeModel(new ExElementController("Element1").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element2").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element3").getModel());

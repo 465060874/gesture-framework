@@ -80,13 +80,17 @@ abstract public class ElementController extends ModelController<Element> {
         if (elementLink != null)
             elementLink.setController(this);
 
+        registerLinkWithElement(getModel());
+    }
+
+    private void registerLinkWithElement(Element element) {
         ToolboxController toolbox = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
 
-        if (getModel() != null && !toolbox.getChildren().contains(this)) {
-            Set<ElementObserver> newObservers = new HashSet<>(getModel().getObservers());
+        if (element != null && !toolbox.getChildren().contains(this)) {
+            Set<ElementObserver> newObservers = new HashSet<>(element.getObservers());
 
             Iterator<ElementObserver> iterator = newObservers.iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 ElementObserver observer = iterator.next();
                 if (observer instanceof ElementLink)
                     iterator.remove();
@@ -95,10 +99,13 @@ abstract public class ElementController extends ModelController<Element> {
             if (elementLink != null)
                 newObservers.add(elementLink);
 
-            Element newModel = getModel().withObservers(newObservers);
-            getModel().replaceWith(newModel);
+            if (!newObservers.equals(element.getObservers())) {
+                Element newModel = element.withObservers(newObservers);
+                MainWindowController.getTopController().startTransientUpdateMode();
+                element.replaceWith(newModel);
+                MainWindowController.getTopController().endTransientUpdateMode();
+            }
         }
-
     }
 
     @Override
@@ -106,8 +113,7 @@ abstract public class ElementController extends ModelController<Element> {
 
     @Override
     public void handleUpdatedModel() {
-        if (elementLink != null && !getModel().getObservers().contains(elementLink))
-            setElementLink(elementLink);
+        registerLinkWithElement(getModel());
     }
 
     @Override

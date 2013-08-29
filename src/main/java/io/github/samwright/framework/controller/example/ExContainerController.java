@@ -12,6 +12,7 @@ public class ExContainerController extends WorkflowContainerControllerImpl {
         super();
         setModel(new ExContainer());
         setElementLink(new ElementLink());
+        handleUpdatedModel();
         addNewWorkflow();
     }
 

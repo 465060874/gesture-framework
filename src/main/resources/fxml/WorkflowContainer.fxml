@@ -10,7 +10,8 @@
   <children>
       <HBox>
           <children>
-            <Label alignment="CENTER" text="WorkflowContainer" fx:id="containerLabel"/>
+            <Label alignment="CENTER" text="WorkflowContainer" fx:id="containerLabel"
+                    minWidth="-Infinity"/>
             <Button text="Add Workflow" fx:id="addButton" />
         </children>
       </HBox>
