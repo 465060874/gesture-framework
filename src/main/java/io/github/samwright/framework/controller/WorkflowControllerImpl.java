@@ -25,7 +25,7 @@ public class WorkflowControllerImpl extends WorkflowController {
 
     public WorkflowControllerImpl() {
         super("/fxml/Workflow.fxml");
-        setModel(new WorkflowImpl());
+        proposeModel(new WorkflowImpl());
         defaultElementLink = new ElementLink();
         handleUpdatedModel();
     }
@@ -41,7 +41,7 @@ public class WorkflowControllerImpl extends WorkflowController {
             this.defaultElementLink = defaultElementLink;
 
             if (this.defaultElementLink != null)
-                MainWindowController.getTopController().handleUpdatedModel();
+                handleUpdatedModel();
         }
     }
 

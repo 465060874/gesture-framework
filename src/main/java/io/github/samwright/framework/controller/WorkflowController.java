@@ -22,6 +22,7 @@ abstract public class WorkflowController extends ModelController<Workflow> {
 
     @Override
     public void handleUpdatedModel() {
+        super.handleUpdatedModel();
         for (Element element : getModel().getChildren())
             element.getController().handleUpdatedModel();
     }

@@ -84,7 +84,7 @@ public abstract class AbstractElement implements Element {
 
     @Override
     public void setAsCurrentVersion() {
-        if (!isCurrentVersion()) {
+        if (this != getCurrentVersion()) {
             mutabilityHelper.setAsCurrentVersion();
             parentManager.setAsCurrentVersion();
         }
@@ -183,5 +183,10 @@ public abstract class AbstractElement implements Element {
     @Override
     public String getModelIdentifier() {
         return mutabilityHelper.getModelIdentifier();
+    }
+
+    @Override
+    public Element getCurrentVersion() {
+        return (Element) mutabilityHelper.getCurrentVersion();
     }
 }

@@ -190,7 +190,7 @@ public class MutabilityHelperTest {
     }
 
     @Test
-    public void testCantDeleteReplaced() throws Exception {
+    public void testCanDeleteReplaced() throws Exception {
         second = first.createMutableClone();
         first.replaceWith(second);
         first.delete();

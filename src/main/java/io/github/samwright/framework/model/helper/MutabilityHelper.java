@@ -41,6 +41,7 @@ public class MutabilityHelper<T extends EventuallyImmutable>
         Node getXMLForDocument(Document doc);
         Processor withXML(Element node, Map<UUID, Processor> dictionary);
         String getModelIdentifier();
+        Processor getCurrentVersion();
     }
 
     /**
@@ -67,7 +68,7 @@ public class MutabilityHelper<T extends EventuallyImmutable>
                     next.setController(controller);
                 } else if (controller != null) {
                     T model = versionInfo.getThisVersion();
-                    controller.setModel(model);
+                    controller.proposeModel(model);
                 }
             }
         }
@@ -214,15 +215,13 @@ public class MutabilityHelper<T extends EventuallyImmutable>
                 startMutation();
                 T oldPrevious = versionInfo.getPrevious();
                 versionInfo = versionInfo.withPrevious(null);
-                if (versionInfo.getNext() == null) {
-                    setUUID(ModelLoader.makeNewUUID());
-                    ModelController oldPreviousController = oldPrevious.getController();
-                    if (oldPreviousController == null)
-                        setController(null);
-                    else
-                        setController(oldPreviousController.createClone());
-                    versionInfo.getThisVersion().setAsCurrentVersion();
-                }
+                setUUID(ModelLoader.makeNewUUID());
+                ModelController oldPreviousController = oldPrevious.getController();
+                if (oldPreviousController == null)
+                    setController(null);
+                else
+                    setController(oldPreviousController.createClone());
+                versionInfo.getThisVersion().setAsCurrentVersion();
                 oldPrevious.discardNext();
                 pauseMutationIfThisStartedIt();
             }
@@ -241,7 +240,7 @@ public class MutabilityHelper<T extends EventuallyImmutable>
             processorString = "Workflow";
         else if (thisProcessor instanceof WorkflowContainer)
             processorString = "WorkflowContainer";
-        else if (thisProcessor instanceof Element)
+        else if (thisProcessor instanceof io.github.samwright.framework.model.Element)
             processorString = "Element";
         else
             processorString = "Processor";
@@ -290,17 +289,17 @@ public class MutabilityHelper<T extends EventuallyImmutable>
 
             if (versionInfo.getThisVersion() instanceof Processor) {
                 if (controller != null)
-                    controller.setModel(versionInfo.getThisVersion());
+                    controller.proposeModel(versionInfo.getThisVersion());
                 ModelLoader.registerProcessor((Processor) versionInfo.getThisVersion());
+//                versionInfo.getThisVersion().setAsCurrentVersion();
             }
             pauseMutationIfThisStartedIt();
         }
-
         endMutationIfPaused();
     }
 
     @Override
-    public boolean isCurrentVersion() {
-        return ModelLoader.getProcessor(getUUID()) == versionInfo.getThisVersion();
+    public Processor getCurrentVersion() {
+        return ModelLoader.getProcessor(getUUID());
     }
 }

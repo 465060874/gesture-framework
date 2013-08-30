@@ -40,7 +40,6 @@ public class MainWindowController extends VBox {
     public MainWindowController() {
         Controllers.bindViewToController("/fxml/MainWindow.fxml", this);
 
-        ModelLoader.registerPrototypeModel(new TopContainerController(this).getModel());
         topController = new TopContainerController(this);
         mainScrollPanel.setContent(topController);
 
@@ -58,10 +57,14 @@ public class MainWindowController extends VBox {
         });
 
         toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
+        toolboxController.setStyle("-fx-vgap: 5;-fx-hgap: 5;-fx-padding: 5");
         hBox.getChildren().add(toolboxController);
+
         topController.handleUpdatedModel();
         topController.addNewWorkflow();
+        ModelLoader.registerPrototypeModel(topController.getModel());
         setOnKeyPressed(topController.getKeyPressHandler());
+
         ModelLoader.registerPrototypeModel(new ExElementController("Element1").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element2").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element3").getModel());

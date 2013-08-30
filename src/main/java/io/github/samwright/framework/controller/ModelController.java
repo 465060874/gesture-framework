@@ -18,15 +18,13 @@ import lombok.Setter;
  */
 public abstract class ModelController<T extends EventuallyImmutable> extends VBox {
 
-    @Getter private T model;
-
+    @Getter private T model, proposedModel, previousModel;
     @Getter private final String fxmlResource;
-
     @Setter @Getter private boolean isBeingDragged = false;
-
     @Getter private BooleanProperty clickedProperty;
 
     {
+        setStyle("-fx-background-color: #f0f0f0");
         clickedProperty = new SimpleBooleanProperty();
         clickedProperty.addListener(new ChangeListener<Boolean>() {
             @Override
@@ -61,15 +59,24 @@ public abstract class ModelController<T extends EventuallyImmutable> extends VBo
         clickedProperty.set(toClone.clickedProperty.get());
     }
 
-    public void setModel(T model) {
-        if (this.model != model) {
-            this.model = model;
-            if (this.model.getController() != this)
-                model.setController(this);
-        }
+    public void proposeModel(T proposedModel) {
+        if (proposedModel != model && proposedModel != null)
+            this.proposedModel = proposedModel;
     }
 
     abstract public ModelController<T> createClone();
 
-    abstract public void handleUpdatedModel();
+    public void handleUpdatedModel() {
+        previousModel = model;
+        if (proposedModel != null)
+            model = proposedModel;
+        proposedModel = null;
+        if (model.getController() != this)
+            model.setController(this);
+    }
+
+    public void revertModel() {
+        proposeModel(getPreviousModel());
+        handleUpdatedModel();
+    }
 }

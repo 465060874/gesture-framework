@@ -91,7 +91,8 @@ public class ModelLoader {
         Processor prototypeModel = getPrototypeModel(xmlNode);
         Processor model = prototypeModel.withXML(xmlNode, new HashMap<UUID, Processor>());
         prototypeModel.replaceWith(model);
-        model.discardPrevious();
+//        model.discardPrevious();
+        prototypeModel.discardNext();
 
         return (Processor) model.versionInfo().getLatest();
     }

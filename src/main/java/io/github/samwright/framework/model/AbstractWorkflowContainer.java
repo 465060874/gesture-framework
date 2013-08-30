@@ -85,10 +85,16 @@ public abstract class AbstractWorkflowContainer
 
     @Override
     public void setAsCurrentVersion() {
-        if (!isCurrentVersion()) {
+        System.out.println("Hello");
+        if (this != getCurrentVersion()) {
             super.setAsCurrentVersion();
             childrenManager.setAsCurrentVersion();
         }
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
     }
 
     @Override
@@ -133,5 +139,10 @@ public abstract class AbstractWorkflowContainer
         org.w3c.dom.Element node = super.getXMLForDocument(doc);
         node.appendChild(childrenManager.getXMLForDocument(doc));
         return node;
+    }
+
+    @Override
+    public WorkflowContainer getCurrentVersion() {
+        return (WorkflowContainer) super.getCurrentVersion();
     }
 }

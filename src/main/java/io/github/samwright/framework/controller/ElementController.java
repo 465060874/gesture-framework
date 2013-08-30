@@ -101,10 +101,14 @@ abstract public class ElementController extends ModelController<Element> {
 
             if (!newObservers.equals(element.getObservers())) {
                 Element newModel = element.withObservers(newObservers);
-                MainWindowController.getTopController().startTransientUpdateMode();
-                element.replaceWith(newModel);
-                MainWindowController.getTopController().endTransientUpdateMode();
-            }
+//                MainWindowController.getTopController().startTransientUpdateMode();
+                try {
+//                    element.replaceWith(newModel);
+                } finally {
+//                    MainWindowController.getTopController().endTransientUpdateMode();
+                }
+            } else
+                System.out.println("Not changing observers");
         }
     }
 
@@ -113,6 +117,7 @@ abstract public class ElementController extends ModelController<Element> {
 
     @Override
     public void handleUpdatedModel() {
+        super.handleUpdatedModel();
         registerLinkWithElement(getModel());
     }
 

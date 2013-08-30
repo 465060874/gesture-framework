@@ -39,4 +39,7 @@ public interface Element extends Processor, ChildOf<Workflow> {
 
     @Override
     Element createMutableClone();
+
+    @Override
+    Element getCurrentVersion();
 }

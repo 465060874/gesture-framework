@@ -192,4 +192,33 @@ public class XMLHelper {
             throw new ModelLoader.ModelLoadException(e);
         }
     }
+
+    public static String xmlNodeToString(Element xmlNode) {
+        Document doc = xmlNode.getOwnerDocument();
+
+        // Create transformer, which converts 'doc' into xml
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = transformerFactory.newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new ModelLoader.ModelLoadException(e);
+        }
+
+        // Make the xml nicely formatted (with multiple lines and indentation)
+        // (taken from 'http://stackoverflow.com/questions/5142632/java-dom-xml-file-create-have-no-tabs-or-whitespaces-in-output-file')
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+        // Prepare input to transformer (ie. doc)
+        DOMSource source = new DOMSource(doc);
+        StringWriter stringWriter = new StringWriter();
+        // Perform the transformation
+        try {
+            transformer.transform(source, new StreamResult(stringWriter));
+        } catch (TransformerException e) {
+            throw new ModelLoader.ModelLoadException(e);
+        }
+        return stringWriter.getBuffer().toString();
+    }
 }

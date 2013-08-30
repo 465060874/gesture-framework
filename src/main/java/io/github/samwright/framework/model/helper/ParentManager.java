@@ -109,7 +109,8 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      * and tells its parent to discard its replacement.
      */
     public void discardNext() {
-        if (parent != null && parent.versionInfo().getNext() != null)
+        if (parent != null && parent.versionInfo().getNext() != null
+                && !parent.versionInfo().getNext().isMutable())
             parent.discardNext();
     }
 

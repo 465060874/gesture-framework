@@ -61,7 +61,7 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
     @SuppressWarnings("unchecked")
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
-         System.out.println("workflows: " + getModel().getChildren());
+
         workflowsBox.getChildren().clear();
         for (Workflow workflow : getModel().getChildren()) {
             workflowsBox.getChildren().add(workflow.getController());

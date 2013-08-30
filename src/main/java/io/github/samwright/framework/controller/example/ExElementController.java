@@ -41,7 +41,7 @@ public class ExElementController extends ElementController {
     public ExElementController(String labelString) {
         super("/fxml/LabelledElement.fxml");
         label.setText(labelString);
-        setModel(new ExElement(labelString));
+        proposeModel(new ExElement(labelString));
         setElementLink(new ElementLink());
         handleUpdatedModel();
     }

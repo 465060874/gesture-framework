@@ -10,7 +10,7 @@ import io.github.samwright.framework.controller.helper.ElementLink;
 public class ExContainerController extends WorkflowContainerControllerImpl {
     public ExContainerController() {
         super();
-        setModel(new ExContainer());
+        proposeModel(new ExContainer());
         setElementLink(new ElementLink());
         handleUpdatedModel();
         addNewWorkflow();

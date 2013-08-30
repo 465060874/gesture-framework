@@ -86,9 +86,9 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
                 if (child.getParent() == managedParent) {
                     // Child is a new addition to this parent - just need to add it to list.
                     latestChildren.add(child);
-                    if (!child.isBeingFixed())
-                        // Being loaded from XML - I need to fix it myself.
-                        child.fixAsVersion(child.versionInfo());
+//                    if (!child.isBeingFixed())
+//                        // Being loaded from XML - I need to fix it myself.
+//                        child.fixAsVersion(child.versionInfo());
 
                 } else {
                     // Child has not been updated.  Grandfather it in to the new version:
@@ -114,7 +114,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     public void discardNext() {
         for (C child : children)
-            if (child.versionInfo().getNext() != null)
+            if (child.versionInfo().getNext() != null
+                    && !child.versionInfo().getNext().isMutable())
                 child.discardNext();
     }
 
@@ -164,9 +165,13 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
 
         for (Element childNode : XMLHelper.iterator(childrenNode)) {
             C child = (C) ModelLoader.getPrototypeModel(childNode);
-            ((Processor) child).withXML(childNode, dictionary);
-            child.withParent(managedParent);
-            children.add(child);
+            C newChild = (C) ((Processor) child).withXML(childNode, dictionary);
+//            newChild.withParent(managedParent);
+            newChild.setBeingFixed();
+            child.replaceWith(newChild);
+//            newChild.discardPrevious();
+            child.discardNext();
+            children.add(newChild);
         }
     }
 }

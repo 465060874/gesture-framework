@@ -105,6 +105,7 @@ public class ElementLink extends Pane implements ElementObserver {
 
                     Element orphanedElement = draggedElement.withParent(null);
                     if (orphanedElement != draggedElement) {
+
                         draggedElement.replaceWith(orphanedElement);
                         draggedElement = orphanedElement;
                     }
@@ -156,5 +157,11 @@ public class ElementLink extends Pane implements ElementObserver {
     @Override
     public void notify(List<Mediator> mediators) {
         // Dummy implementation
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ElementLink: controller = %s, model = %s", controller,
+                controller.getModel());
     }
 }

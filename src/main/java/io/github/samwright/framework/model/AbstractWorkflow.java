@@ -93,7 +93,7 @@ public abstract class AbstractWorkflow implements Workflow {
 
     @Override
     public void setAsCurrentVersion() {
-        if (!isCurrentVersion()) {
+        if (this != getCurrentVersion()) {
             mutabilityHelper.setAsCurrentVersion();
             parentManager.setAsCurrentVersion();
             childrenManager.setAsCurrentVersion();
@@ -117,10 +117,10 @@ public abstract class AbstractWorkflow implements Workflow {
     public Workflow withXML(org.w3c.dom.Element node, Map<UUID, Processor> map) {
         if (!isMutable())
             return (Workflow) createMutableClone().withXML(node, map);
-
         mutabilityHelper.withXML(node, map);
         withParent(null);
         childrenManager.withXML(node, map);
+
         return this;
     }
 
@@ -140,5 +140,10 @@ public abstract class AbstractWorkflow implements Workflow {
     @Override
     public String getModelIdentifier() {
         return Workflow.class.getName();
+    }
+
+    @Override
+    public Workflow getCurrentVersion() {
+        return (Workflow) mutabilityHelper.getCurrentVersion();
     }
 }

@@ -81,9 +81,9 @@ public interface Replaceable {
     void setAsCurrentVersion();
 
     /**
-     * Returns true iff this is the current version.
+     * Returns the current version of this object.
      *
-     * @return true iff this is the current version.
+     * @return the current version of this object.
      */
-    boolean isCurrentVersion();
+    Replaceable getCurrentVersion();
 }
