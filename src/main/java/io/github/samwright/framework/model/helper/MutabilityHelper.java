@@ -197,7 +197,7 @@ public class MutabilityHelper {
     }
 
     public void delete() {
-        discardNext();
+//        discardNext();
     }
 
     public void setAsCurrentVersion() {

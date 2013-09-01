@@ -62,7 +62,7 @@ public abstract class ProcessController extends VBox implements ModelController 
 
     @Override
     public void proposeModel(Processor proposedModel) {
-        if (proposedModel != model && proposedModel != null) {
+        if (proposedModel != null) {
             this.proposedModel = proposedModel;
             if (proposedModel.getController() != this)
                 proposedModel.setController(this);
