@@ -1,5 +1,6 @@
 package io.github.samwright.framework.model.helper;
 
+import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.common.EventuallyImmutable;
 import io.github.samwright.framework.model.common.ParentOf;
@@ -15,8 +16,8 @@ import java.util.List;
  * A helper object that manages a child's parent in an {@link EventuallyImmutable} parent-child
  * hierarchy.
  */
-public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
-                           P extends ParentOf<C> & EventuallyImmutable>
+public class ParentManager<C extends ChildOf<P> & Processor,
+                           P extends ParentOf<C> & Processor>
         implements ChildOf<P> {
 
     @Getter private P parent;
@@ -54,8 +55,9 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
             return managedChild;
         }
 
-        if (newParent != null)
-            newParent = (P) newParent.versionInfo().getLatest();
+//        if (newParent != null)// TODO: did I break this?
+//            newParent = (P) newParent.versionInfo().getLatest();
+//            newParent = (P) newParent.getCurrentVersion();
 
         C childClone = (C) managedChild.createMutableClone();
 
@@ -63,7 +65,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
     }
 
     /**
-     * Called before the managed child is fixed.
+     * Called before the managed child replaces another child.
      * <p/>
      * One of two scenarios caused this update
      * <p/>
@@ -71,10 +73,10 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      *     <p/>
      *     2. A property of the managed child was changed
      *
-     * @param versionInfo the new version information.
+     * @param toReplace the child that managedChild will replace
      */
     @SuppressWarnings("unchecked")
-    public void beforeFixAsVersion(VersionInfo versionInfo) {
+    public void beforeReplacing(C toReplace) {
         if (!managedChild.isMutable())
             return;
 
@@ -86,9 +88,8 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
         if (getParent() != null && !getParent().isMutable()) {
             List<C> newSiblings = new LinkedList<>(getParent().getChildren());
 //            VersionInfo.updateAllToLatest(newSiblings);
-            C previousChild = (C) versionInfo.getPrevious();
             if (!newSiblings.contains(managedChild)
-                    && (previousChild == null || !newSiblings.contains(previousChild))) {
+                    && (toReplace == null || !newSiblings.contains(toReplace))) {
                 newSiblings.add(managedChild);
             }
 
@@ -98,7 +99,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
         }
     }
 
-    public void delete() {
+    public void orphanChild() {
         List<C> newChildren = new ArrayList<>(parent.getChildren());
         newChildren.remove(managedChild);
         parent.replaceWith((Replaceable) parent.withChildren(newChildren));
@@ -109,8 +110,8 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      * and tells its parent to discard its replacement.
      */
     public void discardNext() {
-        if (parent != null && parent.versionInfo().getNext() != null
-                && !parent.versionInfo().getNext().isMutable())
+        if (parent != null && parent.getNext() != null
+                && !parent.getNext().isMutable())
             parent.discardNext();
     }
 
@@ -119,7 +120,7 @@ public class ParentManager<C extends ChildOf<P> & EventuallyImmutable,
      * and tells its parent to discard its older versions.
      */
     public void discardPrevious() {
-        if (parent != null && parent.versionInfo().getPrevious() != null)
+        if (parent != null && parent.getPrevious() != null)
             parent.discardPrevious();
     }
 

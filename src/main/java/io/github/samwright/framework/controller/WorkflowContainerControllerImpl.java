@@ -5,6 +5,7 @@ import io.github.samwright.framework.model.WorkflowContainer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -64,7 +65,7 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
 
         workflowsBox.getChildren().clear();
         for (Workflow workflow : getModel().getChildren()) {
-            workflowsBox.getChildren().add(workflow.getController());
+            workflowsBox.getChildren().add((Node) workflow.getController());
         }
     }
 }

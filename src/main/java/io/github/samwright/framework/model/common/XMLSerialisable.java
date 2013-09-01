@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * User: Sam Wright Date: 26/08/2013 Time: 19:06
  */
-public interface XMLSerialisable<T extends XMLSerialisable<T>> {
+public interface XMLSerialisable {
 
     /**
      * Serialises this object into an XML node for the given document.
@@ -44,5 +44,9 @@ public interface XMLSerialisable<T extends XMLSerialisable<T>> {
      *                   cases, this should be an empty dictionary (which the function then
      *                   populates).
      */
-    T withXML(Element node, Map<UUID, Processor> dictionary);
+    XMLSerialisable withXML(Element node, Map<UUID, Processor> dictionary);
+
+    String getModelIdentifier();
+
+    String getXMLTag();
 }

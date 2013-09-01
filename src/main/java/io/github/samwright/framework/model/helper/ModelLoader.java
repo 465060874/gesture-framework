@@ -94,7 +94,9 @@ public class ModelLoader {
 //        model.discardPrevious();
         prototypeModel.discardNext();
 
-        return (Processor) model.versionInfo().getLatest();
+        if (model.getNext() != null)
+            throw new RuntimeException("Not loading latest version of processor");
+        return model;
     }
 
 }

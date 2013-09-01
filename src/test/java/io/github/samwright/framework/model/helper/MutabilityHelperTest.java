@@ -1,6 +1,6 @@
 package io.github.samwright.framework.model.helper;
 
-import io.github.samwright.framework.model.helper.mock.MockEventuallyImmutable;
+import io.github.samwright.framework.model.helper.mock.MockProcessor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,13 +11,11 @@ import static junit.framework.TestCase.*;
  * User: Sam Wright Date: 10/07/2013 Time: 17:16
  */
 public class MutabilityHelperTest {
-    private MockEventuallyImmutable first, second, third;
-    private MutabilityHelper mutabilityHelper;
+    private MockProcessor first, second, third;
 
     @Before
     public void setUp() throws Exception {
-        first = new MockEventuallyImmutable();
-        mutabilityHelper = first.getMutabilityHelper();
+        first = new MockProcessor();
     }
 
     @Test
@@ -25,39 +23,36 @@ public class MutabilityHelperTest {
         second = first.createMutableClone();
 
         assertTrue(second.isMutable());
-        assertNull(second.versionInfo().getPrevious());
-        assertNull(second.versionInfo().getNext());
-        assertEquals(second, second.versionInfo().getThisVersion());
+        assertNull(second.getPrevious());
+        assertNull(second.getNext());
     }
 
     @Test
     public void testVersionInfo() throws Exception {
         assertFalse(first.isMutable());
-        assertNull(first.versionInfo().getPrevious());
-        assertNull(first.versionInfo().getNext());
-        assertEquals(first, first.versionInfo().getThisVersion());
+        assertNull(first.getPrevious());
+        assertNull(first.getNext());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testIneffectualReplace() throws Exception {
+        second = first.createMutableClone();
+        second.replace(second);
+
+        assertFalse(second.isMutable());
+        assertNull(second.getPrevious());
+        assertNull(second.getNext());
     }
 
     @Test
-    public void testIneffectualFixAsVersion() throws Exception {
+    public void testReplace() throws Exception {
         second = first.createMutableClone();
-        second.fixAsVersion(second.versionInfo());
+        second.replace(first);
 
         assertFalse(second.isMutable());
-        assertNull(second.versionInfo().getPrevious());
-        assertNull(second.versionInfo().getNext());
-        assertEquals(second, second.versionInfo().getThisVersion());
-    }
-
-    @Test
-    public void testFixAsVersion() throws Exception {
-        second = first.createMutableClone();
-        second.fixAsVersion(second.versionInfo().withPrevious(first));
-
-        assertFalse(second.isMutable());
-        assertEquals(first, second.versionInfo().getPrevious());
-        assertNull(second.versionInfo().getNext());
-        assertEquals(second, second.versionInfo().getThisVersion());
+        assertEquals(first, second.getPrevious());
+        assertEquals(second, first.getNext());
+        assertNull(second.getNext());
     }
 
     @Test
@@ -66,14 +61,12 @@ public class MutabilityHelperTest {
         first.replaceWith(second);
 
         assertFalse(first.isMutable());
-        assertNull(first.versionInfo().getPrevious());
-        assertEquals(second, first.versionInfo().getNext());
-        assertEquals(first, first.versionInfo().getThisVersion());
+        assertNull(first.getPrevious());
+        assertEquals(second, first.getNext());
 
         assertFalse(second.isMutable());
-        assertEquals(first, second.versionInfo().getPrevious());
-        assertNull(second.versionInfo().getNext());
-        assertEquals(second, second.versionInfo().getThisVersion());
+        assertEquals(first, second.getPrevious());
+        assertNull(second.getNext());
     }
 
     @Test(expected = RuntimeException.class)
@@ -118,14 +111,12 @@ public class MutabilityHelperTest {
         first.discardNext();
 
         assertFalse(first.isMutable());
-        assertNull(first.versionInfo().getPrevious());
-        assertNull(first.versionInfo().getNext());
-        assertEquals(first, first.versionInfo().getThisVersion());
+        assertNull(first.getPrevious());
+        assertNull(first.getNext());
 
         assertFalse(second.isMutable());
-        assertNull(second.versionInfo().getPrevious());
-        assertEquals(third, second.versionInfo().getNext());
-        assertEquals(second, second.versionInfo().getThisVersion());
+        assertNull(second.getPrevious());
+        assertEquals(third, second.getNext());
     }
 
     @Test
@@ -141,19 +132,16 @@ public class MutabilityHelperTest {
         first.replaceWith(third);
 
         assertFalse(first.isMutable());
-        assertNull(first.versionInfo().getPrevious());
-        assertEquals(third, first.versionInfo().getNext());
-        assertEquals(first, first.versionInfo().getThisVersion());
+        assertNull(first.getPrevious());
+        assertEquals(third, first.getNext());
 
         assertFalse(third.isMutable());
-        assertEquals(first, third.versionInfo().getPrevious());
-        assertNull(third.versionInfo().getNext());
-        assertEquals(third, third.versionInfo().getThisVersion());
+        assertEquals(first, third.getPrevious());
+        assertNull(third.getNext());
 
         assertFalse(second.isMutable());
-        assertNull(second.versionInfo().getPrevious());
-        assertNull(second.versionInfo().getNext());
-        assertEquals(second, second.versionInfo().getThisVersion());
+        assertNull(second.getPrevious());
+        assertNull(second.getNext());
     }
 
     @Test
@@ -166,14 +154,12 @@ public class MutabilityHelperTest {
         second.discardPrevious();
 
         assertFalse(first.isMutable());
-        assertNull(first.versionInfo().getPrevious());
-        assertNull(first.versionInfo().getNext());
-        assertEquals(first, first.versionInfo().getThisVersion());
+        assertNull(first.getPrevious());
+        assertNull(first.getNext());
 
         assertFalse(second.isMutable());
-        assertNull(second.versionInfo().getPrevious());
-        assertEquals(third, second.versionInfo().getNext());
-        assertEquals(second, second.versionInfo().getThisVersion());
+        assertNull(second.getPrevious());
+        assertEquals(third, second.getNext());
     }
 
     @Test
@@ -194,7 +180,7 @@ public class MutabilityHelperTest {
         second = first.createMutableClone();
         first.replaceWith(second);
         first.delete();
-        assertNotSame(second, first.versionInfo().getNext());
+        assertNotSame(second, first.getNext());
     }
 
     @Test
@@ -202,10 +188,5 @@ public class MutabilityHelperTest {
         first.delete();
         first.discardNext();
         first.replaceWith(first.createMutableClone());
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void testCannotClone() throws Exception {
-        mutabilityHelper.createMutableClone();
     }
 }

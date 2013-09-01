@@ -15,8 +15,8 @@ import java.util.*;
  * A helper object that manages a list of children in an {@link EventuallyImmutable} parent-child
  * hierarchy.
  */
-public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
-                             P extends ParentOf<C> & EventuallyImmutable>
+public class ChildrenManager<C extends ChildOf<P> & Processor,
+                             P extends ParentOf<C> & Processor>
         implements ParentOf<C> {
 
     @Getter private List<C> children;
@@ -71,17 +71,17 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      *     <p/>
      *     4. A new child has been added to this parent
      *
-     * @param versionInfo the new version information.
+     * @param toReplace the parent that managedParent will replace.
      */
     @SuppressWarnings("unchecked")
-    public void beforeFixAsVersion(VersionInfo versionInfo) {
+    public void beforeReplacing(P toReplace) {
         if (!managedParent.isMutable())
             return;
 
         List<C> latestChildren = new LinkedList<>();
 
         for (C child : children) {
-            C childNextVersion = (C) child.versionInfo().getNext();
+            C childNextVersion = (C) child.getNext();
             if (childNextVersion == null) {
                 if (child.getParent() == managedParent) {
                     // Child is a new addition to this parent - just need to add it to list.
@@ -114,8 +114,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     public void discardNext() {
         for (C child : children)
-            if (child.versionInfo().getNext() != null
-                    && !child.versionInfo().getNext().isMutable())
+            if (child.getNext() != null
+                    && !child.getNext().isMutable())
                 child.discardNext();
     }
 
@@ -125,7 +125,7 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
      */
     public void discardPrevious() {
         for (C child : children)
-            if (child.versionInfo().getPrevious() != null)
+            if (child.getPrevious() != null)
                 child.discardPrevious();
     }
 
@@ -138,19 +138,16 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
             child.setAsCurrentVersion();
     }
 
-    public void afterVersionFixed() {
+    public void afterReplacement() {
         for (C child : children)
-            child.afterVersionFixed();
+            child.afterReplacement();
     }
 
     public Element getXMLForDocument(Document doc) {
         Element childrenNode = doc.createElement("Children");
 
         for (C child : children)
-            if (child instanceof Processor) {
-                Element childNode = ((Processor) child).getXMLForDocument(doc);
-                childrenNode.appendChild(childNode);
-            }
+            childrenNode.appendChild(child.getXMLForDocument(doc));
 
         return childrenNode;
     }
@@ -165,9 +162,8 @@ public class ChildrenManager<C extends ChildOf<P> & EventuallyImmutable,
 
         for (Element childNode : XMLHelper.iterator(childrenNode)) {
             C child = (C) ModelLoader.getPrototypeModel(childNode);
-            C newChild = (C) ((Processor) child).withXML(childNode, dictionary);
+            C newChild = (C) child.withXML(childNode, dictionary);
 //            newChild.withParent(managedParent);
-            newChild.setBeingFixed();
             child.replaceWith(newChild);
 //            newChild.discardPrevious();
             child.discardNext();

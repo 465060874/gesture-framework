@@ -5,9 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
-import static junit.framework.TestCase.*;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNull;
 
 
 /**
@@ -31,13 +31,13 @@ public class ChildrenManagerTest {
 
         MockImmutableParentChild newChild1, newChild2;
 
-        assertNull(newParent.versionInfo().getNext());
+        assertNull(newParent.getNext());
 
-        newChild1 = (MockImmutableParentChild) child1.versionInfo().getNext();
-        assertNull(newChild1.versionInfo().getNext());
+        newChild1 = (MockImmutableParentChild) child1.getNext();
+        assertNull(newChild1.getNext());
 
-        newChild2 = (MockImmutableParentChild) child2.versionInfo().getNext();
-        assertNull(newChild2.versionInfo().getNext());
+        newChild2 = (MockImmutableParentChild) child2.getNext();
+        assertNull(newChild2.getNext());
 
         assertEquals(newParent, newChild1.getParent());
         assertEquals(newParent, newChild2.getParent());
@@ -56,9 +56,9 @@ public class ChildrenManagerTest {
         child1.replaceWith(newChild1);
 
         parent.discardNext();
-        assertNull(parent.versionInfo().getNext());
-        assertNull(child1.versionInfo().getNext());
-        assertNull(child2.versionInfo().getNext());
+        assertNull(parent.getNext());
+        assertNull(child1.getNext());
+        assertNull(child2.getNext());
     }
 
     @Test
@@ -66,17 +66,8 @@ public class ChildrenManagerTest {
         testWithChildren();
 
         parent.discardPrevious();
-        assertNull(parent.versionInfo().getPrevious());
-        assertNull(child1.versionInfo().getPrevious());
-        assertNull(child2.versionInfo().getPrevious());
-    }
-
-    @Test
-    public void testFixMultipleTimes() throws Exception {
-        testWithChildren();
-
-        List<MockImmutableParentChild> originalChildren = parent.getChildren();
-        parent.fixAsVersion(parent.versionInfo());
-        assertTrue(originalChildren == parent.getChildren());
+        assertNull(parent.getPrevious());
+        assertNull(child1.getPrevious());
+        assertNull(child2.getPrevious());
     }
 }

@@ -1,8 +1,8 @@
 package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.common.ElementObserver;
+import io.github.samwright.framework.model.common.Replaceable;
 import io.github.samwright.framework.model.helper.*;
-import lombok.Delegate;
 import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -17,15 +17,9 @@ import java.util.*;
  * {@link Workflow}, its {@link TypeData}, mutation management, and
  * {@link io.github.samwright.framework.model.common.ElementObserver} management).
  */
-public abstract class AbstractElement implements Element {
+public abstract class AbstractElement extends AbstractProcessor implements Element {
     @Getter private Set<ElementObserver> observers;
     private final ParentManager<Element, Workflow> parentManager;
-
-    @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
-    private final MutabilityHelper<Element> mutabilityHelper;
-
-    @Delegate
-    private final TypeDataManager<Element> typeDataManager;
 
     private Set<UUID> observerUUIDs;
     private Map<UUID,Processor> dictionary;
@@ -34,8 +28,6 @@ public abstract class AbstractElement implements Element {
      * Constructs the initial (and immutable) {@code AbstractElement}.
      */
     public AbstractElement() {
-        typeDataManager = new TypeDataManager<Element>(this);
-        mutabilityHelper = new MutabilityHelper<Element>(this, false);
         observers = Collections.emptySet();
         parentManager = new ParentManager<Element, Workflow>(this);
     }
@@ -46,62 +38,29 @@ public abstract class AbstractElement implements Element {
      * @param oldElement the {@code AbstractElement} to clone.
      */
     public AbstractElement(AbstractElement oldElement) {
-        if (oldElement.isMutable())
-            throw new RuntimeException("Cannot clone a mutable object");
-
-        typeDataManager = new TypeDataManager<Element>(this, oldElement.getTypeData());
-        mutabilityHelper = new MutabilityHelper<Element>(this, true);
+        super(oldElement);
         this.observers = oldElement.getObservers();
         parentManager = new ParentManager<Element, Workflow>(this, oldElement.getParent());
     }
 
     @Override
-    public Element withParent(Workflow newParent) {
-        return parentManager.withParent(newParent);
+    public void replace(Replaceable toReplace) {
+        parentManager.beforeReplacing((Element) toReplace);
+        super.replace(toReplace);
     }
 
     @Override
-    public Workflow getParent() {
-        return parentManager.getParent();
-    }
-
-    @Override
-    public void delete() {
-        parentManager.delete();
-    }
-
-    @Override
-    public void discardNext() {
-        mutabilityHelper.discardNext();
-        parentManager.discardNext();
-    }
-
-    @Override
-    public void discardPrevious() {
-        mutabilityHelper.discardPrevious();
-        parentManager.discardPrevious();
-    }
-
-    @Override
-    public void setAsCurrentVersion() {
-        if (this != getCurrentVersion()) {
-            mutabilityHelper.setAsCurrentVersion();
-            parentManager.setAsCurrentVersion();
-        }
-    }
-
-    @Override
-    public void fixAsVersion(VersionInfo versionInfo) {
-        setBeingFixed();
-        parentManager.beforeFixAsVersion(versionInfo);
-        mutabilityHelper.fixAsVersion(versionInfo);
-    }
-
-    @Override
-    public void afterVersionFixed() {
+    public void afterReplacement() {
         if (this.dictionary == null) {
-            observers = new HashSet<>(observers);
-            VersionInfo.updateAllToLatest(observers);
+            Set<ElementObserver> updatedObservers = new HashSet<>(observers);
+            for (ElementObserver observer : observers) {
+                if (observer instanceof Processor)
+                    updatedObservers.add((ElementObserver) ((Processor) observer)
+                            .getCurrentVersion());
+                else
+                    updatedObservers.add(observer);
+            }
+            observers = updatedObservers;
         } else {
             for (UUID uuid : observerUUIDs) {
                 Processor observer = dictionary.get(uuid);
@@ -138,7 +97,7 @@ public abstract class AbstractElement implements Element {
 
     @Override
     public org.w3c.dom.Element getXMLForDocument(Document doc) {
-        org.w3c.dom.Element observerNode, node = mutabilityHelper.getXMLForDocument(doc);
+        org.w3c.dom.Element observerNode, node = super.getXMLForDocument(doc);
 
         Node observersNode = doc.createElement("Observers");
         node.appendChild(observersNode);
@@ -170,23 +129,57 @@ public abstract class AbstractElement implements Element {
             observerUUIDs.add(UUID.fromString(uuidString));
         }
 
-        return ((Element) mutabilityHelper.withXML(node, map))
-                .withTypeData(getTypeData().withXML(node, map));
+        return ((Element) super.withXML(node, map)).withTypeData(getTypeData().withXML(node, map));
     }
 
     @Override
-    public String toString() {
-        String fullString = super.toString();
-        return getClass().getSimpleName() + fullString.substring(fullString.length() - 4);
+    public String getXMLTag() {
+        return "Element";
     }
 
     @Override
-    public String getModelIdentifier() {
-        return mutabilityHelper.getModelIdentifier();
+    public Element withParent(Workflow newParent) {
+        return parentManager.withParent(newParent);
+    }
+
+    @Override
+    public Workflow getParent() {
+        return parentManager.getParent();
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        parentManager.orphanChild();
+    }
+
+    @Override
+    public void discardNext() {
+        super.discardNext();
+        parentManager.discardNext();
+    }
+
+    @Override
+    public void discardPrevious() {
+        super.discardPrevious();
+        parentManager.discardPrevious();
+    }
+
+    @Override
+    public void setAsCurrentVersion() {
+        if (this != getCurrentVersion()) {
+            super.setAsCurrentVersion();
+            parentManager.setAsCurrentVersion();
+        }
     }
 
     @Override
     public Element getCurrentVersion() {
-        return (Element) mutabilityHelper.getCurrentVersion();
+        return (Element) super.getCurrentVersion();
+    }
+
+    @Override
+    public Element withTypeData(TypeData typeData) {
+        return (Element) super.withTypeData(typeData);
     }
 }

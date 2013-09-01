@@ -3,6 +3,7 @@ package io.github.samwright.framework.controller;
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.ElementLink;
 import io.github.samwright.framework.model.Element;
+import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.XMLHelper;
 import javafx.event.EventHandler;
@@ -16,7 +17,7 @@ import java.util.Set;
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 22:53
  */
-abstract public class ElementController extends ModelController<Element> {
+abstract public class ElementController extends ProcessController {
 
     public final static DataFormat dataFormat
             = new DataFormat("io.github.samwright.framework.model.Element");
@@ -101,6 +102,7 @@ abstract public class ElementController extends ModelController<Element> {
 
             if (!newObservers.equals(element.getObservers())) {
                 Element newModel = element.withObservers(newObservers);
+                // TODO: re-enable link observer
 //                MainWindowController.getTopController().startTransientUpdateMode();
                 try {
 //                    element.replaceWith(newModel);
@@ -125,5 +127,18 @@ abstract public class ElementController extends ModelController<Element> {
     public void setBeingDragged(boolean beingDragged) {
         super.setBeingDragged(beingDragged);
         getElementLink().setBeingDragged(beingDragged);
+    }
+
+    @Override
+    public Element getModel() {
+        return (Element) super.getModel();
+    }
+
+    @Override
+    public void proposeModel(Processor proposedModel) {
+        if (!(proposedModel instanceof Element))
+            throw new RuntimeException("ElementController can only control Elements - not " +
+                    proposedModel);
+        super.proposeModel(proposedModel);
     }
 }

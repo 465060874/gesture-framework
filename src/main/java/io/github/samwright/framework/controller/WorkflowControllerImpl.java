@@ -2,7 +2,6 @@ package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.controller.helper.ElementLink;
 import io.github.samwright.framework.model.Element;
-import io.github.samwright.framework.model.Workflow;
 import io.github.samwright.framework.model.WorkflowImpl;
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
@@ -25,8 +24,8 @@ public class WorkflowControllerImpl extends WorkflowController {
 
     public WorkflowControllerImpl() {
         super("/fxml/Workflow.fxml");
-        proposeModel(new WorkflowImpl());
         defaultElementLink = new ElementLink();
+        proposeModel(new WorkflowImpl());
         handleUpdatedModel();
     }
 
@@ -46,7 +45,7 @@ public class WorkflowControllerImpl extends WorkflowController {
     }
 
     @Override
-    public ModelController<Workflow> createClone() {
+    public ModelController createClone() {
         return new WorkflowControllerImpl(this);
     }
 

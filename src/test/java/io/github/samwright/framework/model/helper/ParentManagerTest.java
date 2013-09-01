@@ -6,8 +6,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNull;
+import static junit.framework.TestCase.*;
 
 /**
  * User: Sam Wright Date: 15/07/2013 Time: 09:24
@@ -30,10 +29,10 @@ public class ParentManagerTest {
         newChild1 = child1.withParent(parent);
         child1.replaceWith(newChild1);
 
-        newParent = (MockImmutableParentChild) parent.versionInfo().getNext();
+        newParent = (MockImmutableParentChild) parent.getNext();
 
-        assertNull(newParent.versionInfo().getNext());
-        assertNull(newChild1.versionInfo().getNext());
+        assertNull(newParent.getNext());
+        assertNull(newChild1.getNext());
 
         assertEquals(newParent, newChild1.getParent());
         assertEquals(Arrays.asList(newChild1), newParent.getChildren());
@@ -51,14 +50,15 @@ public class ParentManagerTest {
         newChild2 = child2.withParent(parent);
         child2.replaceWith(newChild2);
 
-        newChild1 = (MockImmutableParentChild) child1.versionInfo().getNext();
-        newParent = (MockImmutableParentChild) parent.versionInfo().getNext();
+        newChild1 = (MockImmutableParentChild) child1.getNext();
+        newParent = (MockImmutableParentChild) parent.getNext();
 
-        assertNull(newChild1.versionInfo().getNext());
-        assertNull(newParent.versionInfo().getNext());
+        assertNull(newChild1.getNext());
+        assertNull(newChild2.getNext());
+        assertNull(newParent.getNext());
 
-        assertEquals(newParent, newChild1.getParent());
         assertEquals(newParent, newChild2.getParent());
+        assertEquals(newParent, newChild1.getParent());
         assertEquals(Arrays.asList(newChild1, newChild2), newParent.getChildren());
 
         child1 = newChild1;
@@ -80,15 +80,15 @@ public class ParentManagerTest {
 
         MockImmutableParentChild newChild1, newParent;
 
-        newParent = (MockImmutableParentChild) parent.versionInfo().getNext();
-        assertNull(newParent.versionInfo().getNext());
+        newParent = (MockImmutableParentChild) parent.getNext();
+        assertNull(newParent.getNext());
 
-        newChild1 = (MockImmutableParentChild) child1.versionInfo().getNext();
-        assertNull(newChild1.versionInfo().getNext());
+        newChild1 = (MockImmutableParentChild) child1.getNext();
+        assertNull(newChild1.getNext());
 
         assertEquals(Arrays.asList(newChild1), newParent.getChildren());
-        assertNull(child2.versionInfo().getNext());
-        assertNull(child2.getParent());
+        assertNull(child2.getNext());
+        assertFalse(newParent.getChildren().contains(child2));
     }
 
 

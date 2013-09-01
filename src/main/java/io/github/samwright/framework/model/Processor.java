@@ -1,15 +1,15 @@
 package io.github.samwright.framework.model;
 
-import io.github.samwright.framework.model.common.ElementObserver;
-import io.github.samwright.framework.model.common.EventuallyImmutable;
-import io.github.samwright.framework.model.common.HasUUID;
-import io.github.samwright.framework.model.common.XMLSerialisable;
+import io.github.samwright.framework.model.common.*;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.History;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
+import org.w3c.dom.Element;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * The top-level interface for all parts of the workflow framework.
@@ -36,7 +36,8 @@ import java.util.List;
  * for example it might choose to process the data in a certain way that worked well during
  * training.
  */
-public interface Processor extends EventuallyImmutable, XMLSerialisable<Processor>, HasUUID {
+public interface Processor
+        extends EventuallyImmutable, XMLSerialisable, Versioned, Replaceable, Controllable, Deletable {
 
     /**
      * Returns true iff the {@code process(input)} method can run.
@@ -131,5 +132,17 @@ public interface Processor extends EventuallyImmutable, XMLSerialisable<Processo
 
     @Override
     Processor createMutableClone();
+
+    @Override
+    Processor getCurrentVersion();
+
+    @Override
+    Processor withXML(Element node, Map<UUID, Processor> dictionary);
+
+    @Override
+    Processor getNext();
+
+    @Override
+    Processor getPrevious();
 
 }

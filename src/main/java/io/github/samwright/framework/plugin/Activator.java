@@ -2,6 +2,7 @@ package io.github.samwright.framework.plugin;
 
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.*;
+import javafx.scene.Node;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -23,7 +24,7 @@ public class Activator implements BundleActivator {
 
     private static void activateProcessor(ModelController controller) {
         ToolboxController toolbox = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
-        toolbox.getChildren().add(controller);
+        toolbox.getChildren().add((Node) controller);
     }
 
     @Override

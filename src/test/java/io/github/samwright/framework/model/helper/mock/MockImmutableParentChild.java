@@ -2,9 +2,9 @@ package io.github.samwright.framework.model.helper.mock;
 
 import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.common.ParentOf;
+import io.github.samwright.framework.model.common.Replaceable;
 import io.github.samwright.framework.model.helper.ChildrenManager;
 import io.github.samwright.framework.model.helper.ParentManager;
-import io.github.samwright.framework.model.helper.VersionInfo;
 import lombok.Getter;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * User: Sam Wright Date: 12/07/2013 Time: 13:11
  */
-public class MockImmutableParentChild extends MockEventuallyImmutable
+public class MockImmutableParentChild extends MockProcessor
         implements ChildOf<MockImmutableParentChild>, ParentOf<MockImmutableParentChild> {
 
     @Getter
@@ -26,7 +26,7 @@ public class MockImmutableParentChild extends MockEventuallyImmutable
     }
 
     public MockImmutableParentChild(MockImmutableParentChild previous) {
-        super(true);
+        super(previous);
         childrenManager = new ChildrenManager<>(this, previous.getChildren());
         parentManager = new ParentManager<>(this, previous.getParent());
     }
@@ -43,6 +43,7 @@ public class MockImmutableParentChild extends MockEventuallyImmutable
 
     @Override
     public List<MockImmutableParentChild> getChildren() {
+
         return childrenManager.getChildren();
     }
 
@@ -57,16 +58,17 @@ public class MockImmutableParentChild extends MockEventuallyImmutable
     }
 
     @Override
-    public void fixAsVersion(VersionInfo versionInfo) {
-        parentManager.beforeFixAsVersion(versionInfo);
-        childrenManager.beforeFixAsVersion(versionInfo);
+    public void replace(Replaceable toReplace) {
+        parentManager.beforeReplacing((MockImmutableParentChild) toReplace);
+        childrenManager.beforeReplacing((MockImmutableParentChild) toReplace);
 
-        super.fixAsVersion(versionInfo);
+        super.replace(toReplace);
     }
 
     @Override
     public void delete() {
         super.delete();
+        parentManager.orphanChild();
     }
 
     @Override
@@ -79,5 +81,10 @@ public class MockImmutableParentChild extends MockEventuallyImmutable
     public void discardNext() {
         super.discardNext();
         childrenManager.discardNext();
+    }
+
+    @Override
+    public void afterReplacement() {
+        childrenManager.afterReplacement();
     }
 }

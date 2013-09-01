@@ -1,7 +1,9 @@
 package io.github.samwright.framework.model;
 
-import io.github.samwright.framework.model.helper.*;
-import lombok.Delegate;
+import io.github.samwright.framework.model.common.Replaceable;
+import io.github.samwright.framework.model.helper.ChildrenManager;
+import io.github.samwright.framework.model.helper.ParentManager;
+import io.github.samwright.framework.model.helper.TypeData;
 import org.w3c.dom.Document;
 
 import java.util.List;
@@ -12,22 +14,14 @@ import java.util.UUID;
  * Abstract implementation of {@link Workflow}.  Manages its {@link WorkflowContainer} parent,
  * the list of {@link Element} children in this, its {@link TypeData}, and mutation management.
  */
-public abstract class AbstractWorkflow implements Workflow {
+public abstract class AbstractWorkflow extends AbstractProcessor implements Workflow {
     private final ParentManager<Workflow, WorkflowContainer> parentManager;
     private final ChildrenManager<Element, Workflow> childrenManager;
-
-    @Delegate(excludes = MutabilityHelper.ForManualDelegation.class)
-    private final MutabilityHelper<Workflow> mutabilityHelper;
-
-    @Delegate
-    private final TypeDataManager<Workflow> typeDataManager;
 
     /**
      * Constructs the initial (and immutable) {@code AbstractWorkflow}.
      */
     public AbstractWorkflow() {
-        typeDataManager = new TypeDataManager<Workflow>(this);
-        mutabilityHelper = new MutabilityHelper<>((Workflow) this, false);
         childrenManager = new ChildrenManager<Element, Workflow>(this);
         parentManager = new ParentManager<>((Workflow) this);
     }
@@ -39,11 +33,7 @@ public abstract class AbstractWorkflow implements Workflow {
      * @param oldWorkflow the {@code AbstractWorkflow} to clone.
      */
     public AbstractWorkflow(AbstractWorkflow oldWorkflow) {
-        if (oldWorkflow.isMutable())
-            throw new RuntimeException("Cannot clone an immutable object");
-
-        typeDataManager = new TypeDataManager<Workflow>(this, oldWorkflow.getTypeData());
-        mutabilityHelper = new MutabilityHelper<>((Workflow) this, true);
+        super(oldWorkflow);
         childrenManager = new ChildrenManager<Element, Workflow>(this, oldWorkflow.getChildren());
         parentManager = new ParentManager<Workflow,WorkflowContainer>(this, oldWorkflow.getParent());
     }
@@ -74,19 +64,20 @@ public abstract class AbstractWorkflow implements Workflow {
 
     @Override
     public void delete() {
-        parentManager.delete();
+        super.delete();
+        parentManager.orphanChild();
     }
 
     @Override
     public void discardNext() {
-        mutabilityHelper.discardNext();
+        super.discardNext();
         childrenManager.discardNext();
         parentManager.discardNext();
     }
 
     @Override
     public void discardPrevious() {
-        mutabilityHelper.discardPrevious();
+        super.discardPrevious();
         childrenManager.discardPrevious();
         parentManager.discardPrevious();
     }
@@ -94,30 +85,29 @@ public abstract class AbstractWorkflow implements Workflow {
     @Override
     public void setAsCurrentVersion() {
         if (this != getCurrentVersion()) {
-            mutabilityHelper.setAsCurrentVersion();
+            super.setAsCurrentVersion();
             parentManager.setAsCurrentVersion();
             childrenManager.setAsCurrentVersion();
         }
     }
 
     @Override
-    public void fixAsVersion(VersionInfo versionInfo) {
-        setBeingFixed();
-        childrenManager.beforeFixAsVersion(versionInfo);
-        parentManager.beforeFixAsVersion(versionInfo);
-        mutabilityHelper.fixAsVersion(versionInfo);
+    public void replace(Replaceable toReplace) {
+        childrenManager.beforeReplacing((Workflow) toReplace);
+        parentManager.beforeReplacing((Workflow) toReplace);
+        super.replace(toReplace);
     }
 
     @Override
-    public void afterVersionFixed() {
-        childrenManager.afterVersionFixed();
+    public void afterReplacement() {
+        childrenManager.afterReplacement();
     }
 
     @Override
     public Workflow withXML(org.w3c.dom.Element node, Map<UUID, Processor> map) {
         if (!isMutable())
             return (Workflow) createMutableClone().withXML(node, map);
-        mutabilityHelper.withXML(node, map);
+        super.withXML(node, map);
         withParent(null);
         childrenManager.withXML(node, map);
 
@@ -126,7 +116,7 @@ public abstract class AbstractWorkflow implements Workflow {
 
     @Override
     public org.w3c.dom.Element getXMLForDocument(Document doc) {
-        org.w3c.dom.Element node = mutabilityHelper.getXMLForDocument(doc);
+        org.w3c.dom.Element node = super.getXMLForDocument(doc);
         node.appendChild(childrenManager.getXMLForDocument(doc));
         return node;
     }
@@ -144,6 +134,16 @@ public abstract class AbstractWorkflow implements Workflow {
 
     @Override
     public Workflow getCurrentVersion() {
-        return (Workflow) mutabilityHelper.getCurrentVersion();
+        return (Workflow) super.getCurrentVersion();
+    }
+
+    @Override
+    public Workflow withTypeData(TypeData typeData) {
+        return (Workflow) super.withTypeData(typeData);
+    }
+
+    @Override
+    public String getXMLTag() {
+        return "Workflow";
     }
 }

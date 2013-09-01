@@ -29,20 +29,20 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
         return new TopWorkflowContainer(this);
     }
 
-    public TopWorkflowContainer getPrevious() {
-        TopWorkflowContainer pointer = (TopWorkflowContainer) versionInfo().getPrevious();
+    public TopWorkflowContainer getPreviousCompleted() {
+        TopWorkflowContainer pointer = (TopWorkflowContainer) getPrevious();
 
         while (pointer != null && pointer.isTransientUpdate())
-            pointer = (TopWorkflowContainer) pointer.versionInfo().getPrevious();
+            pointer = (TopWorkflowContainer) pointer.getPrevious();
 
         return pointer;
     }
 
-    public TopWorkflowContainer getNext() {
-        TopWorkflowContainer pointer = (TopWorkflowContainer) versionInfo().getNext();
+    public TopWorkflowContainer getNextCompleted() {
+        TopWorkflowContainer pointer = (TopWorkflowContainer) getNext();
 
         while (pointer != null && pointer.isTransientUpdate())
-            pointer = (TopWorkflowContainer) pointer.versionInfo().getNext();
+            pointer = (TopWorkflowContainer) pointer.getNext();
 
         return pointer;
     }

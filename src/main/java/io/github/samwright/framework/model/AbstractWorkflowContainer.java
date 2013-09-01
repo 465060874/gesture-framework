@@ -1,9 +1,9 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.model.common.Replaceable;
 import io.github.samwright.framework.model.helper.ChildrenManager;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
-import io.github.samwright.framework.model.helper.VersionInfo;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
@@ -85,7 +85,6 @@ public abstract class AbstractWorkflowContainer
 
     @Override
     public void setAsCurrentVersion() {
-        System.out.println("Hello");
         if (this != getCurrentVersion()) {
             super.setAsCurrentVersion();
             childrenManager.setAsCurrentVersion();
@@ -93,20 +92,14 @@ public abstract class AbstractWorkflowContainer
     }
 
     @Override
-    public void delete() {
-        super.delete();
+    public void replace(Replaceable toReplace) {
+        childrenManager.beforeReplacing((WorkflowContainer) toReplace);
+        super.replace(toReplace);
     }
 
     @Override
-    public void fixAsVersion(VersionInfo versionInfo) {
-        setBeingFixed();
-        childrenManager.beforeFixAsVersion(versionInfo);
-        super.fixAsVersion(versionInfo);
-    }
-
-    @Override
-    public void afterVersionFixed() {
-        childrenManager.afterVersionFixed();
+    public void afterReplacement() {
+        childrenManager.afterReplacement();
     }
 
     @Override
@@ -144,5 +137,10 @@ public abstract class AbstractWorkflowContainer
     @Override
     public WorkflowContainer getCurrentVersion() {
         return (WorkflowContainer) super.getCurrentVersion();
+    }
+
+    @Override
+    public String getXMLTag() {
+        return "WorkflowContainer";
     }
 }

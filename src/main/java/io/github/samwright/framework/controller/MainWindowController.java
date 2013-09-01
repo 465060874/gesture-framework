@@ -1,7 +1,6 @@
 package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
-import io.github.samwright.framework.controller.example.ExContainerController;
 import io.github.samwright.framework.controller.example.ExElementController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.model.Element;
@@ -11,6 +10,7 @@ import io.github.samwright.framework.model.helper.ModelLoader;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -61,24 +61,25 @@ public class MainWindowController extends VBox {
         hBox.getChildren().add(toolboxController);
 
         topController.handleUpdatedModel();
-        topController.addNewWorkflow();
+//        topController.addNewWorkflow();
         ModelLoader.registerPrototypeModel(topController.getModel());
         setOnKeyPressed(topController.getKeyPressHandler());
 
         ModelLoader.registerPrototypeModel(new ExElementController("Element1").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element2").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element3").getModel());
-        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
+//        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
             if (p instanceof Element && !(p instanceof TopWorkflowContainer))
-                toolboxController.getChildren().add(p.getController());
+                toolboxController.getChildren().add((Node) p.getController());
     }
 
     public void handleUpdatedModel() {
         redoButton.setDisable(!topController.canRedo());
         undoButton.setDisable(!topController.canUndo());
+        requestLayout();
     }
 
 

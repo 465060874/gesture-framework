@@ -35,7 +35,7 @@ abstract public class WorkflowContainerController extends ElementController {
     public void setBeingDragged(boolean beingDragged) {
         super.setBeingDragged(beingDragged);
 
-        for (Workflow workflow : getModel().getChildren())
-            workflow.getController().setBeingDragged(beingDragged);
+        for (Workflow workflow : getModel().getCurrentVersion().getChildren())
+            ((WorkflowController) workflow.getController()).setBeingDragged(beingDragged);
     }
 }

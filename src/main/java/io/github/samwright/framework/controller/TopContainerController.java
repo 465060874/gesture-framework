@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class TopContainerController extends WorkflowContainerControllerImpl {
 
-    private final Set<ModelController> selected = new HashSet<>();
+    private final Set<ProcessController> selected = new HashSet<>();
 
     private MainWindowController mainWindow;
     private int transientUpdateMode = 0;
@@ -25,13 +25,12 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         @Override
         public void handle(KeyEvent keyEvent) {
             if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE) {
-                Set<ModelController> oldSelected = new HashSet<>(selected);
+                Set<ProcessController> oldSelected = new HashSet<>(selected);
                 deselectAll();
                 startTransientUpdateMode();
                 try {
-                    for (ModelController toDelete : oldSelected) {
+                    for (ModelController toDelete : oldSelected)
                         toDelete.getModel().getCurrentVersion().delete();
-                    }
                 } finally {
                     endTransientUpdateMode();
                 }
@@ -105,7 +104,8 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
                     } else {
                         super.handleUpdatedModel();
                         deselectAll();
-                        mainWindow.handleUpdatedModel();
+                        if (mainWindow != null)
+                            mainWindow.handleUpdatedModel();
                     }
                 }
                 if (needsUpdate && !Thread.holdsLock(updateLock))
@@ -122,7 +122,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     }
 
     public void undo() {
-        TopWorkflowContainer previousModel = getModel().getPrevious();
+        TopWorkflowContainer previousModel = getModel().getPreviousCompleted();
         startTransientUpdateMode();
         try {
             previousModel.setAsCurrentVersion();
@@ -135,7 +135,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     }
 
     public void redo() {
-        TopWorkflowContainer nextModel = getModel().getNext();
+        TopWorkflowContainer nextModel = getModel().getNextCompleted();
         startTransientUpdateMode();
         try {
             nextModel.setAsCurrentVersion();
@@ -147,11 +147,11 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     }
 
     public boolean canRedo() {
-        return getModel().getNext() != null;
+        return getModel().getNextCompleted() != null;
     }
 
     public boolean canUndo() {
-        return getModel().getPrevious() != null;
+        return getModel().getPreviousCompleted() != null;
     }
 
     @Override
@@ -164,7 +164,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         return (TopWorkflowContainer) super.getProposedModel();
     }
 
-    public void handleClick(ModelController target, MouseEvent mouseEvent) {
+    public void handleClick(ProcessController target, MouseEvent mouseEvent) {
         ToolboxController toolbox = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         if (toolbox.getChildren().contains(target)) {
             deselectAll();
@@ -190,7 +190,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     }
 
     private void deselectAll() {
-        for (ModelController toDeselect : selected)
+        for (ProcessController toDeselect : selected)
             toDeselect.getClickedProperty().set(false);
         selected.clear();
     }
