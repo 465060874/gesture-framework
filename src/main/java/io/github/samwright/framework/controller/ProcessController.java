@@ -1,5 +1,6 @@
 package io.github.samwright.framework.controller;
 
+import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.model.Processor;
 import javafx.beans.property.BooleanProperty;
@@ -70,12 +71,18 @@ public abstract class ProcessController extends VBox implements ModelController 
 
     @Override
     public void handleUpdatedModel() {
-        previousModel = model;
-        if (proposedModel != null)
-            model = proposedModel;
-        proposedModel = null;
-        if (model.getController() != this)
-            model.setController(this);
+        ToolboxController toolbox = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
+        if (toolbox.getChildren().contains(this)) {
+            model.setAsCurrentVersion();
+        } else {
+    //        previousModel = model;
+            if (proposedModel != null)
+                model = proposedModel;
+            proposedModel = null;
+    //        if (model.getController() != this)
+    //            model.setController(this);
+        }
+
     }
 
     public void revertModel() {

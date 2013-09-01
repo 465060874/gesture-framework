@@ -1,6 +1,5 @@
 package io.github.samwright.framework.model;
 
-import io.github.samwright.framework.controller.ModelController;
 import io.github.samwright.framework.model.helper.ModelLoader;
 import io.github.samwright.framework.model.helper.MutabilityHelper;
 import io.github.samwright.framework.model.helper.TypeData;
@@ -17,9 +16,7 @@ import java.util.UUID;
 public abstract class AbstractProcessor implements Processor {
 
     @Delegate private final MutabilityHelper mutabilityHelper;
-    @Getter private ModelController controller;
     @Getter private TypeData typeData;
-    private UUID uuid;
 
 
     public AbstractProcessor() {
@@ -36,25 +33,6 @@ public abstract class AbstractProcessor implements Processor {
         this.mutabilityHelper = new MutabilityHelper(this, true);
         this.typeData = oldProcessor.getTypeData();
         setUUID(ModelLoader.makeNewUUID());
-    }
-
-    @Override
-    public void setController(ModelController controller) {
-        if (this.controller != controller) {
-            this.controller = controller;
-            if (getNext() != null) {
-                getNext().setController(controller);
-            } else if (controller != null) {
-                Processor currentVersion = getCurrentVersion();
-                if (currentVersion != null) {
-                    controller.proposeModel(getCurrentVersion());
-                    controller.handleUpdatedModel();
-                } else if (!isMutable())
-//                    controller.proposeModel(this);
-                    setAsCurrentVersion();
-
-            }
-        }
     }
 
     public org.w3c.dom.Element getXMLForDocument(Document doc) {
@@ -79,28 +57,6 @@ public abstract class AbstractProcessor implements Processor {
         return this;
     }
 
-    public UUID getUUID() {
-        return uuid;
-    }
-
-    @Override
-    public void setUUID(UUID uuid) {
-        if (getUUID() == null || !getUUID().equals(uuid)) {
-            this.uuid = uuid;
-            if (getNext() != null)
-                getNext().setUUID(uuid);
-            else {
-                Processor currentVersion = getCurrentVersion();
-                if (currentVersion == null) {
-                    if (!isMutable())
-                        setAsCurrentVersion();
-                } else if (currentVersion.getUUID().equals(getUUID())) {
-                    currentVersion.setAsCurrentVersion();
-                }
-            }
-        }
-    }
-
     @Override
     public String getModelIdentifier() {
         return getClass().getName();
@@ -114,8 +70,6 @@ public abstract class AbstractProcessor implements Processor {
             return createMutableClone().withTypeData(typeData);
         }
     }
-
-
 
     @Override
     public String toString() {

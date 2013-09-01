@@ -87,7 +87,8 @@ public abstract class AbstractWorkflowContainer
     public void setAsCurrentVersion() {
         if (this != getCurrentVersion()) {
             super.setAsCurrentVersion();
-            childrenManager.setAsCurrentVersion();
+            if (childrenManager != null)
+                childrenManager.setAsCurrentVersion();
         }
     }
 

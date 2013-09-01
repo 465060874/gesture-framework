@@ -102,15 +102,14 @@ abstract public class ElementController extends ProcessController {
 
             if (!newObservers.equals(element.getObservers())) {
                 Element newModel = element.withObservers(newObservers);
-                // TODO: re-enable link observer
-//                MainWindowController.getTopController().startTransientUpdateMode();
+
+                MainWindowController.getTopController().startTransientUpdateMode();
                 try {
-//                    element.replaceWith(newModel);
+                    element.replaceWith(newModel);
                 } finally {
-//                    MainWindowController.getTopController().endTransientUpdateMode();
+                    MainWindowController.getTopController().endTransientUpdateMode();
                 }
-            } else
-                System.out.println("Not changing observers");
+            }
         }
     }
 

@@ -33,8 +33,8 @@ public class AbstractProcessorTest {
 
         @Override
         public void handleUpdatedModel() {
-            assertNotNull(proposedModel);
             model = proposedModel;
+            proposedModel = null;
         }
     }
 
@@ -83,6 +83,8 @@ public class AbstractProcessorTest {
         UUID uuid2 = p2.getUUID();
         assertFalse(uuid1.equals(uuid2));
         assertEquals(uuid2, p3.getUUID());
+        assertEquals(p1, p1.getCurrentVersion());
+        assertEquals(p3, p3.getCurrentVersion());
         assertEquals(p3, p2.getCurrentVersion());
     }
 
@@ -123,5 +125,15 @@ public class AbstractProcessorTest {
         c2 = p2.getController();
         assertNotSame(c1, c2);
         assertEquals(c2, p3.getController());
+    }
+
+    @Test
+    public void testMakeImmutableClone() throws Exception {
+        p2 = p1.createMutableClone();
+        p2.replace(p1);
+        p2.discardPrevious();
+        assertNotSame(p1.getController(), p2.getController());
+        assertEquals(p1, p1.getCurrentVersion());
+        assertEquals(p2, p2.getCurrentVersion());
     }
 }

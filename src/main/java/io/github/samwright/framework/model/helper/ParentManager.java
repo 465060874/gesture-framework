@@ -55,10 +55,6 @@ public class ParentManager<C extends ChildOf<P> & Processor,
             return managedChild;
         }
 
-//        if (newParent != null)// TODO: did I break this?
-//            newParent = (P) newParent.versionInfo().getLatest();
-//            newParent = (P) newParent.getCurrentVersion();
-
         C childClone = (C) managedChild.createMutableClone();
 
         return (C) childClone.withParent(newParent);

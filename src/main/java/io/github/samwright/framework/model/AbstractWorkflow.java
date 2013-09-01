@@ -86,8 +86,10 @@ public abstract class AbstractWorkflow extends AbstractProcessor implements Work
     public void setAsCurrentVersion() {
         if (this != getCurrentVersion()) {
             super.setAsCurrentVersion();
-            parentManager.setAsCurrentVersion();
-            childrenManager.setAsCurrentVersion();
+            if (parentManager != null)
+                parentManager.setAsCurrentVersion();
+            if (childrenManager != null)
+                childrenManager.setAsCurrentVersion();
         }
     }
 

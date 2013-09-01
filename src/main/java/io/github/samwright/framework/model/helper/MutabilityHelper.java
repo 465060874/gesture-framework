@@ -7,16 +7,27 @@ import io.github.samwright.framework.model.common.Replaceable;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.util.UUID;
+
 /**
  * A helper object that manages mutations in a {@link Processor} object (which delegates to this).
  */
 public class MutabilityHelper {
     private static final Object[] writeLock = new Object[0];
     private static MutabilityHelper mutationStarter;
+    private static Reason reason;
 
     @Getter private boolean mutable;
+    @Getter private ModelController controller;
     private final Processor managedProcessor;
     @Getter private Processor next, previous;
+    private UUID uuid;
+
+
+    private static enum Reason {
+        BEING_REPLACED, REPLACING, DISCARDING_NEXT, DISCARDING_PREV,
+        SETTING_UUID, SETTING_CONTROLLER, SETTING_CURRENT
+    }
 
     /**
      * Construct a new {@code MutabilityHelper} to manage the given {@link Processor}
@@ -34,46 +45,48 @@ public class MutabilityHelper {
         if (replacement == next)
             return;
 
-        synchronized (writeLock) {
-            Processor replacementProcessor = (Processor) replacement;
-            checkReplacementValidity(managedProcessor, replacementProcessor);
+        try {
+            synchronized (writeLock) {
+                Processor replacementProcessor = (Processor) replacement;
+                checkReplacementValidity(managedProcessor, replacementProcessor);
 
-            startMutation();
+                startMutation(Reason.BEING_REPLACED);
 
-            if (getNext() != null)
-                managedProcessor.discardNext();
+                if (getNext() != null)
+                    managedProcessor.discardNext();
 
-            next = replacementProcessor;
-            next.replace(managedProcessor);
+                next = replacementProcessor;
+                next.replace(managedProcessor);
 
-            if (pauseMutationIfThisStartedIt())
-                getTopModel().afterReplacement();
+                if (thisStartedMutation(Reason.BEING_REPLACED))
+                    getTopModel().afterReplacement();
+            }
+        } finally {
+            endMutationIfThisMethodStartedIt(Reason.BEING_REPLACED);
         }
-
-        endMutationIfPaused();
     }
 
     public void replace(@NonNull Replaceable toReplace) {
         if (toReplace == previous)
             return;
 
-        synchronized (writeLock) {
-            checkReplacementValidity((Processor) toReplace, managedProcessor);
+        try {
+            synchronized (writeLock) {
+                checkReplacementValidity((Processor) toReplace, managedProcessor);
 
-            startMutation();
-            previous = (Processor) toReplace;
-            toReplace.replaceWith(managedProcessor);
+                startMutation(Reason.REPLACING);
+                previous = (Processor) toReplace;
+                toReplace.replaceWith(managedProcessor);
 
-            this.mutable = false;
-            if (previous != null) {
+                this.mutable = false;
                 managedProcessor.setController(previous.getController());
                 managedProcessor.setUUID(previous.getUUID());
-            }
 
-            setAsCurrentVersion();
-            pauseMutationIfThisStartedIt();
+                setAsCurrentVersion();
+            }
+        } finally {
+            endMutationIfThisMethodStartedIt(Reason.REPLACING);
         }
-        endMutationIfPaused();
     }
 
     private static void checkReplacementValidity(Processor before, Processor after) {
@@ -102,62 +115,85 @@ public class MutabilityHelper {
         return parent;
     }
 
-    private void startMutation() {
-        if (mutationStarter == null)
+    private void startMutation(Reason forThisReason) {
+        if (mutationStarter == null) {
             mutationStarter = this;
-    }
-
-    private boolean pauseMutationIfThisStartedIt() {
-        if (mutationStarter == this) {
-            mutationStarter = null;
-            return true;
+            reason = forThisReason;
         }
-        return false;
     }
 
-    private void endMutationIfPaused() {
-        if (!Thread.holdsLock(writeLock)) {
+    private boolean thisStartedMutation(Reason forThisReason) {
+        return mutationStarter == this && reason == forThisReason;
+    }
+
+    private void endMutationIfThisMethodStartedIt(Reason forThisReason) {
+        if (thisStartedMutation(forThisReason) && !Thread.holdsLock(writeLock)) {
+            mutationStarter = null;
+            reason = null;
             notifyTopController();
-        } else if (mutationStarter == null) {
-            mutationStarter = this;
         }
     }
 
     public void discardNext() {
-        synchronized (writeLock) {
-            startMutation();
-            if (getNext() != null) {
-                Processor oldNext = getNext();
-                next = null;
-                oldNext.discardPrevious();
+        try {
+            synchronized (writeLock) {
+                startMutation(Reason.DISCARDING_NEXT);
+                if (getNext() != null) {
+                    Processor oldNext = getNext();
+                    next = null;
+                    oldNext.discardPrevious();
+                }
+
+                if (thisStartedMutation(Reason.DISCARDING_NEXT))
+                    restoreCurrentAfterDiscard(managedProcessor);
             }
-
-            pauseMutationIfThisStartedIt();
+        } finally {
+            endMutationIfThisMethodStartedIt(Reason.DISCARDING_NEXT);
         }
-
-        endMutationIfPaused();
     }
 
     public void discardPrevious() {
-        synchronized (writeLock) {
-            if (getPrevious() != null) {
-                startMutation();
-                Processor oldPrevious = getPrevious();
-                previous = null;
-                managedProcessor.setUUID(ModelLoader.makeNewUUID());
+        try {
+            synchronized (writeLock) {
+                if (getPrevious() != null) {
+                    startMutation(Reason.DISCARDING_PREV);
+                    Processor oldPrevious = getPrevious();
+                    previous = null;
+                    managedProcessor.setUUID(ModelLoader.makeNewUUID());
 
-                ModelController oldPreviousController = oldPrevious.getController();
-                if (oldPreviousController == null)
-                    managedProcessor.setController(null);
-                else
-                    managedProcessor.setController(oldPreviousController.createClone());
+                    ModelController oldPreviousController = oldPrevious.getController();
+                    if (oldPreviousController == null)
+                        managedProcessor.setController(null);
+                    else
+                        managedProcessor.setController(oldPreviousController.createClone());
 
-                oldPrevious.discardNext();
-                pauseMutationIfThisStartedIt();
+                    oldPrevious.discardNext();
+
+                    if (thisStartedMutation(Reason.DISCARDING_PREV))
+                        restoreCurrentAfterDiscard(oldPrevious);
+                }
             }
+        } finally {
+            endMutationIfThisMethodStartedIt(Reason.DISCARDING_PREV);
         }
+    }
 
-        endMutationIfPaused();
+    private void restoreCurrentAfterDiscard(Processor beforeDiscardPoint) {
+        Processor current = beforeDiscardPoint.getCurrentVersion();
+
+        if (current.getUUID().equals(getUUID())) {
+            // Current version is after the discard point,
+            // so have the old UUID point to oldPrevious as the current...
+            beforeDiscardPoint.setAsCurrentVersion();
+            // ...and the new UUID point to the new version (after the discard point)
+            current.setAsCurrentVersion();
+        } else {
+            // Current version is before discard point,
+            // so set this as the current version for the new UUID...
+            setAsCurrentVersion();
+            // ...and restore the old UUID's current version as the current one.
+            current.setAsCurrentVersion();
+        }
     }
 
     public void delete() {
@@ -165,16 +201,68 @@ public class MutabilityHelper {
     }
 
     public void setAsCurrentVersion() {
-        synchronized (writeLock) {
-            startMutation();
+        try {
+            synchronized (writeLock) {
+                startMutation(Reason.SETTING_CURRENT);
 
-            if (managedProcessor.getController() != null)
-                managedProcessor.getController().proposeModel(managedProcessor);
+                if (managedProcessor.getController() != null)
+                    managedProcessor.getController().proposeModel(managedProcessor);
 
-            ModelLoader.registerProcessor(managedProcessor);
-            pauseMutationIfThisStartedIt();
+                ModelLoader.registerProcessor(managedProcessor);
+            }
+        } finally {
+            endMutationIfThisMethodStartedIt(Reason.SETTING_CURRENT);
         }
-        endMutationIfPaused();
+    }
+
+    public void setController(ModelController controller) {
+        try {
+            synchronized (writeLock) {
+                if (this.controller != controller) {
+                    startMutation(Reason.SETTING_CONTROLLER);
+
+                    this.controller = controller;
+                    if (getNext() != null)
+                        getNext().setController(controller);
+
+                    if (thisStartedMutation(Reason.SETTING_CONTROLLER)
+                            && controller != null)
+                        controller.proposeModel(getCurrentVersion());
+                }
+            }
+        } finally {
+            endMutationIfThisMethodStartedIt(Reason.SETTING_CONTROLLER);
+        }
+    }
+
+
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    public void setUUID(UUID uuid) {
+        try {
+            synchronized (writeLock) {
+                if (getUUID() == null || !getUUID().equals(uuid)) {
+                    startMutation(Reason.SETTING_UUID);
+
+                    this.uuid = uuid;
+                    if (getNext() != null)
+                        getNext().setUUID(uuid);
+
+                    if (thisStartedMutation(Reason.SETTING_UUID)) {
+                        Processor currentVersion = getCurrentVersion();
+                        if (currentVersion == null)
+                            managedProcessor.setAsCurrentVersion();
+                        else if (currentVersion.getUUID().equals(getUUID()))
+                            currentVersion.setAsCurrentVersion();
+                    }
+                }
+            }
+        } finally {
+            endMutationIfThisMethodStartedIt(Reason.SETTING_UUID);
+        }
+
     }
 
     public Processor getCurrentVersion() {

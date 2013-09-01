@@ -169,7 +169,8 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
     public void setAsCurrentVersion() {
         if (this != getCurrentVersion()) {
             super.setAsCurrentVersion();
-            parentManager.setAsCurrentVersion();
+            if (parentManager != null)
+                parentManager.setAsCurrentVersion();
         }
     }
 

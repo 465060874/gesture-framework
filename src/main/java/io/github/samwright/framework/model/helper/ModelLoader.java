@@ -35,8 +35,8 @@ public class ModelLoader {
     private static Map<String,Processor> prototypeModels = new HashMap<>();
 
     public static void registerProcessor(Processor processor) {
-        if (processor.isMutable())
-            throw new ModelLoadException("Cannot register mutable processor");
+//        if (processor.isMutable())
+//            throw new ModelLoadException("Cannot register mutable processor");
         if (processor.getUUID() == null)
             throw new RuntimeException("Cannot register processor without UUID set");
 

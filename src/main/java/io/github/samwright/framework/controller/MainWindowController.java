@@ -1,6 +1,7 @@
 package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
+import io.github.samwright.framework.controller.example.ExContainerController;
 import io.github.samwright.framework.controller.example.ExElementController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.model.Element;
@@ -61,14 +62,14 @@ public class MainWindowController extends VBox {
         hBox.getChildren().add(toolboxController);
 
         topController.handleUpdatedModel();
-//        topController.addNewWorkflow();
+        topController.addNewWorkflow();
         ModelLoader.registerPrototypeModel(topController.getModel());
         setOnKeyPressed(topController.getKeyPressHandler());
 
         ModelLoader.registerPrototypeModel(new ExElementController("Element1").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element2").getModel());
         ModelLoader.registerPrototypeModel(new ExElementController("Element3").getModel());
-//        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
+        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
