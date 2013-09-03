@@ -45,8 +45,10 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
 
     @Override
     public void replace(Replaceable toReplace) {
+        setReplacing(true);
         parentManager.beforeReplacing((Element) toReplace);
         super.replace(toReplace);
+        setReplacing(false);
     }
 
     @Override
@@ -129,7 +131,9 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
             observerUUIDs.add(UUID.fromString(uuidString));
         }
 
-        return ((Element) super.withXML(node, map)).withTypeData(getTypeData().withXML(node, map));
+        TypeData newTypeData = getTypeData().withXML(node, map);
+
+        return ((Element) super.withXML(node, map)).withTypeData(newTypeData);
     }
 
     @Override

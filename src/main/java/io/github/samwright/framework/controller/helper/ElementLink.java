@@ -89,8 +89,10 @@ public class ElementLink extends Pane implements ElementObserver {
 
                 Element draggedElement =
                         (Element) XMLHelper.loadProcessorFromString(xml, useExistingIfPossible);
-                Workflow parentModel = getWorkflowController().getModel(); //.getCurrentVersion()
-                // ; TODO
+                Workflow parentModel = getWorkflowController().getModel(); //.getCurrentVersion();
+                if (parentModel.getCurrentVersion() != parentModel)
+                    throw new RuntimeException("Element link's controller points to not-current " +
+                            "model");
                 List<Element> newSiblings = new ArrayList<>(parentModel.getChildren());
 
                 // If moving, make sure the dragged element is not already in the workflow.

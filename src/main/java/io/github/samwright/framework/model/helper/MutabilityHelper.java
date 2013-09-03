@@ -57,17 +57,14 @@ public class MutabilityHelper {
 
                 next = replacementProcessor;
                 next.replace(managedProcessor);
-
-                if (thisStartedMutation(Reason.BEING_REPLACED))
-                    getTopModel().afterReplacement();
             }
         } finally {
             endMutationIfThisMethodStartedIt(Reason.BEING_REPLACED);
         }
     }
 
-    public void replace(@NonNull Replaceable toReplace) {
-        if (toReplace == previous)
+    public void replace(Replaceable toReplace) {
+        if (toReplace == previous && toReplace != null)
             return;
 
         try {
@@ -76,13 +73,21 @@ public class MutabilityHelper {
 
                 startMutation(Reason.REPLACING);
                 previous = (Processor) toReplace;
-                toReplace.replaceWith(managedProcessor);
+                if (toReplace != null)
+                    toReplace.replaceWith(managedProcessor);
 
                 this.mutable = false;
-                managedProcessor.setController(previous.getController());
-                managedProcessor.setUUID(previous.getUUID());
+
+                if (toReplace != null) {
+                    managedProcessor.setController(previous.getController());
+                    managedProcessor.setUUID(previous.getUUID());
+                }
 
                 setAsCurrentVersion();
+
+                if (thisStartedMutation(Reason.BEING_REPLACED)
+                        || thisStartedMutation((Reason.REPLACING)))
+                    getTopModel().afterReplacement();
             }
         } finally {
             endMutationIfThisMethodStartedIt(Reason.REPLACING);
@@ -92,7 +97,7 @@ public class MutabilityHelper {
     private static void checkReplacementValidity(Processor before, Processor after) {
         if (after == before)
             throw new RuntimeException("Tried replacing with self: " + before);
-        if (before.isMutable())
+        if (before != null && before.isMutable())
             throw new RuntimeException("Cannot replace a mutable object - fix this first");
         if (after.getPrevious() != null && after.getPrevious() != before)
             throw new RuntimeException("Replacement has already replaced something else");
@@ -234,7 +239,6 @@ public class MutabilityHelper {
             endMutationIfThisMethodStartedIt(Reason.SETTING_CONTROLLER);
         }
     }
-
 
     public UUID getUUID() {
         return uuid;

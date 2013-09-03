@@ -3,8 +3,10 @@ package io.github.samwright.framework.model;
 import io.github.samwright.framework.model.helper.ModelLoader;
 import io.github.samwright.framework.model.helper.MutabilityHelper;
 import io.github.samwright.framework.model.helper.TypeData;
+import lombok.AccessLevel;
 import lombok.Delegate;
 import lombok.Getter;
+import lombok.Setter;
 import org.w3c.dom.Document;
 
 import java.util.Map;
@@ -17,6 +19,7 @@ public abstract class AbstractProcessor implements Processor {
 
     @Delegate private final MutabilityHelper mutabilityHelper;
     @Getter private TypeData typeData;
+    @Setter(AccessLevel.PROTECTED) @Getter private boolean replacing = false;
 
 
     public AbstractProcessor() {

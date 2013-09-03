@@ -95,9 +95,11 @@ public abstract class AbstractWorkflow extends AbstractProcessor implements Work
 
     @Override
     public void replace(Replaceable toReplace) {
+        setReplacing(true);
         childrenManager.beforeReplacing((Workflow) toReplace);
         parentManager.beforeReplacing((Workflow) toReplace);
         super.replace(toReplace);
+        setReplacing(false);
     }
 
     @Override

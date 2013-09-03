@@ -102,7 +102,6 @@ abstract public class ElementController extends ProcessController {
 
             if (!newObservers.equals(element.getObservers())) {
                 Element newModel = element.withObservers(newObservers);
-
                 MainWindowController.getTopController().startTransientUpdateMode();
                 try {
                     element.replaceWith(newModel);

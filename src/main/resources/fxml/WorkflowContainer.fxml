@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <fx:root fx:id="workflowContainer" type="javafx.scene.layout.VBox"
          xmlns:fx="http://javafx.com/fxml"
-         stylesheets="/css/WorkflowContainer.css">
+         stylesheets="/css/WorkflowContainer.css" maxHeight="-Infinity">
   <children>
       <HBox>
           <children>
@@ -16,7 +16,7 @@
         </children>
       </HBox>
 
-      <VBox fx:id="workflowsBox" />
+      <VBox fx:id="workflowsBox" maxHeight="-Infinity"/>
 
     </children>
 </fx:root>

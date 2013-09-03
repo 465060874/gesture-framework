@@ -75,7 +75,7 @@ public abstract class ProcessController extends VBox implements ModelController 
         if (toolbox.getChildren().contains(this)) {
             model.setAsCurrentVersion();
         } else {
-    //        previousModel = model;
+            previousModel = model;
             if (proposedModel != null)
                 model = proposedModel;
             proposedModel = null;

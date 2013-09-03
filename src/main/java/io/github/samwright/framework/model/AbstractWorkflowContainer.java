@@ -94,6 +94,7 @@ public abstract class AbstractWorkflowContainer
 
     @Override
     public void replace(Replaceable toReplace) {
+        setReplacing(true);
         childrenManager.beforeReplacing((WorkflowContainer) toReplace);
         super.replace(toReplace);
     }

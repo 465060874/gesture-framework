@@ -86,9 +86,9 @@ public class ChildrenManager<C extends ChildOf<P> & Processor,
                 if (child.getParent() == managedParent) {
                     // Child is a new addition to this parent - just need to add it to list.
                     latestChildren.add(child);
-//                    if (!child.isBeingFixed())
-//                        // Being loaded from XML - I need to fix it myself.
-//                        child.fixAsVersion(child.versionInfo());
+                    if (!child.isReplacing())
+                        // Being loaded from XML - I need to fix it myself.
+                        child.replace(null);
 
                 } else {
                     // Child has not been updated.  Grandfather it in to the new version:
@@ -163,10 +163,9 @@ public class ChildrenManager<C extends ChildOf<P> & Processor,
         for (Element childNode : XMLHelper.iterator(childrenNode)) {
             C child = (C) ModelLoader.getPrototypeModel(childNode);
             C newChild = (C) child.withXML(childNode, dictionary);
-//            newChild.withParent(managedParent);
-            child.replaceWith(newChild);
-//            newChild.discardPrevious();
-            child.discardNext();
+
+            newChild.withParent(managedParent);
+            newChild.setController(child.getController().createClone());
             children.add(newChild);
         }
     }

@@ -28,7 +28,8 @@ public interface Replaceable {
     void replaceWith(Replaceable replacement);
 
     /**
-     * Propose that this object replace the supplied object.
+     * Propose that this object replace the supplied object.  If the given object is null,
+     * this becomes the start of a new line of objects.
      *
      * @param toReplace the object to replace.
      */
@@ -40,5 +41,12 @@ public interface Replaceable {
      * objects have also been fixed.
      */
     void afterReplacement();
+
+    /**
+     * Returns true iff this object is currently replacing another.
+     *
+     * @return true iff this object is currently replacing another.
+     */
+    boolean isReplacing();
 
 }

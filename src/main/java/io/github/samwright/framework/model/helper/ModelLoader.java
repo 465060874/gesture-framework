@@ -90,12 +90,12 @@ public class ModelLoader {
 
         Processor prototypeModel = getPrototypeModel(xmlNode);
         Processor model = prototypeModel.withXML(xmlNode, new HashMap<UUID, Processor>());
-        prototypeModel.replaceWith(model);
-//        model.discardPrevious();
-        prototypeModel.discardNext();
+        model.replace(null);
+        model.setController(prototypeModel.getController().createClone());
 
-        if (model.getNext() != null)
-            throw new RuntimeException("Not loading latest version of processor");
+        while (model.getNext() != null)
+            model = model.getNext();
+
         return model;
     }
 
