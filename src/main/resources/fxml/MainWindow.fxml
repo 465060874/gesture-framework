@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
@@ -11,8 +9,10 @@
       <children>
           <ToolBar>
               <items>
-                  <Button text="undo" fx:id="undoButton"/>
-                  <Button text="redo" fx:id="redoButton"/>
+                  <Button text="Undo" fx:id="undoButton"/>
+                  <Button text="Redo" fx:id="redoButton"/>
+                  <Button text="Process" fx:id="processButton"/>
+                  <Button text="Train" fx:id="trainButton"/>
               </items>
           </ToolBar>
           <HBox fx:id="hBox">

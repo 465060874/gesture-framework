@@ -19,6 +19,7 @@ import java.util.*;
  */
 public abstract class AbstractElement extends AbstractProcessor implements Element {
     @Getter private Set<ElementObserver> observers;
+    @Getter private TypeData typeData;
     private final ParentManager<Element, Workflow> parentManager;
 
     private Set<UUID> observerUUIDs;
@@ -28,8 +29,18 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
      * Constructs the initial (and immutable) {@code AbstractElement}.
      */
     public AbstractElement() {
+        this(TypeData.getDefaultType());
+    }
+
+    /**
+     * Constructs the initial (and immutable) {@code AbstractElement} with the given type data.
+     *
+     * @param typeData the type data for the new object.
+     */
+    public AbstractElement(TypeData typeData) {
         observers = Collections.emptySet();
         parentManager = new ParentManager<Element, Workflow>(this);
+        this.typeData = typeData;
     }
 
     /**
@@ -41,6 +52,7 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
         super(oldElement);
         this.observers = oldElement.getObservers();
         parentManager = new ParentManager<Element, Workflow>(this, oldElement.getParent());
+        this.typeData = oldElement.typeData;
     }
 
     @Override
@@ -101,6 +113,8 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
     public org.w3c.dom.Element getXMLForDocument(Document doc) {
         org.w3c.dom.Element observerNode, node = super.getXMLForDocument(doc);
 
+        node.appendChild(typeData.getXMLForDocument(doc));
+
         Node observersNode = doc.createElement("Observers");
         node.appendChild(observersNode);
 
@@ -131,7 +145,7 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
             observerUUIDs.add(UUID.fromString(uuidString));
         }
 
-        TypeData newTypeData = getTypeData().withXML(node, map);
+        TypeData newTypeData = typeData.withXML(node, map);
 
         return ((Element) super.withXML(node, map)).withTypeData(newTypeData);
     }
@@ -185,6 +199,13 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
 
     @Override
     public Element withTypeData(TypeData typeData) {
-        return (Element) super.withTypeData(typeData);
+        if (isMutable()) {
+            this.typeData = typeData;
+            return this;
+        } else {
+            return createMutableClone().withTypeData(typeData);
+        }
     }
+
+
 }

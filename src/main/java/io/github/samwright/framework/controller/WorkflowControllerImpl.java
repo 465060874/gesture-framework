@@ -54,13 +54,46 @@ public class WorkflowControllerImpl extends WorkflowController {
         super.handleUpdatedModel();
         elementsBox.getChildren().clear();
 
-        if (defaultElementLink != null)
+        if (defaultElementLink != null) {
             elementsBox.getChildren().add(defaultElementLink);
+            defaultElementLink.setInputType(getModel().getTypeData().getInputType());
+
+            Class linkOutput;
+            if (getModel().getChildren().isEmpty())
+                linkOutput = getModel().getTypeData().getOutputType();
+            else
+                linkOutput = getModel().getChildren().get(0).getTypeData().getInputType();
+
+            defaultElementLink.setOutputType(linkOutput);
+        }
+
+        ElementController previous = null;
 
         for (Element element : getModel().getChildren()) {
             ElementController controller = (ElementController) element.getController();
             elementsBox.getChildren().add(controller);
             elementsBox.getChildren().add(controller.getElementLink());
+            controller.getElementLink().setValid(true);
+
+            controller.getElementLink().setInputType(element.getTypeData().getOutputType());
+            if (previous != null)
+                previous.getElementLink().setOutputType(element.getTypeData().getInputType());
+
+            previous = controller;
+        }
+
+        if (previous != null)
+            previous.getElementLink().setOutputType(getModel().getTypeData().getOutputType());
+
+        defaultElementLink.setValid(true);
+
+        for (Element element : getModel().getInvalidlyOrderedElements()) {
+            if (element == null)
+                defaultElementLink.setValid(false);
+            else {
+                ElementController controller = (ElementController) element.getController();
+                controller.getElementLink().setValid(false);
+            }
         }
     }
 }

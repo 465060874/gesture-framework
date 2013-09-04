@@ -31,11 +31,18 @@ public interface Element extends Processor, ChildOf<Workflow> {
      */
     Element withObservers(Set<ElementObserver> newObservers);
 
-    @Override
-    Element withParent(Workflow newParent);
+    /**
+     * Return a clone of this with the given {@link TypeData}.  It will only work if this is
+     * immutable (since the parametric types must be set at instantiation).
+     *
+     * @param newTypeData the type data to put in the returned clone.
+     * @return a clone of this with the given {@code TypeData}.
+     * @throws RuntimeException if this is still mutable.
+     */
+    Element withTypeData(TypeData newTypeData);
 
     @Override
-    Element withTypeData(TypeData newTypeData);
+    Element withParent(Workflow newParent);
 
     @Override
     Element createMutableClone();

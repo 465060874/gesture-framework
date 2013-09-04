@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 22:53
  */
-abstract public class ElementController extends ProcessController {
+abstract public class ElementController extends JavaFXController {
 
     public final static DataFormat dataFormat
             = new DataFormat("io.github.samwright.framework.model.Element");

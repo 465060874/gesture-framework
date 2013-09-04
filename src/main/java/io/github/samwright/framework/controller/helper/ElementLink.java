@@ -10,9 +10,11 @@ import io.github.samwright.framework.model.helper.XMLHelper;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import lombok.Getter;
@@ -32,6 +34,9 @@ public class ElementLink extends Pane implements ElementObserver {
     @FXML
     private Polygon triangle;
 
+    @FXML
+    private Label inputTypeLabel, outputTypeLabel;
+
     @Getter private ElementController controller;
 
     @Getter @Setter private boolean beingDragged = false;
@@ -44,8 +49,33 @@ public class ElementLink extends Pane implements ElementObserver {
         line.startYProperty().bind(heightProperty().divide(2));
         line.endYProperty().bind(heightProperty().divide(2));
 
-        triangle.translateXProperty().bind(widthProperty().divide(2));
         triangle.translateYProperty().bind(heightProperty().divide(2));
+        triangle.translateXProperty().bind(
+                inputTypeLabel.widthProperty().add(
+                        (widthProperty()
+                                .subtract(inputTypeLabel.widthProperty())
+                                .subtract(outputTypeLabel.widthProperty())
+                        ).divide(2))
+        );
+
+        double xPadding = 1.;
+
+        inputTypeLabel.translateYProperty().bind(
+                heightProperty().divide(2).subtract(inputTypeLabel.heightProperty())
+        );
+        inputTypeLabel.setTranslateX(xPadding);
+
+        outputTypeLabel.translateYProperty().bind(
+                heightProperty().divide(2)//.add(outputTypeLabel.heightProperty())
+        );
+        outputTypeLabel.translateXProperty().bind(
+                widthProperty().subtract(outputTypeLabel.widthProperty().subtract(xPadding))
+        );
+
+        minWidthProperty().bind(
+                inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(20));
+
+        setValid(true);
 
         setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -166,5 +196,20 @@ public class ElementLink extends Pane implements ElementObserver {
     public String toString() {
         return String.format("ElementLink: controller = %s, model = %s", controller,
                 controller.getModel());
+    }
+
+    public void setValid(boolean valid) {
+        if (valid)
+            triangle.setFill(Paint.valueOf("DODGERBLUE"));
+        else
+            triangle.setFill(Paint.valueOf("RED"));
+    }
+
+    public void setInputType(Class input) {
+        inputTypeLabel.setText(input.getSimpleName());
+    }
+
+    public void setOutputType(Class output) {
+        outputTypeLabel.setText(output.getSimpleName());
     }
 }

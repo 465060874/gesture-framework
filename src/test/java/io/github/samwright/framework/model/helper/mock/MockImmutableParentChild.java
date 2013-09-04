@@ -53,6 +53,11 @@ public class MockImmutableParentChild extends MockProcessor
     }
 
     @Override
+    public boolean areChildrenValid() {
+        return childrenManager.areChildrenValid();
+    }
+
+    @Override
     public MockImmutableParentChild createMutableClone() {
         return new MockImmutableParentChild(this);
     }

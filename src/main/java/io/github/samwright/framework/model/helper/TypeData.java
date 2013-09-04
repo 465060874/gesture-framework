@@ -30,12 +30,7 @@ final public class TypeData {
 
     @Override
     public String toString() {
-        return new StringBuilder("<")
-                .append(inputType.getSimpleName())
-                .append(",")
-                .append(outputType.getSimpleName())
-                .append(">")
-                .toString();
+        return "<" + inputType.getSimpleName() + "," + outputType.getSimpleName() + ">";
     }
 
     /**
@@ -98,7 +93,7 @@ final public class TypeData {
     public Element getXMLForDocument(Document doc) {
         Element node = doc.createElement("TypeData");
         XMLHelper.addDataUnderNode(node, "Input", inputType.getName());
-        XMLHelper.addDataUnderNode(node, "Output", inputType.getName());
+        XMLHelper.addDataUnderNode(node, "Output", outputType.getName());
         return node;
     }
 

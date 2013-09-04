@@ -31,25 +31,22 @@ public class ExElementController extends ElementController {
             @Override
             public void handle(ActionEvent actionEvent) {
                 int newClicks = getModel().getClicks() + 1;
-                ExElement newModel = getModel().withClicks(newClicks);
+                Adder newModel = getModel().withClicks(newClicks);
                 getModel().replaceWith(newModel);
             }
         });
     }
 
 
-    public ExElementController(String labelString) {
+    public ExElementController() {
         super("/fxml/LabelledElement.fxml");
-        label.setText(labelString);
-        proposeModel(new ExElement(labelString));
+        proposeModel(new Adder());
         setElementLink(new ElementLink());
         handleUpdatedModel();
     }
 
     public ExElementController(ExElementController toClone) {
         super(toClone);
-        label.setText(toClone.label.getText());
-//        handleUpdatedModel();
     }
 
     @Override
@@ -60,13 +57,12 @@ public class ExElementController extends ElementController {
     @Override
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
-        String labelText = getModel().getClicks() + " clicks";
-        clicksLabel.setText(labelText);
+        clicksLabel.setText("add " + getModel().getClicks());
     }
 
     @Override
-    public ExElement getModel() {
-        return (ExElement) super.getModel();
+    public Adder getModel() {
+        return (Adder) super.getModel();
     }
 
     @Override

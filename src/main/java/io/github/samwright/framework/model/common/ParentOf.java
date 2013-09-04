@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * A Parent of the child type {@code C}.
  */
-public interface ParentOf<C extends ChildOf<? extends ParentOf<C>>> {
+public interface ParentOf<C extends ChildOf<? extends ParentOf<C>> & Validatable> {
 
     /**
      * Gets the list of children of this parent.
@@ -24,4 +24,11 @@ public interface ParentOf<C extends ChildOf<? extends ParentOf<C>>> {
      * @return a version of {@code this} with the given children.
      */
     ParentOf<C> withChildren(List<C> newChildren);
+
+    /**
+     * Returns true iff the child elements are all valid.
+     *
+     * @return true iff the child elements are all valid.
+     */
+    boolean areChildrenValid();
 }

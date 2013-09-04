@@ -1,6 +1,8 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.model.datatypes.StartType;
 import io.github.samwright.framework.model.helper.Mediator;
+import io.github.samwright.framework.model.helper.TypeData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
     @Getter @Setter private boolean transientUpdate = false;
 
     public TopWorkflowContainer() {
-        super();
+        super(new TypeData(StartType.class, Object.class));
     }
 
     public TopWorkflowContainer(TopWorkflowContainer oldWorkflowContainer) {
@@ -21,7 +23,9 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
 
     @Override
     public Mediator process(Mediator input) {
-        return null; // Dummy implementation
+        for (Workflow workflow : getChildren())
+            workflow.process(input);
+        return null;
     }
 
     @Override

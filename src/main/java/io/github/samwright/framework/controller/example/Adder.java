@@ -3,11 +3,13 @@ package io.github.samwright.framework.controller.example;
 import io.github.samwright.framework.model.AbstractElement;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.helper.Mediator;
+import io.github.samwright.framework.model.helper.TypeData;
 import io.github.samwright.framework.model.helper.XMLHelper;
 import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,20 +17,18 @@ import java.util.UUID;
 /**
  * User: Sam Wright Date: 21/08/2013 Time: 12:11
  */
-public class ExElement extends AbstractElement {
+public class Adder extends AbstractElement {
 
     @Getter private int clicks;
-    @Getter private String modelIdentifier;
 
-    public ExElement(String modelIdentifier) {
+    public Adder() {
+        super(new TypeData(Integer.class, Integer.class));
         clicks = 0;
-        this.modelIdentifier = "ExElement:" + modelIdentifier;
     }
 
-    public ExElement(ExElement oldElement) {
+    public Adder(Adder oldElement) {
         super(oldElement);
         this.clicks = oldElement.getClicks();
-        this.modelIdentifier = oldElement.getModelIdentifier();
     }
 
     @Override
@@ -38,25 +38,30 @@ public class ExElement extends AbstractElement {
 
     @Override
     public Mediator process(Mediator input) {
-        return null; // Dummy implementation
+        Integer castedInput = (Integer) input.getData();
+        return input.createNext(this, castedInput + clicks);
     }
 
     @Override
     public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
-        return null; // Dummy implementation
+        List<Mediator> outputs = new LinkedList<>();
+        for (Mediator m : inputs)
+            outputs.add(process(m));
+
+        return outputs;
     }
 
     @Override
-    public ExElement createMutableClone() {
-        return new ExElement(this);
+    public Adder createMutableClone() {
+        return new Adder(this);
     }
 
-    public ExElement withClicks(int newClicks) {
+    public Adder withClicks(int newClicks) {
         if (isMutable()) {
             this.clicks = newClicks;
             return this;
         } else {
-            ExElement clone = createMutableClone();
+            Adder clone = createMutableClone();
             clone.withClicks(newClicks);
             return clone;
         }
@@ -70,8 +75,8 @@ public class ExElement extends AbstractElement {
     }
 
     @Override
-    public ExElement withXML(Element node, Map<UUID, Processor> map) {
-        ExElement clone = (ExElement) super.withXML(node, map);
+    public Adder withXML(Element node, Map<UUID, Processor> map) {
+        Adder clone = (Adder) super.withXML(node, map);
         if (clone != this)
             return clone;
 

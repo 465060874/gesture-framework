@@ -4,7 +4,6 @@ import io.github.samwright.framework.model.helper.mock.MockProcessor;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertNotSame;
 import static junit.framework.TestCase.*;
 
 /**
@@ -173,14 +172,6 @@ public class MutabilityHelperTest {
     public void testCanDeleteDeleted() throws Exception {
         first.delete();
         first.delete();
-    }
-
-    @Test
-    public void testCanDeleteReplaced() throws Exception {
-        second = first.createMutableClone();
-        first.replaceWith(second);
-        first.delete();
-        assertNotSame(second, first.getNext());
     }
 
     @Test

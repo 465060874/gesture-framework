@@ -8,7 +8,7 @@
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/WorkflowContainer.css" maxHeight="-Infinity">
   <children>
-      <HBox>
+      <HBox fx:id="header">
           <children>
             <Label alignment="CENTER" text="WorkflowContainer" fx:id="containerLabel"
                     minWidth="-Infinity"/>

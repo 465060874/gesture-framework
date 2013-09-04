@@ -3,6 +3,7 @@
 <!--<fx:root fx:id="workflowLink" type="javafx.scene.layout.AnchorPane"-->
 <!--<fx:root fx:id="workflowLink" type="javafx.scene.Group"-->
 <!--<fx:root fx:id="workflowLink" type="javafx.scene.layout.Region"-->
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Polygon?>
@@ -15,6 +16,8 @@
         prefHeight="-1.0">
 
   <children>
+    <Label fx:id="inputTypeLabel"/>
+    <Label fx:id="outputTypeLabel"/>
     <Line startX="0" startY="25" endX="40" endY="25" strokeWidth="3"
             fx:id="line"/>
     <Polygon fx:id="triangle" fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE">

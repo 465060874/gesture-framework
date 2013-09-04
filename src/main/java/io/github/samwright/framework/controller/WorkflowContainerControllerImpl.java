@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
 
     @FXML
     protected Label containerLabel;
+
+    @FXML
+    protected HBox header;
 
     {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -67,5 +71,7 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
         for (Workflow workflow : getModel().getChildren()) {
             workflowsBox.getChildren().add((Node) workflow.getController());
         }
+
+        containerLabel.setText(getModel().getTypeData().toString());
     }
 }

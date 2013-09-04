@@ -57,6 +57,10 @@ public class MutabilityHelper {
 
                 next = replacementProcessor;
                 next.replace(managedProcessor);
+
+                if (thisStartedMutation(Reason.BEING_REPLACED)) {
+                    getTopModel(next).afterReplacement();
+                }
             }
         } finally {
             endMutationIfThisMethodStartedIt(Reason.BEING_REPLACED);
@@ -85,9 +89,8 @@ public class MutabilityHelper {
 
                 setAsCurrentVersion();
 
-                if (thisStartedMutation(Reason.BEING_REPLACED)
-                        || thisStartedMutation((Reason.REPLACING)))
-                    getTopModel().afterReplacement();
+                if (thisStartedMutation((Reason.REPLACING)))
+                    getTopModel(managedProcessor).afterReplacement();
             }
         } finally {
             endMutationIfThisMethodStartedIt(Reason.REPLACING);
@@ -105,19 +108,17 @@ public class MutabilityHelper {
 
     private void notifyTopController() {
         if (managedProcessor.getController() != null) {
-            Processor topModel = getTopModel();
+            Processor topModel = getTopModel(managedProcessor);
             if (topModel.getController() != null)
                 topModel.getController().handleUpdatedModel();
         }
     }
 
-    private Processor getTopModel() {
-        Processor parent = managedProcessor;
+    private static Processor getTopModel(Processor processor) {
+        while (processor instanceof ChildOf && ((ChildOf) processor).getParent() != null)
+            processor = (Processor) ((ChildOf) processor).getParent();
 
-        while (parent instanceof ChildOf && ((ChildOf) parent).getParent() != null)
-            parent = (Processor) ((ChildOf) parent).getParent();
-
-        return parent;
+        return processor;
     }
 
     private void startMutation(Reason forThisReason) {

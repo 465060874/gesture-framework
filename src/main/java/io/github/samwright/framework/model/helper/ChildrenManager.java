@@ -58,6 +58,17 @@ public class ChildrenManager<C extends ChildOf<P> & Processor,
         }
     }
 
+    @Override
+    public boolean areChildrenValid() {
+        for (C child : children) {
+            if (!child.isValid())
+                return false;
+            if (child instanceof ParentOf && !((ParentOf) child).areChildrenValid())
+                return false;
+        }
+        return true;
+    }
+
     /**
      * Called before the managed parent is being fixed.
      * <p/>

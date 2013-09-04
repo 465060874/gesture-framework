@@ -3,6 +3,8 @@ package io.github.samwright.framework.controller;
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.example.ExContainerController;
 import io.github.samwright.framework.controller.example.ExElementController;
+import io.github.samwright.framework.controller.example.StartElementController;
+import io.github.samwright.framework.controller.example.ViewerController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
@@ -35,6 +37,12 @@ public class MainWindowController extends VBox {
     @FXML
     private Button redoButton;
 
+    @FXML
+    private Button trainButton;
+
+    @FXML
+    private Button processButton;
+
     @Getter private static TopContainerController topController;
     private static ToolboxController toolboxController;
 
@@ -56,6 +64,13 @@ public class MainWindowController extends VBox {
                 topController.redo();
             }
         });
+        processButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                topController.getModel().process(null);
+                topController.handleUpdatedModel();
+            }
+        });
 
         toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         toolboxController.setStyle("-fx-vgap: 5;-fx-hgap: 5;-fx-padding: 5");
@@ -66,11 +81,11 @@ public class MainWindowController extends VBox {
         ModelLoader.registerPrototypeModel(topController.getModel());
         setOnKeyPressed(topController.getKeyPressHandler());
 
-        ModelLoader.registerPrototypeModel(new ExElementController("Element1").getModel());
-        ModelLoader.registerPrototypeModel(new ExElementController("Element2").getModel());
-        ModelLoader.registerPrototypeModel(new ExElementController("Element3").getModel());
+        ModelLoader.registerPrototypeModel(new ExElementController().getModel());
         ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
+        ModelLoader.registerPrototypeModel(new StartElementController().getModel());
+        ModelLoader.registerPrototypeModel(new ViewerController().getModel());
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
             if (p instanceof Element && !(p instanceof TopWorkflowContainer))

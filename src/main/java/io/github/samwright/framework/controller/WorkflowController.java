@@ -8,7 +8,7 @@ import javafx.scene.input.DataFormat;
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 21:15
  */
-abstract public class WorkflowController extends ProcessController {
+abstract public class WorkflowController extends JavaFXController {
 
     public final static DataFormat dataFormat = new DataFormat("Workflow");
 

@@ -55,11 +55,12 @@ public abstract class AbstractWorkflow extends AbstractProcessor implements Work
 
     @Override
     public Workflow withParent(WorkflowContainer newParent) {
-        if (newParent != null && getParent() != null
-                && !getTypeData().equals(getParent().getTypeData()))
-            return withTypeData(newParent.getTypeData()).withParent(newParent);
-        else
-            return parentManager.withParent(newParent);
+        return parentManager.withParent(newParent);
+    }
+
+    @Override
+    public boolean areChildrenValid() {
+        return childrenManager.areChildrenValid();
     }
 
     @Override
@@ -142,12 +143,15 @@ public abstract class AbstractWorkflow extends AbstractProcessor implements Work
     }
 
     @Override
-    public Workflow withTypeData(TypeData typeData) {
-        return (Workflow) super.withTypeData(typeData);
+    public String getXMLTag() {
+        return "Workflow";
     }
 
     @Override
-    public String getXMLTag() {
-        return "Workflow";
+    public TypeData getTypeData() {
+        if (getParent() == null)
+            return TypeData.getDefaultType();
+        else
+            return getParent().getTypeData();
     }
 }

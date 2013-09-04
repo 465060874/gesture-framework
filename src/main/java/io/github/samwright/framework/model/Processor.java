@@ -37,14 +37,9 @@ import java.util.UUID;
  * training.
  */
 public interface Processor
-        extends EventuallyImmutable, XMLSerialisable, Versioned, Replaceable, Controllable, Deletable {
+        extends EventuallyImmutable, XMLSerialisable, Versioned,
+                Replaceable, Controllable, Deletable, Validatable {
 
-    /**
-     * Returns true iff the {@code process(input)} method can run.
-     *
-     * @return true iff the {@code process(input)} method can run.
-     */
-    boolean isValid();
 
     /**
      * Process the input {@link Mediator} object and return the result in an output {@code
@@ -79,16 +74,6 @@ public interface Processor
      * @return the input/output types required by this {@code Processor}.
      */
     TypeData getTypeData();
-
-    /**
-     * Return a clone of this with the given {@link TypeData}.  It will only work if this is
-     * immutable (since the parametric types must be set at instantiation).
-     *
-     * @param newTypeData the type data to put in the returned clone.
-     * @return a clone of this with the given {@code TypeData}.
-     * @throws RuntimeException if this is still mutable.
-     */
-    Processor withTypeData(TypeData newTypeData);
 
     /**
      * This method is called after a training batch has been processed to completion, and returns

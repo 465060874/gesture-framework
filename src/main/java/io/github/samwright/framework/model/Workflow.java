@@ -2,7 +2,6 @@ package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.common.ParentOf;
-import io.github.samwright.framework.model.helper.TypeData;
 
 import java.util.List;
 
@@ -34,14 +33,20 @@ import java.util.List;
  */
 public interface Workflow extends Processor, ChildOf<WorkflowContainer>, ParentOf<Element> {
 
+    /**
+     * Returns the subset of this workflow's children which are invalid because their output type
+     * doesn't match the next element's input type.  If this workflow's input type doesn't match
+     * the first element's input type, the list will also contain a {@code null}.
+     *
+     * @return the child elements that are invalid due to their order in this workflow.
+     */
+    List<Element> getInvalidlyOrderedElements();
+
     @Override
     Workflow withChildren(List<Element> newChildren);
 
     @Override
     Workflow withParent(WorkflowContainer newParent);
-
-    @Override
-    Workflow withTypeData(TypeData newTypeData);
 
     @Override
     Workflow createMutableClone();

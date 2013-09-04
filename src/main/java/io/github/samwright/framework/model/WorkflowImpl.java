@@ -1,9 +1,12 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
+import lombok.Getter;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -11,6 +14,8 @@ import java.util.ListIterator;
  * Implementation of Workflow.
  */
 public class WorkflowImpl extends AbstractWorkflow {
+
+    @Getter private List<Element> invalidlyOrderedElements;
 
     /**
      * Constructs the initial (and immutable) {@code WorkflowImpl}.
@@ -29,45 +34,58 @@ public class WorkflowImpl extends AbstractWorkflow {
         super(oldWorkflow);
     }
 
-
     @Override
     public boolean isValid() {
-        if (getChildren().size() == 0) {
-            return getTypeData().canBeEmptyContainer();
-        } else {
+        if (invalidlyOrderedElements == null) {
+            invalidlyOrderedElements = new LinkedList<>();
 
-            if ( !getChildren().get(1).getTypeData().canBeAtStartOfWorkflow(getTypeData()) ||
-                    !getChildren().get(getChildren().size()-1).getTypeData().canBeAtEndOfWorkflow
-                            (getTypeData()
-                            ) )
-                return false;
+            if (getChildren().size() == 0) {
+                if (!getTypeData().canBeEmptyContainer())
+                    invalidlyOrderedElements.add(null);
 
-            TypeData previousType = null;
+            } else {
 
-            for (Element e : getChildren()) {
-                if (previousType != null)
-                    if ( !e.getTypeData().canComeAfter(previousType) )
-                        return false;
+                Element firstChild = getChildren().get(0);
+                if (!firstChild.getTypeData().canBeAtStartOfWorkflow(getTypeData()))
+                    invalidlyOrderedElements.add(null);
 
-                previousType = e.getTypeData();
+                Element finalChild = getChildren().get(getChildren().size() - 1);
+                if (!finalChild.getTypeData().canBeAtEndOfWorkflow(getTypeData()))
+                    invalidlyOrderedElements.add(finalChild);
+
+                Element previousElement = null;
+
+                for (Element element : getChildren()) {
+                    if (previousElement != null)
+                        if (!element.getTypeData().canComeAfter(previousElement.getTypeData()))
+                            invalidlyOrderedElements.add(previousElement);
+
+                    previousElement = element;
+                }
             }
-
-            return true;
         }
+
+        return invalidlyOrderedElements.isEmpty();
     }
 
     @Override
     public Mediator process(Mediator input) {
-        for (Element e : getChildren())
+        for (Element e : getChildren()) {
             input = e.process(input);
+            for (ElementObserver observer : e.getObservers())
+                observer.notify(input);
+        }
 
         return input;
     }
 
     @Override
     public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
-        for (Element e : getChildren())
+        for (Element e : getChildren()) {
             inputs = e.processTrainingBatch(inputs);
+            for (ElementObserver observer : e.getObservers())
+                observer.notify(inputs);
+        }
 
         return inputs;
     }

@@ -16,29 +16,15 @@ import java.util.Set;
  */
 public class TopContainerController extends WorkflowContainerControllerImpl {
 
-    private final Set<ProcessController> selected = new HashSet<>();
+    private final Set<JavaFXController> selected = new HashSet<>();
 
     private MainWindowController mainWindow;
     private int transientUpdateMode = 0;
-
-    @Getter private EventHandler<KeyEvent> keyPressHandler = new EventHandler<KeyEvent>() {
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE) {
-                Set<ProcessController> oldSelected = new HashSet<>(selected);
-                deselectAll();
-                startTransientUpdateMode();
-                try {
-                    for (ModelController toDelete : oldSelected)
-                        toDelete.getModel().getCurrentVersion().delete();
-                } finally {
-                    endTransientUpdateMode();
-                }
-            }
-        }
-    };
+    private Object[] updateLock = new Object[0];
+    private boolean needsUpdate = false;
 
     {
+        setMaxHeight(Double.MAX_VALUE);
         setOnDragDetected(null);
         setOnDragDone(null);
         setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -58,20 +44,34 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     public TopContainerController(MainWindowController mainWindow) {
         super();
         proposeModel(new TopWorkflowContainer());
+
         this.mainWindow = mainWindow;
     }
 
+    @Getter private EventHandler<KeyEvent> keyPressHandler = new EventHandler<KeyEvent>() {
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE) {
+                Set<JavaFXController> oldSelected = new HashSet<>(selected);
+                deselectAll();
+                startTransientUpdateMode();
+                try {
+                    for (ModelController toDelete : oldSelected)
+                        toDelete.getModel().getCurrentVersion().delete();
+                } finally {
+                    endTransientUpdateMode();
+                }
+            }
+        }
+    };
+
     public void startTransientUpdateMode() {
-//        if (transientUpdateMode)
-//            throw new RuntimeException("Already in transient update mode");
         if (transientUpdateMode == 0 && getProposedModel() != null)
             getProposedModel().setTransientUpdate(true);
         ++transientUpdateMode;
     }
 
     public void endTransientUpdateMode() {
-//        if (!transientUpdateMode)
-//            throw new RuntimeException("Not in transient update mode, so can't end it");
         --transientUpdateMode;
         if (getProposedModel() != null && transientUpdateMode == 0) {
             getProposedModel().setTransientUpdate(false);
@@ -84,40 +84,26 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         return new TopContainerController(this);
     }
 
-    private Object[] updateLock = new Object[0];
-    private boolean needsUpdate = false;
-
     @Override
     public void handleUpdatedModel() {
-        try {
-            if (getProposedModel() == null)
-                return;
+        if (Thread.holdsLock(updateLock)) {
+            needsUpdate = true;
+        } else {
+            synchronized (updateLock) {
+                needsUpdate = false;
 
-            if (Thread.holdsLock(updateLock)) {
-                needsUpdate = true;
-            } else {
-                synchronized (updateLock) {
-                    needsUpdate = false;
+                if (transientUpdateMode > 0) {
+                    getProposedModel().setTransientUpdate(true);
+                } else {
+                    super.handleUpdatedModel();
+                    deselectAll();
 
-                    if (transientUpdateMode > 0) {
-                        getProposedModel().setTransientUpdate(true);
-                    } else {
-                        super.handleUpdatedModel();
-                        deselectAll();
-                        if (mainWindow != null)
-                            mainWindow.handleUpdatedModel();
-                    }
+                    if (mainWindow != null)
+                        mainWindow.handleUpdatedModel();
                 }
-                if (needsUpdate && !Thread.holdsLock(updateLock))
-                    handleUpdatedModel();
             }
-
-//            if (!Thread.holdsLock(updateLock) && !needsUpdate && transientUpdateMode != 0)
-//                throw new RuntimeException("Transient update mode not 0, was: " + transientUpdateMode);
-        } catch (RuntimeException e) {
-//            System.out.println("REVERTING!!\n" + e.getStackTrace());
-            throw e;
-//            revertModel();
+            if (needsUpdate && !Thread.holdsLock(updateLock))
+                handleUpdatedModel();
         }
     }
 
@@ -164,7 +150,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         return (TopWorkflowContainer) super.getProposedModel();
     }
 
-    public void handleClick(ProcessController target, MouseEvent mouseEvent) {
+    public void handleClick(JavaFXController target, MouseEvent mouseEvent) {
         ToolboxController toolbox = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         if (toolbox.getChildren().contains(target)) {
             deselectAll();
@@ -190,7 +176,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     }
 
     private void deselectAll() {
-        for (ProcessController toDeselect : selected)
+        for (JavaFXController toDeselect : selected)
             toDeselect.getClickedProperty().set(false);
         selected.clear();
     }

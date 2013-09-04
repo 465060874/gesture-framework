@@ -17,44 +17,41 @@ import lombok.Setter;
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 12:25
  */
-public abstract class ProcessController extends VBox implements ModelController {
+public abstract class JavaFXController extends VBox implements ModelController {
 
-    @Getter private Processor model, proposedModel, previousModel;
+    @Getter private Processor model, proposedModel;
     @Getter private final String fxmlResource;
     @Setter @Getter private boolean isBeingDragged = false;
     @Getter private BooleanProperty clickedProperty;
 
     {
-        setStyle("-fx-background-color: #f0f0f0");
         clickedProperty = new SimpleBooleanProperty();
         clickedProperty.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue,
                                 Boolean oldVal,
                                 Boolean newVal) {
-                if (newVal)
-                    setStyle("-fx-background-color: lightblue");
-                else
-                    setStyle("-fx-background-color: #f0f0f0");
+                updateColours();
             }
         });
+        updateColours();
     }
 
-    public ProcessController(@NonNull String fxmlResource) {
+    public JavaFXController(@NonNull String fxmlResource) {
         this.fxmlResource = fxmlResource;
         Controllers.bindViewToController(fxmlResource, this);
         setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 MainWindowController.getTopController()
-                        .handleClick(ProcessController.this, mouseEvent);
+                        .handleClick(JavaFXController.this, mouseEvent);
             }
         });
         clickedProperty.set(false);
     }
 
     @SuppressWarnings("unchecked")
-    public ProcessController(ProcessController toClone) {
+    public JavaFXController(JavaFXController toClone) {
         this(toClone.getFxmlResource());
         this.model = null;
         clickedProperty.set(toClone.clickedProperty.get());
@@ -75,18 +72,31 @@ public abstract class ProcessController extends VBox implements ModelController 
         if (toolbox.getChildren().contains(this)) {
             model.setAsCurrentVersion();
         } else {
-            previousModel = model;
             if (proposedModel != null)
                 model = proposedModel;
             proposedModel = null;
-    //        if (model.getController() != this)
-    //            model.setController(this);
+            updateColours();
         }
 
     }
 
-    public void revertModel() {
-        proposeModel(getPreviousModel());
-        handleUpdatedModel();
+    private void updateColours() {
+        if (model != null && !model.isValid()) {
+            if (clickedProperty.get())
+                setStyle("-fx-background-color: #c7537f");
+            else
+                setStyle("-fx-background-color: #cd9686");
+//        } else if (model != null &&
+//                model instanceof ParentOf && !((ParentOf) model).areChildrenValid()) {
+//            if (clickedProperty.get())
+//                setStyle("-fx-background-color: lightblue");
+//            else
+//                setStyle("-fx-background-color: #f7ff51");
+        } else {
+            if (clickedProperty.get())
+                setStyle("-fx-background-color: lightblue");
+            else
+                setStyle("-fx-background-color: #f0f0f0");
+        }
     }
 }
