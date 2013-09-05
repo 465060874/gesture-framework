@@ -37,8 +37,8 @@ public class ElementLink extends Pane implements ElementObserver {
     @FXML
     private Label inputTypeLabel, outputTypeLabel;
 
+    private ElementLinkTooltip tooltip;
     @Getter private ElementController controller;
-
     @Getter @Setter private boolean beingDragged = false;
 
     public ElementLink() {
@@ -74,6 +74,10 @@ public class ElementLink extends Pane implements ElementObserver {
 
         minWidthProperty().bind(
                 inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(20));
+
+        minHeightProperty().bind(
+                inputTypeLabel.heightProperty().add(outputTypeLabel.heightProperty()).add(5)
+        );
 
         setValid(true);
 
@@ -184,7 +188,7 @@ public class ElementLink extends Pane implements ElementObserver {
 
     @Override
     public void notify(Mediator mediator) {
-        // Dummy implementation
+        System.out.println("Link notified of: " + mediator.getData());
     }
 
     @Override

@@ -12,7 +12,7 @@
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/ElementLink.css"
          HBox.hgrow="ALWAYS"
-         prefWidth="-Infinity" minHeight="30" minWidth="40" maxWidth="Infinity"
+         prefWidth="-Infinity" maxWidth="Infinity"
         prefHeight="-1.0">
 
   <children>
