@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml">
+    <children>
+        <ComboBox fx:id="viewerSelector" />
+        <VBox fx:id="dataViewerBox" />
+        <HBox fx:id="footer">
+            <children>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button text="|&lt;" fx:id="firstButton"/>
+                <Button text="&lt;" fx:id="prevButton"/>
+                <Label text="0/0" fx:id="countLabel"/>
+                <Button text="&gt;" fx:id="nextButton"/>
+                <Button text="&gt;|" fx:id="lastButton"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </children>
+        </HBox>
+    </children>
+</fx:root>

@@ -6,6 +6,8 @@ import io.github.samwright.framework.controller.example.ExElementController;
 import io.github.samwright.framework.controller.example.StartElementController;
 import io.github.samwright.framework.controller.example.ViewerController;
 import io.github.samwright.framework.controller.helper.Controllers;
+import io.github.samwright.framework.controller.helper.IntegerViewer;
+import io.github.samwright.framework.controller.helper.PreviewPane;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.TopWorkflowContainer;
@@ -86,6 +88,8 @@ public class MainWindowController extends VBox {
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
         ModelLoader.registerPrototypeModel(new StartElementController().getModel());
         ModelLoader.registerPrototypeModel(new ViewerController().getModel());
+
+        PreviewPane.registerDataViewer(new IntegerViewer());
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
             if (p instanceof Element && !(p instanceof TopWorkflowContainer))

@@ -44,20 +44,16 @@ public class ElementLink extends Pane implements ElementObserver {
     @FXML
     private Label inputTypeLabel, outputTypeLabel;
 
-    private Pane previewPane;
+    private PreviewPane previewPane;
     @Getter private ElementController controller;
     @Getter @Setter private boolean beingDragged = false;
 
     public ElementLink() {
         Controllers.bindViewToController("/fxml/ElementLink.fxml", this);
-        Pane pane = new Pane();
-        pane.setMinWidth(50);
-        pane.setMinHeight(50);
-        pane.setPrefWidth(50);
-        pane.setPrefHeight(50);
-        pane.setStyle("-fx-background-color: RED");
+        PreviewPane pane = new PreviewPane();
         setPreviewPane(pane);
-        setStyle("-fx-background-color: lightgreen");
+        pane.setVisible(false);
+
 
         setValid(true);
 
@@ -164,26 +160,20 @@ public class ElementLink extends Pane implements ElementObserver {
         });
     }
 
-    public void setPreviewPane(@NonNull Pane previewPane) {
+    public void setPreviewPane(@NonNull PreviewPane previewPane) {
         if (this.previewPane != null)
             getChildren().remove(this.previewPane);
         this.previewPane = previewPane;
         getChildren().add(previewPane);
 
-        NumberBinding previewPaneWidth = new When(previewPane.visibleProperty())
-                .then(previewPane.widthProperty())
-                .otherwise(0);
+        double previewPaneBorder = 5;
 
-        NumberBinding previewPaneMinWidth = new When(previewPane.visibleProperty())
-                .then(previewPane.minWidthProperty())
+        NumberBinding previewPaneWidth = new When(previewPane.visibleProperty())
+                .then(previewPane.widthProperty().add(2 * previewPaneBorder))
                 .otherwise(0);
 
         NumberBinding previewPaneHeight = new When(previewPane.visibleProperty())
-                .then(previewPane.heightProperty())
-                .otherwise(0);
-
-        NumberBinding previewPaneMinHeight = new When(previewPane.visibleProperty())
-                .then(previewPane.minHeightProperty())
+                .then(previewPane.heightProperty().add(2 * previewPaneBorder))
                 .otherwise(0);
 
         topLine.startXProperty().bind(leftHorizLine.endXProperty());
@@ -251,22 +241,22 @@ public class ElementLink extends Pane implements ElementObserver {
 
         minWidthProperty().bind(
                 Bindings.max(
-                        inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(30),
-                        previewPaneMinWidth
-                )
+                        inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(10),
+                        previewPaneWidth
+                ).add(2 * padding)
         );
 
         minHeightProperty().bind(
                 inputTypeLabel.heightProperty().add(outputTypeLabel.heightProperty()).add(5)
-                        .add(previewPaneMinHeight)
+                        .add(previewPaneHeight)
         );
 
         previewPane.translateXProperty().bind(
-                (widthProperty().subtract(previewPaneWidth))
-                        .divide(2)
+                ((widthProperty().subtract(previewPaneWidth))
+                        .divide(2)).add(previewPaneBorder)
         );
 
-        previewPane.translateYProperty().bind(topLine.startYProperty());
+        previewPane.translateYProperty().bind(topLine.startYProperty().add(previewPaneBorder));
 
 
     }
@@ -290,12 +280,14 @@ public class ElementLink extends Pane implements ElementObserver {
 
     @Override
     public void notify(Mediator mediator) {
-        System.out.println("Link notified of: " + mediator.getData());
+        if (previewPane != null)
+            previewPane.notify(mediator);
     }
 
     @Override
     public void notify(List<Mediator> mediators) {
-        // Dummy implementation
+        if (previewPane != null)
+            previewPane.notify(mediators);
     }
 
     @Override
@@ -318,6 +310,8 @@ public class ElementLink extends Pane implements ElementObserver {
 
     public void setInputType(Class input) {
         inputTypeLabel.setText(input.getSimpleName());
+        if (previewPane != null)
+            previewPane.setInputType(input);
     }
 
     public void setOutputType(Class output) {
