@@ -175,7 +175,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         mouseEvent.consume();
     }
 
-    private void deselectAll() {
+    public void deselectAll() {
         for (JavaFXController toDeselect : selected)
             toDeselect.getClickedProperty().set(false);
         selected.clear();

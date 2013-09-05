@@ -1,23 +1,30 @@
 package io.github.samwright.framework.controller.helper;
 
 import io.github.samwright.framework.controller.ElementController;
+import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.WorkflowController;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Workflow;
 import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.XMLHelper;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.When;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -29,57 +36,45 @@ import java.util.List;
 public class ElementLink extends Pane implements ElementObserver {
 
     @FXML
-    private Line line;
+    private Line topLine, bottomLine, leftVertLine, leftHorizLine, rightVertLine, rightHorizLine;
 
     @FXML
-    private Polygon triangle;
+    private Polygon topTriangle, bottomTriangle;
 
     @FXML
     private Label inputTypeLabel, outputTypeLabel;
 
-    private ElementLinkTooltip tooltip;
+    private Pane previewPane;
     @Getter private ElementController controller;
     @Getter @Setter private boolean beingDragged = false;
 
     public ElementLink() {
         Controllers.bindViewToController("/fxml/ElementLink.fxml", this);
-
-        line.setStartX(0);
-        line.endXProperty().bind(widthProperty());
-        line.startYProperty().bind(heightProperty().divide(2));
-        line.endYProperty().bind(heightProperty().divide(2));
-
-        triangle.translateYProperty().bind(heightProperty().divide(2));
-        triangle.translateXProperty().bind(
-                inputTypeLabel.widthProperty().add(
-                        (widthProperty()
-                                .subtract(inputTypeLabel.widthProperty())
-                                .subtract(outputTypeLabel.widthProperty())
-                        ).divide(2))
-        );
-
-        double xPadding = 1.;
-
-        inputTypeLabel.translateYProperty().bind(
-                heightProperty().divide(2).subtract(inputTypeLabel.heightProperty())
-        );
-        inputTypeLabel.setTranslateX(xPadding);
-
-        outputTypeLabel.translateYProperty().bind(
-                heightProperty().divide(2)//.add(outputTypeLabel.heightProperty())
-        );
-        outputTypeLabel.translateXProperty().bind(
-                widthProperty().subtract(outputTypeLabel.widthProperty().subtract(xPadding))
-        );
-
-        minWidthProperty().bind(
-                inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(20));
-
-        minHeightProperty().bind(
-                inputTypeLabel.heightProperty().add(outputTypeLabel.heightProperty()).add(5)
-        );
+        Pane pane = new Pane();
+        pane.setMinWidth(50);
+        pane.setMinHeight(50);
+        pane.setPrefWidth(50);
+        pane.setPrefHeight(50);
+        pane.setStyle("-fx-background-color: RED");
+        setPreviewPane(pane);
+        setStyle("-fx-background-color: lightgreen");
 
         setValid(true);
+
+        setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)
+                        && mouseEvent.getClickCount() == 2) {
+
+                    if (previewPane != null) {
+                        previewPane.setVisible(!previewPane.isVisible());
+                        MainWindowController.getTopController().deselectAll();
+                    }
+                    mouseEvent.consume();
+                }
+            }
+        });
 
         setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -123,7 +118,7 @@ public class ElementLink extends Pane implements ElementObserver {
 
                 Element draggedElement =
                         (Element) XMLHelper.loadProcessorFromString(xml, useExistingIfPossible);
-                Workflow parentModel = getWorkflowController().getModel(); //.getCurrentVersion();
+                Workflow parentModel = getWorkflowController().getModel();
                 if (parentModel.getCurrentVersion() != parentModel)
                     throw new RuntimeException("Element link's controller points to not-current " +
                             "model");
@@ -169,6 +164,113 @@ public class ElementLink extends Pane implements ElementObserver {
         });
     }
 
+    public void setPreviewPane(@NonNull Pane previewPane) {
+        if (this.previewPane != null)
+            getChildren().remove(this.previewPane);
+        this.previewPane = previewPane;
+        getChildren().add(previewPane);
+
+        NumberBinding previewPaneWidth = new When(previewPane.visibleProperty())
+                .then(previewPane.widthProperty())
+                .otherwise(0);
+
+        NumberBinding previewPaneMinWidth = new When(previewPane.visibleProperty())
+                .then(previewPane.minWidthProperty())
+                .otherwise(0);
+
+        NumberBinding previewPaneHeight = new When(previewPane.visibleProperty())
+                .then(previewPane.heightProperty())
+                .otherwise(0);
+
+        NumberBinding previewPaneMinHeight = new When(previewPane.visibleProperty())
+                .then(previewPane.minHeightProperty())
+                .otherwise(0);
+
+        topLine.startXProperty().bind(leftHorizLine.endXProperty());
+        topLine.endXProperty().bind(rightHorizLine.startXProperty());
+        topLine.startYProperty().bind(
+                (heightProperty().subtract(previewPaneHeight))
+                        .divide(2)
+        );
+        topLine.endYProperty().bind(topLine.startYProperty());
+
+        topTriangle.translateYProperty().bind(topLine.startYProperty());
+        topTriangle.translateXProperty().bind(
+                inputTypeLabel.widthProperty().add(
+                        (widthProperty()
+                                .subtract(inputTypeLabel.widthProperty())
+                                .subtract(outputTypeLabel.widthProperty())
+                        ).divide(2))
+        );
+
+        bottomLine.startXProperty().bind(topLine.startXProperty());
+        bottomLine.endXProperty().bind(topLine.endXProperty());
+        bottomLine.startYProperty().bind(
+                topLine.startYProperty().add(previewPaneHeight)
+        );
+        bottomLine.endYProperty().bind(bottomLine.startYProperty());
+
+        bottomTriangle.translateYProperty().bind(bottomLine.startYProperty());
+        bottomTriangle.translateXProperty().bind(topTriangle.translateXProperty());
+
+        leftVertLine.visibleProperty().bind(previewPane.visibleProperty());
+        rightVertLine.visibleProperty().bind(previewPane.visibleProperty());
+
+        int padding = 10;
+
+        leftHorizLine.setStartX(0);
+        leftHorizLine.startYProperty().bind(heightProperty().divide(2));
+        leftHorizLine.setEndX(padding);
+        leftHorizLine.endYProperty().bind(leftHorizLine.startYProperty());
+
+        rightHorizLine.startXProperty().bind(widthProperty().subtract(padding));
+        rightHorizLine.startYProperty().bind(heightProperty().divide(2));
+        rightHorizLine.endXProperty().bind(widthProperty());
+        rightHorizLine.endYProperty().bind(rightHorizLine.startYProperty());
+
+        leftVertLine.startXProperty().bind(topLine.startXProperty());
+        leftVertLine.startYProperty().bind(topLine.startYProperty());
+        leftVertLine.endXProperty().bind(bottomLine.startXProperty());
+        leftVertLine.endYProperty().bind(bottomLine.startYProperty());
+
+        rightVertLine.startXProperty().bind(topLine.endXProperty());
+        rightVertLine.startYProperty().bind(topLine.endYProperty());
+        rightVertLine.endXProperty().bind(bottomLine.endXProperty());
+        rightVertLine.endYProperty().bind(bottomLine.endYProperty());
+
+
+        inputTypeLabel.translateYProperty().bind(
+                topLine.startYProperty().subtract(inputTypeLabel.heightProperty())
+        );
+        inputTypeLabel.translateXProperty().bind(topLine.startXProperty());
+
+        outputTypeLabel.translateYProperty().bind(bottomLine.startYProperty());
+        outputTypeLabel.translateXProperty().bind(
+                bottomLine.endXProperty().subtract(outputTypeLabel.widthProperty())
+        );
+
+        minWidthProperty().bind(
+                Bindings.max(
+                        inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(30),
+                        previewPaneMinWidth
+                )
+        );
+
+        minHeightProperty().bind(
+                inputTypeLabel.heightProperty().add(outputTypeLabel.heightProperty()).add(5)
+                        .add(previewPaneMinHeight)
+        );
+
+        previewPane.translateXProperty().bind(
+                (widthProperty().subtract(previewPaneWidth))
+                        .divide(2)
+        );
+
+        previewPane.translateYProperty().bind(topLine.startYProperty());
+
+
+    }
+
     public void setController(ElementController controller) {
         this.controller = controller;
         if (controller != null && controller.getElementLink() != this)
@@ -203,10 +305,15 @@ public class ElementLink extends Pane implements ElementObserver {
     }
 
     public void setValid(boolean valid) {
+        Paint triangleColour;
+
         if (valid)
-            triangle.setFill(Paint.valueOf("DODGERBLUE"));
+            triangleColour = Paint.valueOf("DODGERBLUE");
         else
-            triangle.setFill(Paint.valueOf("RED"));
+            triangleColour = Paint.valueOf("RED");
+
+        topTriangle.setFill(triangleColour);
+        bottomTriangle.setFill(triangleColour);
     }
 
     public void setInputType(Class input) {
