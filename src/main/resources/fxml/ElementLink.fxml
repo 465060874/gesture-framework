@@ -17,31 +17,20 @@
   <children>
     <Label fx:id="inputTypeLabel"/>
     <Label fx:id="outputTypeLabel"/>
-      <Line strokeWidth="3" fx:id="bottomLine"/>
-      <Line strokeWidth="3" fx:id="topLine"/>
+      <Line strokeWidth="3" fx:id="mainLine"/>
       <Line strokeWidth="3" fx:id="leftVertLine"/>
       <Line strokeWidth="3" fx:id="leftHorizLine"/>
       <Line strokeWidth="3" fx:id="rightVertLine"/>
       <Line strokeWidth="3" fx:id="rightHorizLine"/>
-    <Polygon fx:id="topTriangle" fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE">
+    <Polygon fx:id="triangle" fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE">
       <points>
         <Double fx:value="-6.0" />
         <Double fx:value="-6.0" />
         <Double fx:value="-6.0" />
-        <Double fx:value="0.0" />
+        <Double fx:value="6.0" />
         <Double fx:value="6.0" />
         <Double fx:value="0.0" />
       </points>
     </Polygon>
-      <Polygon fx:id="bottomTriangle" fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE">
-          <points>
-              <Double fx:value="-6.0"/>
-              <Double fx:value="0.0"/>
-              <Double fx:value="-6.0"/>
-              <Double fx:value="6.0"/>
-              <Double fx:value="6.0"/>
-              <Double fx:value="0.0"/>
-          </points>
-      </Polygon>
   </children>
 </fx:root>

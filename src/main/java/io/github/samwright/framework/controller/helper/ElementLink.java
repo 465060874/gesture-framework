@@ -36,10 +36,10 @@ import java.util.List;
 public class ElementLink extends Pane implements ElementObserver {
 
     @FXML
-    private Line topLine, bottomLine, leftVertLine, leftHorizLine, rightVertLine, rightHorizLine;
+    private Line mainLine, leftVertLine, leftHorizLine, rightVertLine, rightHorizLine;
 
     @FXML
-    private Polygon topTriangle, bottomTriangle;
+    private Polygon triangle;
 
     @FXML
     private Label inputTypeLabel, outputTypeLabel;
@@ -176,32 +176,23 @@ public class ElementLink extends Pane implements ElementObserver {
                 .then(previewPane.heightProperty().add(2 * previewPaneBorder))
                 .otherwise(0);
 
-        topLine.startXProperty().bind(leftHorizLine.endXProperty());
-        topLine.endXProperty().bind(rightHorizLine.startXProperty());
-        topLine.startYProperty().bind(
-                (heightProperty().subtract(previewPaneHeight))
-                        .divide(2)
+        mainLine.startXProperty().bind(previewPane.translateXProperty().subtract(previewPaneBorder));
+        mainLine.endXProperty().bind(mainLine.startXProperty().add(previewPaneWidth));
+        mainLine.startYProperty().bind(
+                ((heightProperty().subtract(previewPaneHeight))
+                        .divide(2))
+                        .add(previewPaneHeight)
         );
-        topLine.endYProperty().bind(topLine.startYProperty());
+        mainLine.endYProperty().bind(mainLine.startYProperty());
 
-        topTriangle.translateYProperty().bind(topLine.startYProperty());
-        topTriangle.translateXProperty().bind(
+        triangle.translateYProperty().bind(mainLine.startYProperty());
+        triangle.translateXProperty().bind(
                 inputTypeLabel.widthProperty().add(
                         (widthProperty()
                                 .subtract(inputTypeLabel.widthProperty())
                                 .subtract(outputTypeLabel.widthProperty())
                         ).divide(2))
         );
-
-        bottomLine.startXProperty().bind(topLine.startXProperty());
-        bottomLine.endXProperty().bind(topLine.endXProperty());
-        bottomLine.startYProperty().bind(
-                topLine.startYProperty().add(previewPaneHeight)
-        );
-        bottomLine.endYProperty().bind(bottomLine.startYProperty());
-
-        bottomTriangle.translateYProperty().bind(bottomLine.startYProperty());
-        bottomTriangle.translateXProperty().bind(topTriangle.translateXProperty());
 
         leftVertLine.visibleProperty().bind(previewPane.visibleProperty());
         rightVertLine.visibleProperty().bind(previewPane.visibleProperty());
@@ -210,53 +201,69 @@ public class ElementLink extends Pane implements ElementObserver {
 
         leftHorizLine.setStartX(0);
         leftHorizLine.startYProperty().bind(heightProperty().divide(2));
-        leftHorizLine.setEndX(padding);
+        leftHorizLine.endXProperty().bind(mainLine.startXProperty());
         leftHorizLine.endYProperty().bind(leftHorizLine.startYProperty());
 
-        rightHorizLine.startXProperty().bind(widthProperty().subtract(padding));
+        rightHorizLine.startXProperty().bind(mainLine.endXProperty());
         rightHorizLine.startYProperty().bind(heightProperty().divide(2));
         rightHorizLine.endXProperty().bind(widthProperty());
         rightHorizLine.endYProperty().bind(rightHorizLine.startYProperty());
 
-        leftVertLine.startXProperty().bind(topLine.startXProperty());
-        leftVertLine.startYProperty().bind(topLine.startYProperty());
-        leftVertLine.endXProperty().bind(bottomLine.startXProperty());
-        leftVertLine.endYProperty().bind(bottomLine.startYProperty());
+        leftVertLine.startXProperty().bind(mainLine.startXProperty());
+        leftVertLine.startYProperty().bind(mainLine.startYProperty());
+        leftVertLine.endXProperty().bind(leftVertLine.startXProperty());
+        leftVertLine.endYProperty().bind(leftHorizLine.startYProperty());
 
-        rightVertLine.startXProperty().bind(topLine.endXProperty());
-        rightVertLine.startYProperty().bind(topLine.endYProperty());
-        rightVertLine.endXProperty().bind(bottomLine.endXProperty());
-        rightVertLine.endYProperty().bind(bottomLine.endYProperty());
+        rightVertLine.startXProperty().bind(mainLine.endXProperty());
+        rightVertLine.startYProperty().bind(mainLine.endYProperty());
+        rightVertLine.endXProperty().bind(rightVertLine.startXProperty());
+        rightVertLine.endYProperty().bind(rightHorizLine.startYProperty());
 
 
         inputTypeLabel.translateYProperty().bind(
-                topLine.startYProperty().subtract(inputTypeLabel.heightProperty())
+                leftHorizLine.startYProperty()
+                .subtract(inputTypeLabel.heightProperty())
         );
-        inputTypeLabel.translateXProperty().bind(topLine.startXProperty());
+        inputTypeLabel.setTranslateX(0);
 
-        outputTypeLabel.translateYProperty().bind(bottomLine.startYProperty());
+        outputTypeLabel.translateYProperty().bind(
+                rightHorizLine.startYProperty()
+                .subtract(outputTypeLabel.heightProperty())
+        );
         outputTypeLabel.translateXProperty().bind(
-                bottomLine.endXProperty().subtract(outputTypeLabel.widthProperty())
+                widthProperty()
+                .subtract(outputTypeLabel.widthProperty())
         );
 
         minWidthProperty().bind(
-                Bindings.max(
-                        inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(10),
-                        previewPaneWidth
-                ).add(2 * padding)
+                inputTypeLabel.widthProperty().add(outputTypeLabel.widthProperty()).add(10)
+                .add(previewPaneWidth).add(2 * padding)
         );
 
         minHeightProperty().bind(
-                inputTypeLabel.heightProperty().add(outputTypeLabel.heightProperty()).add(5)
-                        .add(previewPaneHeight)
+                Bindings.max(
+                    Bindings.max(
+                            outputTypeLabel.heightProperty(),
+                            inputTypeLabel.heightProperty()
+                    ),
+                    previewPaneHeight
+                ).add(10)
+
         );
 
         previewPane.translateXProperty().bind(
-                ((widthProperty().subtract(previewPaneWidth))
-                        .divide(2)).add(previewPaneBorder)
+                widthProperty()
+                .subtract(inputTypeLabel.widthProperty())
+                .subtract(outputTypeLabel.widthProperty())
+                .subtract(previewPane.widthProperty())
+                .divide(2)
+                .add(inputTypeLabel.widthProperty())
         );
 
-        previewPane.translateYProperty().bind(topLine.startYProperty().add(previewPaneBorder));
+        previewPane.translateYProperty().bind(
+                mainLine.startYProperty()
+                .subtract(previewPaneHeight)
+        );
 
 
     }
@@ -304,8 +311,7 @@ public class ElementLink extends Pane implements ElementObserver {
         else
             triangleColour = Paint.valueOf("RED");
 
-        topTriangle.setFill(triangleColour);
-        bottomTriangle.setFill(triangleColour);
+        triangle.setFill(triangleColour);
     }
 
     public void setInputType(Class input) {
