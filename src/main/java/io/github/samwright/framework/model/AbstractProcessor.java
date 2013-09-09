@@ -1,5 +1,7 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
+import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.ModelLoader;
 import io.github.samwright.framework.model.helper.MutabilityHelper;
 import lombok.AccessLevel;
@@ -8,8 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.w3c.dom.Document;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * User: Sam Wright Date: 31/08/2013 Time: 12:53
@@ -59,6 +60,23 @@ public abstract class AbstractProcessor implements Processor {
     @Override
     public String getModelIdentifier() {
         return getClass().getName();
+    }
+
+    @Override
+    public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
+        Set<Mediator> allOutputs = completedTrainingBatch.getAll();
+
+        Set<Mediator> successfulOutputs = completedTrainingBatch.getSuccessful();
+
+        Set<Mediator> allInputs = Mediator.rollbackMediators(allOutputs);
+        Set<Mediator> successfulInputs = Mediator.rollbackMediators(successfulOutputs);
+
+        return new CompletedTrainingBatch(allInputs, successfulInputs);
+    }
+
+    @Override
+    public List<Mediator> processTrainingData(Mediator input) {
+        return Arrays.asList(process(input));
     }
 
     @Override

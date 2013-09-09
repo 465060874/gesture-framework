@@ -6,9 +6,7 @@ import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 import lombok.Getter;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Implementation of Workflow.
@@ -76,15 +74,18 @@ public class WorkflowImpl extends AbstractWorkflow {
                 observer.notify(input);
         }
 
-        return input;
+        return input.createNext(this, input.getData());
     }
 
     @Override
-    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
-        for (Element e : getChildren()) {
-            inputs = e.processTrainingBatch(inputs);
-            for (ElementObserver observer : e.getObservers())
-                observer.notify(inputs);
+    public List<Mediator> processTrainingData(Mediator firstInput) {
+        List<Mediator> outputs, inputs = Arrays.asList(firstInput);
+
+        for (Element element : getChildren()) {
+            outputs = new ArrayList<>();
+            for (Mediator input : inputs)
+                outputs.addAll(element.processTrainingData(input));
+            inputs = outputs;
         }
 
         return inputs;
@@ -92,6 +93,7 @@ public class WorkflowImpl extends AbstractWorkflow {
 
     @Override
     public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
+        completedTrainingBatch = super.processCompletedTrainingBatch(completedTrainingBatch);
         ListIterator<Element> itr = getChildren().listIterator(getChildren().size());
 
         while (itr.hasPrevious()) {

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<fx:root fx:id="element" type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/Element.css"
+         maxHeight="-Infinity"
+        >
+    <children>
+        <Label alignment="CENTER" text="Image Loader" fx:id="label" minWidth="-Infinity"/>
+        <HBox>
+            <children>
+                <TextField fx:id="tagField" text="Snapshot"/>
+                <Button fx:id="snapshotButton" text="Snapshot"/>
+            </children>
+        </HBox>
+        <ListView fx:id="imagesView" minHeight="100" prefHeight="100"/>
+    </children>
+</fx:root>

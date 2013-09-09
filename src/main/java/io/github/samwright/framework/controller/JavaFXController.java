@@ -3,10 +3,6 @@ package io.github.samwright.framework.controller;
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.model.Processor;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -22,18 +18,9 @@ public abstract class JavaFXController extends VBox implements ModelController {
     @Getter private Processor model, proposedModel;
     @Getter private final String fxmlResource;
     @Setter @Getter private boolean isBeingDragged = false;
-    @Getter private BooleanProperty clickedProperty;
+    @Getter private boolean selected = false;
 
     {
-        clickedProperty = new SimpleBooleanProperty();
-        clickedProperty.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue,
-                                Boolean oldVal,
-                                Boolean newVal) {
-                updateColours();
-            }
-        });
         updateColours();
     }
 
@@ -47,14 +34,13 @@ public abstract class JavaFXController extends VBox implements ModelController {
                         .handleClick(JavaFXController.this, mouseEvent);
             }
         });
-        clickedProperty.set(false);
     }
 
     @SuppressWarnings("unchecked")
     public JavaFXController(JavaFXController toClone) {
         this(toClone.getFxmlResource());
         this.model = null;
-        clickedProperty.set(toClone.clickedProperty.get());
+        selected = toClone.isSelected();
     }
 
     @Override
@@ -82,7 +68,7 @@ public abstract class JavaFXController extends VBox implements ModelController {
 
     private void updateColours() {
         if (model != null && !model.isValid()) {
-            if (clickedProperty.get())
+            if (isSelected())
                 setStyle("-fx-background-color: #c7537f");
             else
                 setStyle("-fx-background-color: #cd9686");
@@ -93,10 +79,15 @@ public abstract class JavaFXController extends VBox implements ModelController {
 //            else
 //                setStyle("-fx-background-color: #f7ff51");
         } else {
-            if (clickedProperty.get())
+            if (isSelected())
                 setStyle("-fx-background-color: lightblue");
             else
                 setStyle("-fx-background-color: #f0f0f0");
         }
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        updateColours();
     }
 }

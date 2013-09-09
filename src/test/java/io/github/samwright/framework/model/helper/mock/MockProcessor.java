@@ -1,11 +1,8 @@
 package io.github.samwright.framework.model.helper.mock;
 
 import io.github.samwright.framework.model.AbstractProcessor;
-import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
-
-import java.util.List;
 
 /**
  * User: Sam Wright Date: 10/07/2013 Time: 13:00
@@ -30,18 +27,8 @@ public class MockProcessor extends AbstractProcessor {
     }
 
     @Override
-    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
-        return null; // Dummy implementation
-    }
-
-    @Override
     public TypeData getTypeData() {
         return TypeData.getDefaultType();
-    }
-
-    @Override
-    public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
-        return null; // Dummy implementation
     }
 
     @Override

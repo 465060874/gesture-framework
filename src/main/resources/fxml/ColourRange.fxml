@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<fx:root fx:id="element" type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/Element.css"
+         maxHeight="-Infinity"
+        >
+    <children>
+        <Label alignment="CENTER" text="Colour Range" fx:id="label" minWidth="-Infinity"/>
+        <VBox fx:id="configPanel">
+            <children>
+                <HBox>
+                    <children>
+                        <Slider orientation="VERTICAL" fx:id="upperH" max="180" />
+                        <Slider orientation="VERTICAL" fx:id="upperS" max="255"/>
+                        <Slider orientation="VERTICAL" fx:id="upperV" max="255"/>
+                    </children>
+                </HBox>
+                <HBox>
+                    <children>
+                        <Slider orientation="VERTICAL" fx:id="lowerH" max="180"/>
+                        <Slider orientation="VERTICAL" fx:id="lowerS" max="255"/>
+                        <Slider orientation="VERTICAL" fx:id="lowerV" max="255"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</fx:root>

@@ -52,8 +52,9 @@ public interface Processor
     Mediator process(Mediator input);
 
     /**
-     * Given a list of input {@link Mediator} objects, produce all output {@code Mediator}
-     * objects that this {@link Processor} could possibly produce.  The input data will be for
+     * Given a {@link Mediator} object containing training data, produce all output {@code
+     * Mediator} objects that this {@link Processor} could possibly produce.  The input data will
+     * be for
      * training, and if this {@code Processor} expects to be notified of prior {@code Processor}
      * objects' completions, it will be notified by the {@code notify(List<Mediator<?>>)} method,
      * which contains all training data.
@@ -62,11 +63,11 @@ public interface Processor
      * input, and for {@code Processors} comprising multiple {@link Workflow} objects this means
      * processing each input using all appropriate {@code Workflows}.
      *
-     * @param inputs list of {@code Mediator} objects containing input data.
-     * @return all output {@code Mediators} that this could possibly produce.
-     * @throws ClassCastException if any input cannot be cast to {@code Mediator<I>}.
+     * @param input set of {@code Mediator} objects containing input data.
+     * @return all output {@code Mediators} that this could possibly produce,
+     *          indexed by each input mediator that created them.
      */
-    List<Mediator> processTrainingBatch(List<Mediator> inputs);
+    List<Mediator> processTrainingData(Mediator input);
 
     /**
      * Gets the input/output {@link TypeData} required by this {@link Processor}.

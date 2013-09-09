@@ -2,7 +2,10 @@ package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.common.Replaceable;
-import io.github.samwright.framework.model.helper.*;
+import io.github.samwright.framework.model.helper.ModelLoader;
+import io.github.samwright.framework.model.helper.ParentManager;
+import io.github.samwright.framework.model.helper.TypeData;
+import io.github.samwright.framework.model.helper.XMLHelper;
 import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -95,18 +98,6 @@ public abstract class AbstractElement extends AbstractProcessor implements Eleme
         } else {
             return createMutableClone().withObservers(newObservers);
         }
-    }
-
-    @Override
-    public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
-        Set<Mediator> allOutputs = completedTrainingBatch.getAll();
-
-        Set<Mediator> successfulOutputs = completedTrainingBatch.getSuccessful();
-
-        Set<Mediator> allInputs = Mediator.rollbackMediators(allOutputs);
-        Set<Mediator> successfulInputs = Mediator.rollbackMediators(successfulOutputs);
-
-        return new CompletedTrainingBatch(allInputs, successfulInputs);
     }
 
     @Override

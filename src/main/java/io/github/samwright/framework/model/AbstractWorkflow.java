@@ -151,7 +151,15 @@ public abstract class AbstractWorkflow extends AbstractProcessor implements Work
     public TypeData getTypeData() {
         if (getParent() == null)
             return TypeData.getDefaultType();
-        else
+        else {
+            if (getParent() instanceof SplitJoinWorkflowContainer) {
+                int myIndex = getParent().getChildren().indexOf(this);
+                List<TypeData> requiredWorkflowTypeData
+                        = ((SplitJoinWorkflowContainer) getParent()).getRequiredWorkflowTypeData();
+                if (myIndex != -1 && myIndex < requiredWorkflowTypeData.size())
+                    return requiredWorkflowTypeData.get(myIndex);
+            }
             return getParent().getTypeData();
+        }
     }
 }

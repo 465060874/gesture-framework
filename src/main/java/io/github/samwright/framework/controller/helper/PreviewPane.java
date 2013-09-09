@@ -1,19 +1,15 @@
 package io.github.samwright.framework.controller.helper;
 
 import io.github.samwright.framework.model.common.ElementObserver;
-import io.github.samwright.framework.model.datatypes.Helper;
+import io.github.samwright.framework.model.datatypes.ClassHelper;
 import io.github.samwright.framework.model.helper.Mediator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,27 +27,14 @@ public class PreviewPane extends VBox implements ElementObserver {
     private ComboBox<DataViewer.ComboItem> viewerSelector;
 
     @FXML
-    private Button firstButton, prevButton, nextButton, lastButton;
-
-    @FXML
-    private Label countLabel, defaultViewer;
-
-    @FXML
-    private HBox footer;
-
-    @FXML
     private VBox dataViewerBox;
 
     private DataViewer selectedViewer;
     private Class<?> inputType;
     private Mediator lastMediator;
-    private List<Mediator> lastMediatorList;
-    private boolean lastWasSingleMediator = true;
-    private int mediatorListIndex = -1;
 
     public PreviewPane() {
         Controllers.bindViewToController("/fxml/PreviewPane.fxml", this);
-        setFooterVisible(false);
 
         viewerSelector.valueProperty().addListener(new ChangeListener<DataViewer.ComboItem>() {
             @Override
@@ -71,7 +54,7 @@ public class PreviewPane extends VBox implements ElementObserver {
         this.inputType = inputType;
         viewerSelector.getItems().clear();
 
-        for (Class clazz : Helper.getAncestry(inputType)) {
+        for (Class clazz : ClassHelper.getAncestry(inputType)) {
             DataViewer dataViewer = dataViewers.get(clazz);
             if (dataViewer != null)
                 viewerSelector.getItems().add(dataViewer.createClone().getComboItem());
@@ -110,47 +93,18 @@ public class PreviewPane extends VBox implements ElementObserver {
     }
 
     public void updateDataViewer() {
-        Mediator mediator;
-
-        if (lastWasSingleMediator)
-            mediator = lastMediator;
-        else
-            mediator = lastMediatorList.get(mediatorListIndex);
-
-        if (mediator == null)
+        if (lastMediator == null)
             return;
 
-        setInputType(mediator.getClass());
+        setInputType(lastMediator.getData().getClass());
 
         if (selectedViewer != null)
-            selectedViewer.view(mediator);
+            selectedViewer.view(lastMediator);
     }
 
     @Override
     public void notify(Mediator mediator) {
         this.lastMediator = mediator;
-        lastWasSingleMediator = true;
-        setFooterVisible(false);
         updateDataViewer();
-    }
-
-    @Override
-    public void notify(List<Mediator> mediators) {
-        this.lastMediatorList = mediators;
-        mediatorListIndex = 0;
-        lastWasSingleMediator = false;
-        setFooterVisible(true);
-        updateDataViewer();
-    }
-
-    private void setFooterVisible(boolean visible) {
-        if (visible) {
-            if (!getChildren().contains(footer))
-                getChildren().add(footer);
-            countLabel.setText(String.format("%d / %d", mediatorListIndex, lastMediatorList.size()));
-        } else {
-            if (getChildren().contains(footer))
-                getChildren().remove(footer);
-        }
     }
 }

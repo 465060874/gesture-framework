@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class ElementLink extends Pane implements ElementObserver {
 
+    private static final String empty = " ";
+
     @FXML
     private Line mainLine, leftVertLine, leftHorizLine, rightVertLine, rightHorizLine;
 
@@ -48,13 +50,21 @@ public class ElementLink extends Pane implements ElementObserver {
     @Getter private ElementController controller;
     @Getter @Setter private boolean beingDragged = false;
 
+    private DelayedNotifier<Mediator> mediatorNotifier = new DelayedNotifier<Mediator>() {
+        @Override
+        public void handleNewObject(Mediator newObject) {
+            if (previewPane != null)
+                previewPane.notify(newObject);
+        }
+    };
+    private String inputTypeString, outputTypeString;
+    private boolean valid;
+
     public ElementLink() {
         Controllers.bindViewToController("/fxml/ElementLink.fxml", this);
         PreviewPane pane = new PreviewPane();
         setPreviewPane(pane);
         pane.setVisible(false);
-
-
         setValid(true);
 
         setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -169,8 +179,9 @@ public class ElementLink extends Pane implements ElementObserver {
         double previewPaneBorder = 5;
 
         NumberBinding previewPaneWidth = new When(previewPane.visibleProperty())
-                .then(previewPane.widthProperty().add(2 * previewPaneBorder))
-                .otherwise(0);
+                .then(previewPane.widthProperty())
+                .otherwise(0)
+                .add(2 * previewPaneBorder);
 
         NumberBinding previewPaneHeight = new When(previewPane.visibleProperty())
                 .then(previewPane.heightProperty().add(2 * previewPaneBorder))
@@ -252,12 +263,8 @@ public class ElementLink extends Pane implements ElementObserver {
         );
 
         previewPane.translateXProperty().bind(
-                widthProperty()
-                .subtract(inputTypeLabel.widthProperty())
-                .subtract(outputTypeLabel.widthProperty())
-                .subtract(previewPane.widthProperty())
-                .divide(2)
-                .add(inputTypeLabel.widthProperty())
+                triangle.translateXProperty()
+                .subtract(previewPaneWidth.divide(2))
         );
 
         previewPane.translateYProperty().bind(
@@ -287,14 +294,7 @@ public class ElementLink extends Pane implements ElementObserver {
 
     @Override
     public void notify(Mediator mediator) {
-        if (previewPane != null)
-            previewPane.notify(mediator);
-    }
-
-    @Override
-    public void notify(List<Mediator> mediators) {
-        if (previewPane != null)
-            previewPane.notify(mediators);
+        mediatorNotifier.notify(mediator);
     }
 
     @Override
@@ -305,22 +305,36 @@ public class ElementLink extends Pane implements ElementObserver {
 
     public void setValid(boolean valid) {
         Paint triangleColour;
+        this.valid = valid;
 
-        if (valid)
+        if (valid) {
             triangleColour = Paint.valueOf("DODGERBLUE");
-        else
+            inputTypeLabel.setText(empty);
+            outputTypeLabel.setText(empty);
+        } else {
             triangleColour = Paint.valueOf("RED");
+            inputTypeLabel.setText(inputTypeString);
+            outputTypeLabel.setText(outputTypeString);
+        }
 
         triangle.setFill(triangleColour);
     }
 
     public void setInputType(Class input) {
-        inputTypeLabel.setText(input.getSimpleName());
+        inputTypeString = input.getSimpleName();
+        if (valid)
+            inputTypeLabel.setText(empty);
+        else
+            inputTypeLabel.setText(inputTypeString);
         if (previewPane != null)
             previewPane.setInputType(input);
     }
 
     public void setOutputType(Class output) {
-        outputTypeLabel.setText(output.getSimpleName());
+        outputTypeString = output.getSimpleName();
+        if (valid)
+            outputTypeLabel.setText(empty);
+        else
+            outputTypeLabel.setText(outputTypeString);
     }
 }

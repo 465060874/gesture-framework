@@ -8,6 +8,7 @@ import io.github.samwright.framework.controller.example.ViewerController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.controller.helper.IntegerViewer;
 import io.github.samwright.framework.controller.helper.PreviewPane;
+import io.github.samwright.framework.javacv.*;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.TopWorkflowContainer;
@@ -70,7 +71,7 @@ public class MainWindowController extends VBox {
             @Override
             public void handle(ActionEvent actionEvent) {
                 topController.getModel().process(null);
-                topController.handleUpdatedModel();
+//                topController.handleUpdatedModel();
             }
         });
 
@@ -88,8 +89,14 @@ public class MainWindowController extends VBox {
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
         ModelLoader.registerPrototypeModel(new StartElementController().getModel());
         ModelLoader.registerPrototypeModel(new ViewerController().getModel());
+        ModelLoader.registerPrototypeModel(new ImageLoaderController().getModel());
+        ModelLoader.registerPrototypeModel(new SkinDetectorController().getModel());
+        ModelLoader.registerPrototypeModel(new StaticColourRangeController().getModel());
 
         PreviewPane.registerDataViewer(new IntegerViewer());
+        PreviewPane.registerDataViewer(new ImageViewer());
+        PreviewPane.registerDataViewer(new ColourRangeViewer());
+
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
             if (p instanceof Element && !(p instanceof TopWorkflowContainer))

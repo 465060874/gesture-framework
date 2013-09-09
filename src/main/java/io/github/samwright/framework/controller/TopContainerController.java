@@ -159,25 +159,25 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         }
 
         if (mouseEvent.isMetaDown()) {
-            if (target.getClickedProperty().get()) {
+            if (target.isSelected()) {
                 selected.remove(target);
-                target.getClickedProperty().set(false);
+                target.setSelected(false);
             } else {
                 selected.add(target);
-                target.getClickedProperty().set(true);
+                target.setSelected(true);
             }
         } else {
             selected.remove(target);
             deselectAll();
             selected.add(target);
-            target.getClickedProperty().set(true);
+            target.setSelected(true);
         }
         mouseEvent.consume();
     }
 
     public void deselectAll() {
         for (JavaFXController toDeselect : selected)
-            toDeselect.getClickedProperty().set(false);
+            toDeselect.setSelected(false);
         selected.clear();
     }
 }

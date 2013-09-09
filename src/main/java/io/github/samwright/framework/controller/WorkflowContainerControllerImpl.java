@@ -71,7 +71,5 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
         for (Workflow workflow : getModel().getChildren()) {
             workflowsBox.getChildren().add((Node) workflow.getController());
         }
-
-        containerLabel.setText(getModel().getTypeData().toString());
     }
 }

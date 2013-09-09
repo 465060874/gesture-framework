@@ -31,7 +31,7 @@ public class MockElement extends AbstractElement {
     }
 
     @Override
-    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
+    public List<Mediator> processTrainingData(Mediator input) {
         throw new RuntimeException("not implemented");
     }
 

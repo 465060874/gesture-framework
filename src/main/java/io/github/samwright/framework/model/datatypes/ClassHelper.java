@@ -10,7 +10,7 @@ import java.util.Set;
  * from this website:
  * http://stackoverflow.com/questions/9797212/finding-the-nearest-common-superclass-or-superinterface-of-a-collection-of-cla
  */
-public class Helper {
+public class ClassHelper {
 
     public static Class lowestCommonAncestor(List<Class> classes) {
         LinkedHashSet<Class> sharedAncestry = null;

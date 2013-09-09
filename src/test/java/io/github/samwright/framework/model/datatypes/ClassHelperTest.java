@@ -12,7 +12,7 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * User: Sam Wright Date: 03/09/2013 Time: 21:02
  */
-public class HelperTest {
+public class ClassHelperTest {
 
     interface A {}
     interface B {}
@@ -27,23 +27,23 @@ public class HelperTest {
 
     @Test
     public void testLowestCommonAncestor() throws Exception {
-        assertEquals(C.class, Helper.lowestCommonAncestor(listOf(AC.class, ABC.class)));
-        assertEquals(A.class, Helper.lowestCommonAncestor(listOf(AC.class, AB.class)));
-        assertEquals(C.class, Helper.lowestCommonAncestor(listOf(BC.class, AC.class)));
-        assertEquals(C.class, Helper.lowestCommonAncestor(listOf(BC.class, ABC.class)));
-        assertEquals(A.class, Helper.lowestCommonAncestor(listOf(BCA.class, AB.class)));
+        assertEquals(C.class, ClassHelper.lowestCommonAncestor(listOf(AC.class, ABC.class)));
+        assertEquals(A.class, ClassHelper.lowestCommonAncestor(listOf(AC.class, AB.class)));
+        assertEquals(C.class, ClassHelper.lowestCommonAncestor(listOf(BC.class, AC.class)));
+        assertEquals(C.class, ClassHelper.lowestCommonAncestor(listOf(BC.class, ABC.class)));
+        assertEquals(A.class, ClassHelper.lowestCommonAncestor(listOf(BCA.class, AB.class)));
     }
 
     @Test
     public void testGetAncestry() throws Exception {
-        assertEquals(setOf(A.class), Helper.getAncestry(A.class));
-        assertEquals(setOf(AB.class, A.class, B.class), Helper.getAncestry(AB.class));
-        assertEquals(setOf(AC.class, C.class, A.class), Helper.getAncestry(AC.class));
+        assertEquals(setOf(A.class), ClassHelper.getAncestry(A.class));
+        assertEquals(setOf(AB.class, A.class, B.class), ClassHelper.getAncestry(AB.class));
+        assertEquals(setOf(AC.class, C.class, A.class), ClassHelper.getAncestry(AC.class));
         assertEquals(setOf(ABC.class, C.class, AB.class, A.class, B.class),
-                Helper.getAncestry(ABC.class));
-        assertEquals(setOf(BC.class, C.class, B.class), Helper.getAncestry(BC.class));
+                ClassHelper.getAncestry(ABC.class));
+        assertEquals(setOf(BC.class, C.class, B.class), ClassHelper.getAncestry(BC.class));
         assertEquals(setOf(BCA.class, BC.class, C.class, B.class, A.class),
-                Helper.getAncestry(BCA.class));
+                ClassHelper.getAncestry(BCA.class));
     }
 
     private LinkedHashSet<Class> setOf(Class... children) {

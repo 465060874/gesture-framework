@@ -5,8 +5,6 @@ import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 
-import java.util.List;
-
 /**
  * User: Sam Wright Date: 03/09/2013 Time: 17:59
  */
@@ -26,11 +24,6 @@ public class Viewer extends AbstractElement {
     public Mediator process(Mediator input) {
         previousOutput = (Integer) input.getData();
         return input;
-    }
-
-    @Override
-    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
-        return inputs;
     }
 
     @Override

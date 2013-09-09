@@ -1,13 +1,15 @@
 package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.common.Replaceable;
-import io.github.samwright.framework.model.datatypes.Helper;
+import io.github.samwright.framework.model.datatypes.ClassHelper;
 import io.github.samwright.framework.model.helper.ChildrenManager;
-import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 import org.w3c.dom.Document;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Abstract implementation of {@link WorkflowContainer}.
@@ -20,7 +22,6 @@ public abstract class AbstractWorkflowContainer
         extends AbstractElement implements WorkflowContainer {
 
     private final ChildrenManager<Workflow, WorkflowContainer> childrenManager;
-//    @Getter private TypeData requiredTypeData;
     private TypeData downconvertedTypeData;
     private boolean outputTypeFixed = false;
     private Object[] typeDataLock = new Object[0];
@@ -35,7 +36,6 @@ public abstract class AbstractWorkflowContainer
     public AbstractWorkflowContainer(TypeData typeData) {
         super(typeData);
         childrenManager = new ChildrenManager<Workflow, WorkflowContainer>(this);
-//        requiredTypeData = typeData;
         resetDerivedTypeData();
     }
 
@@ -54,14 +54,8 @@ public abstract class AbstractWorkflowContainer
 
     @Override
     public boolean isValid() {
-        if (getChildren().isEmpty())
-            return false;
+        return !getChildren().isEmpty();
 
-        return true;
-    }
-
-    public TypeData getRequiredTypeData() {
-        return super.getTypeData();
     }
 
     @Override
@@ -72,16 +66,6 @@ public abstract class AbstractWorkflowContainer
     @Override
     public boolean areChildrenValid() {
         return childrenManager.areChildrenValid();
-    }
-
-    @Override
-    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
-        List<Mediator> outputs = new ArrayList<>();
-
-        for (Workflow workflow : getChildren())
-            outputs.addAll(workflow.processTrainingBatch(inputs));
-
-        return outputs;
     }
 
     @Override
@@ -204,13 +188,14 @@ public abstract class AbstractWorkflowContainer
             if (workflowOutputs.isEmpty())
                 outputType = requiredOutput;
             else {
-                outputType = Helper.lowestCommonAncestor(workflowOutputs);
+                outputType = ClassHelper.lowestCommonAncestor(workflowOutputs);
                 if (!requiredOutput.isAssignableFrom(outputType))
                     outputType = requiredOutput;
             }
 
             downconvertedTypeData = new TypeData(downconvertedTypeData.getInputType(), outputType);
             outputTypeFixed = true;
+
 
             return downconvertedTypeData;
         }

@@ -1,0 +1,65 @@
+package io.github.samwright.framework.javacv;
+
+import com.googlecode.javacv.cpp.opencv_core;
+import io.github.samwright.framework.controller.helper.DataViewer;
+import io.github.samwright.framework.model.helper.Mediator;
+import javafx.beans.binding.Bindings;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.awt.image.BufferedImage;
+
+/**
+ * User: Sam Wright Date: 05/09/2013 Time: 17:40
+ */
+public class ImageViewer extends DataViewer {
+
+    private ImageView imageView = new ImageView();
+    private Label tag = new Label();
+
+    public ImageViewer() {
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+
+        getChildren().add(imageView);
+        imageView.setTranslateX(0);
+        imageView.setTranslateY(0);
+        imageView.setFitWidth(140);
+
+
+        getChildren().add(tag);
+        tag.setTranslateX(0);
+        tag.translateYProperty().bind(imageView.fitHeightProperty());
+
+        minWidthProperty().bind(Bindings.max(imageView.fitWidthProperty(), tag.widthProperty()));
+        minHeightProperty().bind(imageView.fitHeightProperty().add(tag.heightProperty()));
+    }
+
+    @Override
+    public DataViewer createClone() {
+        return new ImageViewer();
+    }
+
+    @Override
+    public Class<?> getViewableClass() {
+        return TaggedImage.class;
+    }
+
+    @Override
+    public void view(Mediator mediator) {
+        TaggedImage image = (TaggedImage) mediator.getData();
+        opencv_core.IplImage iplImage = image.getImage();
+        BufferedImage bufferedImage = iplImage.getBufferedImage();
+        imageView.setImage(Image.impl_fromExternalImage(bufferedImage));
+        if (image.getTag() == null)
+            tag.setText("");
+        else
+            tag.setText(image.getTag());
+    }
+
+    @Override
+    public String toString() {
+        return "OpenCV Image";
+    }
+}

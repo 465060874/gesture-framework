@@ -6,12 +6,15 @@ import io.github.samwright.framework.model.helper.TypeData;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 09:21
  */
 public class TopWorkflowContainer extends AbstractWorkflowContainer {
 
     @Getter @Setter private boolean transientUpdate = false;
+    private Object[] processLock = new Object[0];
 
     public TopWorkflowContainer() {
         super(new TypeData(StartType.class, Object.class));
@@ -22,14 +25,24 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
     }
 
     @Override
-    public Mediator process(Mediator input) {
-        for (Workflow workflow : getChildren())
-            workflow.process(input);
+    public Mediator process(final Mediator input) {
+        final List<Workflow> workflows = getChildren();
+
+        synchronized (processLock) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (Workflow workflow : workflows)
+                        workflow.process(input);
+                }
+            }).start();
+        }
+
         return null;
     }
 
     @Override
-    public WorkflowContainer createMutableClone() {
+    public TopWorkflowContainer createMutableClone() {
         return new TopWorkflowContainer(this);
     }
 

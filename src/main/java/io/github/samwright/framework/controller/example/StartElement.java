@@ -28,7 +28,7 @@ public class StartElement extends AbstractElement {
     }
 
     @Override
-    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
+    public List<Mediator> processTrainingData(Mediator input) {
         List<Mediator> outputs = new LinkedList<>();
         for (int i = 0; i < 3; ++i)
             outputs.add(Mediator.createEmpty().createNext(this, i));

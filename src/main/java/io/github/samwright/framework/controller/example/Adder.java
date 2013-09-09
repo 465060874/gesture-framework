@@ -9,8 +9,6 @@ import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,15 +38,6 @@ public class Adder extends AbstractElement {
     public Mediator process(Mediator input) {
         Integer castedInput = (Integer) input.getData();
         return input.createNext(this, castedInput + clicks);
-    }
-
-    @Override
-    public List<Mediator> processTrainingBatch(List<Mediator> inputs) {
-        List<Mediator> outputs = new LinkedList<>();
-        for (Mediator m : inputs)
-            outputs.add(process(m));
-
-        return outputs;
     }
 
     @Override
