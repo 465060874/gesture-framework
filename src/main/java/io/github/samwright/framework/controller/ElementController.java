@@ -6,6 +6,7 @@ import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.XMLHelper;
+import io.github.samwright.framework.model.mock.TopProcessor;
 import javafx.event.EventHandler;
 import javafx.scene.input.*;
 import lombok.Getter;
@@ -63,6 +64,8 @@ abstract public class ElementController extends JavaFXController {
                 dragEvent.consume();
             }
         });
+
+        setSelected(false);
     }
 
     public ElementController(String fxmlResource) {
@@ -102,11 +105,14 @@ abstract public class ElementController extends JavaFXController {
 
             if (!newObservers.equals(element.getObservers())) {
                 Element newModel = element.withObservers(newObservers);
-                MainWindowController.getTopController().startTransientUpdateMode();
+                TopProcessor topProcessor = getModel().getTopProcessor();
+                if (topProcessor != null)
+                    MainWindowController.getTopController().startTransientUpdateMode();
                 try {
                     element.replaceWith(newModel);
                 } finally {
-                    MainWindowController.getTopController().endTransientUpdateMode();
+                    if (topProcessor != null)
+                        MainWindowController.getTopController().endTransientUpdateMode();
                 }
             }
         }

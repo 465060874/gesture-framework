@@ -83,4 +83,16 @@ public class ImageLoaderController extends ElementController {
         else
             imagesView.getSelectionModel().clearSelection();
     }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+
+        boolean listVisible = getChildren().contains(imagesView);
+
+        if (listVisible && !selected)
+            getChildren().remove(imagesView);
+        else if (!listVisible && selected)
+            getChildren().add(imagesView);
+    }
 }

@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,9 @@ public class StaticColourRangeController extends ElementController {
 
     @FXML
     private Label label;
+
+    @FXML
+    private VBox configPanel;
 
     @FXML
     private Slider upperH, upperS, upperV, lowerH, lowerS, lowerV;
@@ -91,5 +95,10 @@ public class StaticColourRangeController extends ElementController {
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
+        boolean configVisible = getChildren().contains(configPanel);
+        if (configVisible && !selected)
+            getChildren().remove(configPanel);
+        else if (!configVisible && selected)
+            getChildren().add(configPanel);
     }
 }

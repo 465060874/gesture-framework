@@ -73,7 +73,7 @@ public class ElementLink extends Pane implements ElementObserver {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)
                         && mouseEvent.getClickCount() == 2) {
 
-                    if (previewPane != null) {
+                    if (previewPane != null && controller != null) {
                         previewPane.setVisible(!previewPane.isVisible());
                         MainWindowController.getTopController().deselectAll();
                     }

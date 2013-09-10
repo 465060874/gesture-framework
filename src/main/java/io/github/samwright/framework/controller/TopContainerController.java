@@ -6,7 +6,6 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,33 +47,30 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         this.mainWindow = mainWindow;
     }
 
-    @Getter private EventHandler<KeyEvent> keyPressHandler = new EventHandler<KeyEvent>() {
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE) {
-                Set<JavaFXController> oldSelected = new HashSet<>(selected);
-                deselectAll();
-                startTransientUpdateMode();
-                try {
-                    for (ModelController toDelete : oldSelected)
-                        toDelete.getModel().getCurrentVersion().delete();
-                } finally {
-                    endTransientUpdateMode();
-                }
+    public void handleKeyEvent(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE) {
+            Set<JavaFXController> oldSelected = new HashSet<>(selected);
+            deselectAll();
+            startTransientUpdateMode();
+            try {
+                for (ModelController toDelete : oldSelected)
+                    toDelete.getModel().getCurrentVersion().delete();
+            } finally {
+                endTransientUpdateMode();
             }
         }
-    };
+    }
 
     public void startTransientUpdateMode() {
         if (transientUpdateMode == 0 && getProposedModel() != null)
-            getProposedModel().setTransientUpdate(true);
+            getProposedModel().setTransientModel(true);
         ++transientUpdateMode;
     }
 
     public void endTransientUpdateMode() {
         --transientUpdateMode;
         if (getProposedModel() != null && transientUpdateMode == 0) {
-            getProposedModel().setTransientUpdate(false);
+            getProposedModel().setTransientModel(false);
             handleUpdatedModel();
         }
     }
@@ -93,10 +89,9 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
                 needsUpdate = false;
 
                 if (transientUpdateMode > 0) {
-                    getProposedModel().setTransientUpdate(true);
+                    getProposedModel().setTransientModel(true);
                 } else {
                     super.handleUpdatedModel();
-                    deselectAll();
 
                     if (mainWindow != null)
                         mainWindow.handleUpdatedModel();
@@ -117,7 +112,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         }
         if (previousModel != getModel())
             throw new RuntimeException("Didn't undo properly!");
-
+        deselectAll();
     }
 
     public void redo() {
@@ -130,6 +125,7 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         }
         if (nextModel != getModel())
             throw new RuntimeException("Didn't redo properly!");
+        deselectAll();
     }
 
     public boolean canRedo() {

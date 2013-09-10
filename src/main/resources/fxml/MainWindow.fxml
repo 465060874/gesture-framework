@@ -13,6 +13,9 @@
                   <Button text="Redo" fx:id="redoButton"/>
                   <Button text="Process" fx:id="processButton"/>
                   <Button text="Train" fx:id="trainButton"/>
+                  <Button text="Save" fx:id="saveButton"/>
+                  <Button text="Save As" fx:id="saveAsButton"/>
+                  <Button text="Open" fx:id="openButton"/>
               </items>
           </ToolBar>
           <HBox fx:id="hBox">

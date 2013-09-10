@@ -3,6 +3,7 @@ package io.github.samwright.framework.model;
 import io.github.samwright.framework.model.datatypes.StartType;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
+import io.github.samwright.framework.model.mock.TopProcessor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,9 +12,9 @@ import java.util.List;
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 09:21
  */
-public class TopWorkflowContainer extends AbstractWorkflowContainer {
+public class TopWorkflowContainer extends AbstractWorkflowContainer implements TopProcessor {
 
-    @Getter @Setter private boolean transientUpdate = false;
+    @Getter @Setter private boolean transientModel = false;
     private Object[] processLock = new Object[0];
 
     public TopWorkflowContainer() {
@@ -49,7 +50,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
     public TopWorkflowContainer getPreviousCompleted() {
         TopWorkflowContainer pointer = (TopWorkflowContainer) getPrevious();
 
-        while (pointer != null && pointer.isTransientUpdate())
+        while (pointer != null && pointer.isTransientModel())
             pointer = (TopWorkflowContainer) pointer.getPrevious();
 
         return pointer;
@@ -58,7 +59,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer {
     public TopWorkflowContainer getNextCompleted() {
         TopWorkflowContainer pointer = (TopWorkflowContainer) getNext();
 
-        while (pointer != null && pointer.isTransientUpdate())
+        while (pointer != null && pointer.isTransientModel())
             pointer = (TopWorkflowContainer) pointer.getNext();
 
         return pointer;

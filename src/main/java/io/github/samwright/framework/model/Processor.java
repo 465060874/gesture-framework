@@ -5,6 +5,7 @@ import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.History;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
+import io.github.samwright.framework.model.mock.TopProcessor;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -115,6 +116,14 @@ public interface Processor
      */
     CompletedTrainingBatch processCompletedTrainingBatch(
             CompletedTrainingBatch completedTrainingBatch);
+
+    /**
+     * Gets the ultimate ancestor of this {@code Processor} if it is in a complete model (ie. the
+     * ultimate ancestor is a {@link TopProcessor}.  Otherwise returns null.
+     *
+     * @return the ultimate ancestor of this object if it is a {@code TopProcessor}
+     */
+    TopProcessor getTopProcessor();
 
     @Override
     Processor createMutableClone();

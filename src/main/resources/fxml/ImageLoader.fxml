@@ -9,6 +9,7 @@
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/Element.css"
          maxHeight="-Infinity"
+         maxWidth="150"
         >
     <children>
         <Label alignment="CENTER" text="Image Loader" fx:id="label" minWidth="-Infinity"/>

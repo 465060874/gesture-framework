@@ -4,6 +4,7 @@ import io.github.samwright.framework.controller.ModelController;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.common.Replaceable;
+import io.github.samwright.framework.model.mock.TopProcessor;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -112,6 +113,14 @@ public class MutabilityHelper {
             if (topModel.getController() != null)
                 topModel.getController().handleUpdatedModel();
         }
+    }
+
+    public TopProcessor getTopProcessor() {
+        Processor topProcessor = getTopModel(managedProcessor);
+        if (topProcessor instanceof TopProcessor)
+            return (TopProcessor) topProcessor;
+        else
+            return null;
     }
 
     private static Processor getTopModel(Processor processor) {
@@ -231,7 +240,7 @@ public class MutabilityHelper {
                     if (getNext() != null)
                         getNext().setController(controller);
 
-                    if (thisStartedMutation(Reason.SETTING_CONTROLLER)
+                    else if (thisStartedMutation(Reason.SETTING_CONTROLLER)
                             && controller != null)
                         controller.proposeModel(getCurrentVersion());
                 }

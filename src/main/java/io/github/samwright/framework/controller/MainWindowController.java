@@ -13,15 +13,21 @@ import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.TopWorkflowContainer;
 import io.github.samwright.framework.model.helper.ModelLoader;
+import io.github.samwright.framework.model.helper.XMLHelper;
+import io.github.samwright.framework.model.mock.TopProcessor;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import lombok.Getter;
+
+import java.io.File;
 
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 18:55
@@ -35,25 +41,18 @@ public class MainWindowController extends VBox {
     private HBox hBox;
 
     @FXML
-    private Button undoButton;
+    private Button undoButton, redoButton, trainButton,
+                   processButton, saveButton, saveAsButton, openButton;
 
-    @FXML
-    private Button redoButton;
-
-    @FXML
-    private Button trainButton;
-
-    @FXML
-    private Button processButton;
 
     @Getter private static TopContainerController topController;
     private static ToolboxController toolboxController;
+    private String filename;
 
     public MainWindowController() {
         Controllers.bindViewToController("/fxml/MainWindow.fxml", this);
 
-        topController = new TopContainerController(this);
-        mainScrollPanel.setContent(topController);
+        setTopController(new TopContainerController(this));
 
         undoButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -71,7 +70,25 @@ public class MainWindowController extends VBox {
             @Override
             public void handle(ActionEvent actionEvent) {
                 topController.getModel().process(null);
-//                topController.handleUpdatedModel();
+            }
+        });
+        saveButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                    save();
+            }
+        });
+
+        saveAsButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                saveAs();
+            }
+        });
+        openButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                open();
             }
         });
 
@@ -82,7 +99,13 @@ public class MainWindowController extends VBox {
         topController.handleUpdatedModel();
         topController.addNewWorkflow();
         ModelLoader.registerPrototypeModel(topController.getModel());
-        setOnKeyPressed(topController.getKeyPressHandler());
+
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                topController.handleKeyEvent(keyEvent);
+            }
+        });
 
         ModelLoader.registerPrototypeModel(new ExElementController().getModel());
         ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
@@ -103,12 +126,60 @@ public class MainWindowController extends VBox {
                 toolboxController.getChildren().add((Node) p.getController());
     }
 
+    private void setTopController(TopContainerController topController) {
+        MainWindowController.topController = topController;
+        mainScrollPanel.setContent(topController);
+
+        TopProcessor pointer = topController.getModel();
+        while (pointer != null) {
+            pointer.setTransientModel(true);
+            pointer = (TopProcessor) pointer.getPrevious();
+        }
+        topController.getModel().setTransientModel(false);
+        handleUpdatedModel();
+    }
+
     public void handleUpdatedModel() {
         redoButton.setDisable(!topController.canRedo());
         undoButton.setDisable(!topController.canUndo());
         requestLayout();
     }
 
+    public void save() {
+        if (filename == null) {
+            saveAs();
+        } else {
+            XMLHelper.writeProcessorToFile(topController.getModel(), filename);
+        }
+    }
 
+    public void saveAs() {
+        File file = new FileChooser().showSaveDialog(null);
+        if (file == null)
+            return;
+
+        if (file.exists())
+            file.delete();
+        filename = file.getAbsolutePath();
+        save();
+    }
+
+    public void open() {
+        File file = new FileChooser().showOpenDialog(null);
+        if (file == null)
+            return;
+
+        TopWorkflowContainer loaded = (TopWorkflowContainer)
+                XMLHelper.loadProcessorFromFile(file.getAbsolutePath(), false);
+
+
+        setTopController((TopContainerController) loaded.getController());
+//        topController.startTransientUpdateMode();
+//        try {
+//            topController.getModel().discardPrevious();
+//        } finally {
+//            topController.endTransientUpdateMode();
+//        }
+    }
 }
 

@@ -93,10 +93,11 @@ public class ModelLoader {
         model.replace(null);
         model.setController(prototypeModel.getController().createClone());
 
-        while (model.getNext() != null)
-            model = model.getNext();
+//        while (model.getNext() != null)
+        model = model.getCurrentVersion();
+        model.discardPrevious();
 
-        return model;
+        return model.getCurrentVersion();
     }
 
 }

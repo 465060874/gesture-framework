@@ -10,7 +10,7 @@
         >
     <children>
         <Label alignment="CENTER" text="Colour Range" fx:id="label" minWidth="-Infinity"/>
-        <VBox fx:id="configPanel">
+        <VBox fx:id="configPanel" maxHeight="200">
             <children>
                 <HBox>
                     <children>
