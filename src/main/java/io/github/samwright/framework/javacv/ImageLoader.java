@@ -3,6 +3,7 @@ package io.github.samwright.framework.javacv;
 import com.googlecode.javacpp.Loader;
 import com.googlecode.javacv.FrameGrabber;
 import com.googlecode.javacv.cpp.opencv_objdetect;
+import io.github.samwright.framework.javacv.helper.TaggedImage;
 import io.github.samwright.framework.model.AbstractElement;
 import io.github.samwright.framework.model.datatypes.StartType;
 import io.github.samwright.framework.model.helper.Mediator;

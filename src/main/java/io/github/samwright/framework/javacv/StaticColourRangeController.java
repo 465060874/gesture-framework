@@ -21,7 +21,7 @@ public class StaticColourRangeController extends ElementController {
     private Label label;
 
     @FXML
-    private VBox configPanel;
+    private VBox configPane;
 
     @FXML
     private Slider upperH, upperS, upperV, lowerH, lowerS, lowerV;
@@ -51,13 +51,14 @@ public class StaticColourRangeController extends ElementController {
         Slider[] sliders = {upperH, upperS, upperV, lowerH, lowerS, lowerV};
         for (Slider slider : sliders)
             slider.valueChangingProperty().addListener(changeListener);
+
+        setConfigNode(configPane);
     }
 
     public StaticColourRangeController() {
         super("/fxml/ColourRange.fxml");
         proposeModel(new StaticColourRange());
         setElementLink(new ElementLink());
-        label.setText("Colour range");
     }
 
     public StaticColourRangeController(StaticColourRangeController toClone) {
@@ -90,15 +91,5 @@ public class StaticColourRangeController extends ElementController {
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
         updateSliders();
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-        boolean configVisible = getChildren().contains(configPanel);
-        if (configVisible && !selected)
-            getChildren().remove(configPanel);
-        else if (!configVisible && selected)
-            getChildren().add(configPanel);
     }
 }

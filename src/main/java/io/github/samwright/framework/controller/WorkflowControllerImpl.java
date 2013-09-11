@@ -4,6 +4,7 @@ import io.github.samwright.framework.controller.helper.ElementLink;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.WorkflowImpl;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
@@ -18,6 +19,9 @@ public class WorkflowControllerImpl extends WorkflowController {
 
     @FXML
     private HBox elementsBox;
+
+    @FXML
+    private Label label;
 
     @Getter private ElementLink defaultElementLink;
 
@@ -47,6 +51,10 @@ public class WorkflowControllerImpl extends WorkflowController {
     @Override
     public ModelController createClone() {
         return new WorkflowControllerImpl(this);
+    }
+
+    public void setLabel(String label) {
+        this.label.setText(label);
     }
 
     @Override

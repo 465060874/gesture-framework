@@ -3,6 +3,7 @@ package io.github.samwright.framework.javacv;
 import io.github.samwright.framework.controller.ElementController;
 import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.helper.ElementLink;
+import io.github.samwright.framework.javacv.helper.TaggedImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -46,6 +47,8 @@ public class ImageLoaderController extends ElementController {
                 getModel().takeSnapshot(tagField.getText());
             }
         });
+
+        setConfigNode(imagesView);
     }
 
     public ImageLoaderController() {
@@ -82,17 +85,5 @@ public class ImageLoaderController extends ElementController {
             imagesView.getSelectionModel().select(activeImage);
         else
             imagesView.getSelectionModel().clearSelection();
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-
-        boolean listVisible = getChildren().contains(imagesView);
-
-        if (listVisible && !selected)
-            getChildren().remove(imagesView);
-        else if (!listVisible && selected)
-            getChildren().add(imagesView);
     }
 }

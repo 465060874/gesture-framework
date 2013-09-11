@@ -8,6 +8,7 @@ import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.XMLHelper;
 import io.github.samwright.framework.model.mock.TopProcessor;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.input.*;
 import lombok.Getter;
 
@@ -23,6 +24,7 @@ abstract public class ElementController extends JavaFXController {
     public final static DataFormat dataFormat
             = new DataFormat("io.github.samwright.framework.model.Element");
 
+    private Node configNode;
     @Getter private ElementLink elementLink;
 
     {
@@ -144,5 +146,23 @@ abstract public class ElementController extends JavaFXController {
             throw new RuntimeException("ElementController can only control Elements - not " +
                     proposedModel);
         super.proposeModel(proposedModel);
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        if (configNode == null)
+            return;
+
+        boolean configVisible = getChildren().contains(configNode);
+        if (configVisible && !selected)
+            getChildren().remove(configNode);
+        else if (!configVisible && selected)
+            getChildren().add(configNode);
+    }
+
+    public void setConfigNode(Node configNode) {
+        this.configNode = configNode;
+        setSelected(isSelected());
     }
 }

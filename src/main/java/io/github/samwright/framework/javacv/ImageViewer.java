@@ -2,13 +2,12 @@ package io.github.samwright.framework.javacv;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import io.github.samwright.framework.controller.helper.DataViewer;
+import io.github.samwright.framework.javacv.helper.TaggedImage;
 import io.github.samwright.framework.model.helper.Mediator;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
-import java.awt.image.BufferedImage;
 
 /**
  * User: Sam Wright Date: 05/09/2013 Time: 17:40
@@ -50,12 +49,15 @@ public class ImageViewer extends DataViewer {
     public void view(Mediator mediator) {
         TaggedImage image = (TaggedImage) mediator.getData();
         opencv_core.IplImage iplImage = image.getImage();
-        BufferedImage bufferedImage = iplImage.getBufferedImage();
-        imageView.setImage(Image.impl_fromExternalImage(bufferedImage));
+        view(iplImage);
         if (image.getTag() == null)
             tag.setText("");
         else
             tag.setText(image.getTag());
+    }
+
+    public void view(opencv_core.IplImage image) {
+        imageView.setImage(Image.impl_fromExternalImage(image.getBufferedImage()));
     }
 
     @Override

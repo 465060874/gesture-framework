@@ -103,11 +103,14 @@ final public class TypeData {
         String inputString = XMLHelper.getDataUnderNode(typeDataNode, "Input");
         String outputString = XMLHelper.getDataUnderNode(typeDataNode, "Output");
 
+        return new TypeData(loadClass(inputString), loadClass(outputString));
+    }
+
+    private Class<?> loadClass(String className) {
         try {
-            return new TypeData(Class.forName(inputString), Class.forName(outputString));
+            return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new ModelLoader.ModelLoadException("Couldn't find class: " + inputString +
-                    " or " + outputString, e);
+            throw new ModelLoader.ModelLoadException("Couldn't find class: " + className, e);
         }
     }
 }

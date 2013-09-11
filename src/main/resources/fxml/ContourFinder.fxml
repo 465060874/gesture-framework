@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root fx:id="element" type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/Element.css"
+         maxHeight="-Infinity"
+        >
+    <children>
+        <Label alignment="CENTER" text="Contour Finder" fx:id="label" minWidth="-Infinity"/>
+        <HBox fx:id="configPanel" maxHeight="200">
+            <children>
+                <Region HBox.hgrow="ALWAYS"/>
+                <VBox>
+                    <children>
+                        <Slider orientation="VERTICAL" fx:id="lowerLimit" max="1000"/>
+                        <Label text="min" />
+                    </children>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <VBox>
+                    <children>
+                        <Slider orientation="VERTICAL" fx:id="upperLimit" max="1000"/>
+                        <Label text="max"/>
+                    </children>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+            </children>
+        </HBox>
+    </children>
+</fx:root>

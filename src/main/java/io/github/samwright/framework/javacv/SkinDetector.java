@@ -1,6 +1,7 @@
 package io.github.samwright.framework.javacv;
 
 import io.github.samwright.framework.javacv.helper.ColourRange;
+import io.github.samwright.framework.javacv.helper.TaggedImage;
 import io.github.samwright.framework.model.SplitJoinWorkflowContainer;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;

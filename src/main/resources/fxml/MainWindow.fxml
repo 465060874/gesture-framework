@@ -18,13 +18,26 @@
                   <Button text="Open" fx:id="openButton"/>
               </items>
           </ToolBar>
-          <HBox fx:id="hBox">
+          <!--<HBox fx:id="hBox">-->
+              <!--<VBox.vgrow>ALWAYS</VBox.vgrow>-->
+              <!--<children>-->
+                  <!--<SplitPane fx:id="splitPane" >-->
+                      <!--<items>-->
+                          <!--<ScrollPane id="scrollPanel" fx:id="mainScrollPanel" HBox.hgrow="ALWAYS"-->
+                              <!--fitToHeight="true" fitToWidth="true">-->
+                          <!--</ScrollPane>-->
+                      <!--</items>-->
+                  <!--</SplitPane>-->
+
+              <!--</children>-->
+          <!--</HBox>-->
+          <SplitPane fx:id="splitPane">
               <VBox.vgrow>ALWAYS</VBox.vgrow>
-              <children>
+              <items>
                   <ScrollPane id="scrollPanel" fx:id="mainScrollPanel" HBox.hgrow="ALWAYS"
                               fitToHeight="true" fitToWidth="true">
                   </ScrollPane>
-              </children>
-          </HBox>
+              </items>
+          </SplitPane>
       </children>
 </fx:root>

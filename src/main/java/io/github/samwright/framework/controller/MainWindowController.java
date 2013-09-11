@@ -1,10 +1,6 @@
 package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
-import io.github.samwright.framework.controller.example.ExContainerController;
-import io.github.samwright.framework.controller.example.ExElementController;
-import io.github.samwright.framework.controller.example.StartElementController;
-import io.github.samwright.framework.controller.example.ViewerController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.controller.helper.IntegerViewer;
 import io.github.samwright.framework.controller.helper.PreviewPane;
@@ -21,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -39,6 +36,9 @@ public class MainWindowController extends VBox {
 
     @FXML
     private HBox hBox;
+
+    @FXML
+    private SplitPane splitPane;
 
     @FXML
     private Button undoButton, redoButton, trainButton,
@@ -94,7 +94,8 @@ public class MainWindowController extends VBox {
 
         toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         toolboxController.setStyle("-fx-vgap: 5;-fx-hgap: 5;-fx-padding: 5");
-        hBox.getChildren().add(toolboxController);
+        splitPane.getItems().add(toolboxController);
+        SplitPane.setResizableWithParent(toolboxController, false);
 
         topController.handleUpdatedModel();
         topController.addNewWorkflow();
@@ -107,18 +108,20 @@ public class MainWindowController extends VBox {
             }
         });
 
-        ModelLoader.registerPrototypeModel(new ExElementController().getModel());
-        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
+//        ModelLoader.registerPrototypeModel(new ExElementController().getModel());
+//        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
-        ModelLoader.registerPrototypeModel(new StartElementController().getModel());
-        ModelLoader.registerPrototypeModel(new ViewerController().getModel());
+//        ModelLoader.registerPrototypeModel(new StartElementController().getModel());
+//        ModelLoader.registerPrototypeModel(new ViewerController().getModel());
         ModelLoader.registerPrototypeModel(new ImageLoaderController().getModel());
         ModelLoader.registerPrototypeModel(new SkinDetectorController().getModel());
         ModelLoader.registerPrototypeModel(new StaticColourRangeController().getModel());
+        ModelLoader.registerPrototypeModel(new ContourFinderController().getModel());
 
         PreviewPane.registerDataViewer(new IntegerViewer());
         PreviewPane.registerDataViewer(new ImageViewer());
         PreviewPane.registerDataViewer(new ColourRangeViewer());
+        PreviewPane.registerDataViewer(new ContourViewer());
 
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
@@ -168,18 +171,18 @@ public class MainWindowController extends VBox {
         File file = new FileChooser().showOpenDialog(null);
         if (file == null)
             return;
-
+        filename = file.getAbsolutePath();
         TopWorkflowContainer loaded = (TopWorkflowContainer)
                 XMLHelper.loadProcessorFromFile(file.getAbsolutePath(), false);
 
 
         setTopController((TopContainerController) loaded.getController());
-//        topController.startTransientUpdateMode();
-//        try {
-//            topController.getModel().discardPrevious();
-//        } finally {
-//            topController.endTransientUpdateMode();
-//        }
+        topController.startTransientUpdateMode();
+        try {
+            topController.getModel().discardPrevious();
+        } finally {
+            topController.endTransientUpdateMode();
+        }
     }
 }
 

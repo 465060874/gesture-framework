@@ -11,7 +11,8 @@ public class ToolboxController extends FlowPane {
 
     public ToolboxController() {
         HBox.setHgrow(this, Priority.NEVER);
-        setPrefWidth(200);
+        setPrefWidth(150);
+//        setMinWidth(100);
     }
 
 }

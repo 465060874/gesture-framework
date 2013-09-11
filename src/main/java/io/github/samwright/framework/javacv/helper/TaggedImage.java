@@ -1,4 +1,4 @@
-package io.github.samwright.framework.javacv;
+package io.github.samwright.framework.javacv.helper;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import lombok.Getter;
