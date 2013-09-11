@@ -73,6 +73,4 @@ public class ContourFinderController extends ElementController {
         upperLimit.setValue(getModel().getUpperLimit());
         changing = false;
     }
-
-
 }

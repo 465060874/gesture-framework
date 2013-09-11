@@ -45,6 +45,15 @@ public class PreviewPane extends VBox implements ElementObserver {
             }
         });
 
+        visibleProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue,
+                                Boolean oldVal,
+                                Boolean newVal) {
+                if (newVal)
+                    updateDataViewer();
+            }
+        });
     }
 
     public void setInputType(Class inputType) {
@@ -105,6 +114,7 @@ public class PreviewPane extends VBox implements ElementObserver {
     @Override
     public void notify(Mediator mediator) {
         this.lastMediator = mediator;
-        updateDataViewer();
+        if (isVisible())
+            updateDataViewer();
     }
 }

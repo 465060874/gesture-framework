@@ -7,12 +7,17 @@ import com.googlecode.javacv.cpp.opencv_core.CvSeq;
 import io.github.samwright.framework.javacv.helper.Contours;
 import io.github.samwright.framework.javacv.helper.TaggedImage;
 import io.github.samwright.framework.model.AbstractElement;
+import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
+import io.github.samwright.framework.model.helper.XMLHelper;
 import lombok.Getter;
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvCloneImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
@@ -51,8 +56,8 @@ public class ContourFinder extends AbstractElement {
         List<CvSeq> contours = new ArrayList<>();
         while (contour != null && !contour.isNull()) {
             if (contour.elem_size() > 0
-                    && contour.total() > lowerLimit
-                    && contour.total() > upperLimit) {
+                    && contour.total() >= lowerLimit
+                    && contour.total() <= upperLimit) {
                 contours.add(contour);
             }
             contour = contour.h_next();
@@ -87,5 +92,27 @@ public class ContourFinder extends AbstractElement {
         } else {
             return createMutableClone().withLowerLimit(lowerLimit);
         }
+    }
+
+    @Override
+    public ContourFinder withXML(org.w3c.dom.Element node, Map<UUID, Processor> map) {
+        if (!isMutable())
+            return createMutableClone().withXML(node, map);
+
+        super.withXML(node, map);
+        upperLimit = Integer.parseInt(XMLHelper.getDataUnderNode(node, "UpperLimit"));
+        lowerLimit = Integer.parseInt(XMLHelper.getDataUnderNode(node, "LowerLimit"));
+
+        return this;
+    }
+
+    @Override
+    public org.w3c.dom.Element getXMLForDocument(Document doc) {
+        org.w3c.dom.Element node = super.getXMLForDocument(doc);
+
+        XMLHelper.addDataUnderNode(node, "UpperLimit", String.valueOf(upperLimit));
+        XMLHelper.addDataUnderNode(node, "LowerLimit", String.valueOf(lowerLimit));
+
+        return node;
     }
 }

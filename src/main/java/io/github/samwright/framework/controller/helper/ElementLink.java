@@ -271,8 +271,6 @@ public class ElementLink extends Pane implements ElementObserver {
                 mainLine.startYProperty()
                 .subtract(previewPaneHeight)
         );
-
-
     }
 
     public void setController(ElementController controller) {
