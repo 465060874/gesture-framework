@@ -2,8 +2,7 @@ package io.github.samwright.framework.javacv;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import io.github.samwright.framework.controller.helper.DataViewer;
-import io.github.samwright.framework.javacv.helper.Contours;
-import io.github.samwright.framework.javacv.helper.TaggedImage;
+import io.github.samwright.framework.javacv.helper.Contour;
 import io.github.samwright.framework.model.helper.Mediator;
 
 import static com.googlecode.javacv.cpp.opencv_core.*;
@@ -15,7 +14,6 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
  */
 public class ContourViewer extends ImageViewer {
 
-
     @Override
     public DataViewer createClone() {
         return new ContourViewer();
@@ -23,24 +21,19 @@ public class ContourViewer extends ImageViewer {
 
     @Override
     public Class<?> getViewableClass() {
-        return Contours.class;
+        return Contour.class;
     }
 
     @Override
     public void view(Mediator mediator) {
-        Contours contours = (Contours) mediator.getData();
-        do {
-            mediator = mediator.getPrevious();
-        } while(!(mediator.getData() instanceof TaggedImage));
-        TaggedImage image = (TaggedImage) mediator.getData();
-        IplImage src = image.getImage();
+        Contour contours = (Contour) mediator.getData();
+        IplImage src = contours.getSourceImage();
 
         opencv_core.IplImage copiedImage = IplImage.create(cvGetSize(src), src.depth(), 3);
         cvCvtColor(src, copiedImage, CV_GRAY2BGR);
 
         opencv_core.CvScalar colour = opencv_core.CvScalar.RED;
-        for (opencv_core.CvSeq contour : contours.getContours())
-            cvDrawContours(copiedImage, contour, colour, colour, -1, 3, CV_AA);
+        cvDrawContours(copiedImage, contours.getContour(), colour, colour, -1, 3, CV_AA);
 
         super.view(copiedImage);
     }

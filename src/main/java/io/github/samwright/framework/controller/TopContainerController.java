@@ -176,4 +176,8 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
             toDeselect.setSelected(false);
         selected.clear();
     }
+
+    public boolean canProcess() {
+        return getModel().areChildrenValid() && getModel().isValid();
+    }
 }

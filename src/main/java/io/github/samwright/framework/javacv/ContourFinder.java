@@ -2,9 +2,8 @@ package io.github.samwright.framework.javacv;
 
 import com.googlecode.javacpp.Loader;
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.CvMemStorage;
-import com.googlecode.javacv.cpp.opencv_core.CvSeq;
-import io.github.samwright.framework.javacv.helper.Contours;
+import com.googlecode.javacv.cpp.opencv_core.*;
+import io.github.samwright.framework.javacv.helper.Contour;
 import io.github.samwright.framework.javacv.helper.TaggedImage;
 import io.github.samwright.framework.model.AbstractElement;
 import io.github.samwright.framework.model.Processor;
@@ -14,12 +13,10 @@ import io.github.samwright.framework.model.helper.XMLHelper;
 import lombok.Getter;
 import org.w3c.dom.Document;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.googlecode.javacv.cpp.opencv_core.cvCloneImage;
+import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 
 /**
@@ -30,7 +27,7 @@ public class ContourFinder extends AbstractElement {
     @Getter private int upperLimit, lowerLimit;
 
     public ContourFinder() {
-        super(new TypeData(TaggedImage.class, Contours.class));
+        super(new TypeData(TaggedImage.class, Contour.class));
         upperLimit = 1000;
         lowerLimit = 100;
     }
@@ -47,23 +44,33 @@ public class ContourFinder extends AbstractElement {
         opencv_core.IplImage src = cvCloneImage(image.getImage());
 
         CvMemStorage storage = CvMemStorage.create();
-        CvSeq contourSeq = new CvSeq(null);
-        cvFindContours(src, storage, contourSeq, Loader.sizeof(opencv_core.CvContour.class),
+        CvSeq contours = new CvSeq(null);
+        cvFindContours(src, storage, contours, Loader.sizeof(opencv_core.CvContour.class),
                 CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+//        storage.release();
 
-        // Convert contour sequence to array list
-        CvSeq contour = contourSeq;
-        List<CvSeq> contours = new ArrayList<>();
-        while (contour != null && !contour.isNull()) {
-            if (contour.elem_size() > 0
-                    && contour.total() >= lowerLimit
-                    && contour.total() <= upperLimit) {
-                contours.add(contour);
+        // adapted from: http://www.javacodegeeks.com/2012/12/hand-and-finger-detection-using-javacv.html
+        // find the largest contour in the list based on bounded box size
+        float maxArea = 200;
+        CvBox2D maxBox = null;
+        CvSeq bigContour = null;
+
+        while (contours != null && !contours.isNull()) {
+            if (contours.elem_size() > 0) {
+                CvBox2D box = cvMinAreaRect2(contours, storage);
+                if (box != null) {
+                    CvSize2D32f size = box.size();
+                    float area = size.width() * size.height();
+                    if (area > maxArea) {
+                        maxArea = area;
+                        bigContour = contours;
+                    }
+                }
             }
-            contour = contour.h_next();
+            contours = contours.h_next();
         }
 
-        return input.createNext(this, new Contours(contours));
+        return input.createNext(this, new Contour(bigContour, image.getImage()));
     }
 
     @Override

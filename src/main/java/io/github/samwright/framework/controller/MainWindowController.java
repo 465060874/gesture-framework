@@ -2,7 +2,6 @@ package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
-import io.github.samwright.framework.controller.helper.IntegerViewer;
 import io.github.samwright.framework.controller.helper.PreviewPane;
 import io.github.samwright.framework.javacv.*;
 import io.github.samwright.framework.model.Element;
@@ -117,11 +116,18 @@ public class MainWindowController extends VBox {
         ModelLoader.registerPrototypeModel(new SkinDetectorController().getModel());
         ModelLoader.registerPrototypeModel(new StaticColourRangeController().getModel());
         ModelLoader.registerPrototypeModel(new ContourFinderController().getModel());
+//        ModelLoader.registerPrototypeModel(new ConvexHullFinderController().getModel());
+        ModelLoader.registerPrototypeModel(new HandDetectorController().getModel());
+        ModelLoader.registerPrototypeModel(new FingertipFinderController().getModel());
+        ModelLoader.registerPrototypeModel(new PalmDetectorController().getModel());
 
-        PreviewPane.registerDataViewer(new IntegerViewer());
+
+//        PreviewPane.registerDataViewer(new IntegerViewer());
         PreviewPane.registerDataViewer(new ImageViewer());
         PreviewPane.registerDataViewer(new ColourRangeViewer());
         PreviewPane.registerDataViewer(new ContourViewer());
+        PreviewPane.registerDataViewer(new PalmViewer());
+        PreviewPane.registerDataViewer(new FingertipViewer());
 
 
         for (Processor p : ModelLoader.getAllProtoypeModels())
@@ -145,6 +151,7 @@ public class MainWindowController extends VBox {
     public void handleUpdatedModel() {
         redoButton.setDisable(!topController.canRedo());
         undoButton.setDisable(!topController.canUndo());
+        processButton.setDisable(!topController.canProcess());
         requestLayout();
     }
 
