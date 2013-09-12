@@ -51,7 +51,7 @@ public class PalmDetector extends AbstractElement {
         double m02 = cvGetCentralMoment(moments, 0, 2);
         contourAxisAngle = calculateTilt(m11, m20, m02);
 
-        return input.createNext(this, new Palm(cogPt, contourAxisAngle, contour.getSourceImage()));
+        return input.createNext(this, new Palm(cogPt, contourAxisAngle, contour.getSourceTaggedImage()));
     }
 
     private int calculateTilt(double m11, double m20, double m02) {

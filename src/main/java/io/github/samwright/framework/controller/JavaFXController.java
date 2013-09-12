@@ -72,12 +72,6 @@ public abstract class JavaFXController extends VBox implements ModelController {
                 setStyle("-fx-background-color: #c7537f");
             else
                 setStyle("-fx-background-color: #cd9686");
-//        } else if (model != null &&
-//                model instanceof ParentOf && !((ParentOf) model).areChildrenValid()) {
-//            if (clickedProperty.get())
-//                setStyle("-fx-background-color: lightblue");
-//            else
-//                setStyle("-fx-background-color: #f7ff51");
         } else {
             if (isSelected())
                 setStyle("-fx-background-color: lightblue");

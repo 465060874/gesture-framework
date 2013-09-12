@@ -25,8 +25,8 @@ final public class TypeData {
         defaultType = new TypeData(Object.class, Object.class);
     }
 
-    @Getter @NonNull private final Class inputType;
-    @Getter @NonNull private final Class outputType;
+    @Getter @NonNull private final Class<?> inputType;
+    @Getter @NonNull private final Class<?> outputType;
 
     @Override
     public String toString() {

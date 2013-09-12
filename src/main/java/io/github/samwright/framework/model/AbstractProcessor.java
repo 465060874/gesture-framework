@@ -10,7 +10,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.w3c.dom.Document;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * User: Sam Wright Date: 31/08/2013 Time: 12:53
@@ -64,14 +67,22 @@ public abstract class AbstractProcessor implements Processor {
 
     @Override
     public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
-        Set<Mediator> allOutputs = completedTrainingBatch.getAll();
+        // Check typedata
+        Mediator first = completedTrainingBatch.getAll().iterator().next();
+        if (first != null) {
+            Processor creator = first.getHistory().getCreator();
+            if (creator != this)
+                throw new RuntimeException("Training batch was created by: " + creator
+                                        + " instead of this: " + this);
 
-        Set<Mediator> successfulOutputs = completedTrainingBatch.getSuccessful();
+            Class<?> myOutput = getTypeData().getOutputType();
+            Class<?> outputDataType = first.getData().getClass();
+            if (!myOutput.isAssignableFrom(outputDataType))
+                throw new RuntimeException("Training batch had output type: " + outputDataType
+                                         + " but this processor only outputs type: " + myOutput);
+        }
 
-        Set<Mediator> allInputs = Mediator.rollbackMediators(allOutputs);
-        Set<Mediator> successfulInputs = Mediator.rollbackMediators(successfulOutputs);
-
-        return new CompletedTrainingBatch(allInputs, successfulInputs);
+        return completedTrainingBatch.rollBack();
     }
 
     @Override

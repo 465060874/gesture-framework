@@ -4,6 +4,7 @@ import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.controller.helper.PreviewPane;
 import io.github.samwright.framework.javacv.*;
+import io.github.samwright.framework.javacv.to_delete.PointsViewer;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.TopWorkflowContainer;
@@ -68,7 +69,13 @@ public class MainWindowController extends VBox {
         processButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                topController.getModel().process(null);
+                topController.getModel().process();
+            }
+        });
+        trainButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                topController.getModel().train();
             }
         });
         saveButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -120,14 +127,21 @@ public class MainWindowController extends VBox {
         ModelLoader.registerPrototypeModel(new HandDetectorController().getModel());
         ModelLoader.registerPrototypeModel(new FingertipFinderController().getModel());
         ModelLoader.registerPrototypeModel(new PalmDetectorController().getModel());
+        ModelLoader.registerPrototypeModel(new FingertipReducerController().getModel());
+        ModelLoader.registerPrototypeModel(new SimplifyContourController().getModel());
+//        ModelLoader.registerPrototypeModel(new DominantPointFinderController().getModel());
+        ModelLoader.registerPrototypeModel(new NNClassifierController().getModel());
 
 
-//        PreviewPane.registerDataViewer(new IntegerViewer());
+//        PreviewPane.registerDataViewer(new StringViewer());
         PreviewPane.registerDataViewer(new ImageViewer());
         PreviewPane.registerDataViewer(new ColourRangeViewer());
         PreviewPane.registerDataViewer(new ContourViewer());
         PreviewPane.registerDataViewer(new PalmViewer());
         PreviewPane.registerDataViewer(new FingertipViewer());
+        PreviewPane.registerDataViewer(new PointsViewer());
+        PreviewPane.registerDataViewer(new HandViewer());
+        PreviewPane.registerDataViewer(new ClassificationViewer());
 
 
         for (Processor p : ModelLoader.getAllProtoypeModels())

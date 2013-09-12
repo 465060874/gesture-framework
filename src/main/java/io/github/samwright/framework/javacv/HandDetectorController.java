@@ -20,8 +20,12 @@ public class HandDetectorController extends WorkflowContainerControllerImpl {
     public HandDetectorController() {
         WorkflowContainer model = new HandDetector();
 
-        model = model.withChildren(Arrays.asList(new WorkflowControllerImpl().getModel(),
-                new WorkflowControllerImpl().getModel()));
+        model = model.withChildren(Arrays.asList(
+                new WorkflowControllerImpl().getModel(),
+                new WorkflowControllerImpl().getModel(),
+                new WorkflowControllerImpl().getModel()
+        ));
+
         model.replace(null);
         proposeModel(model);
         setElementLink(new ElementLink());
@@ -32,13 +36,15 @@ public class HandDetectorController extends WorkflowContainerControllerImpl {
     }
 
     private void relabelWorkflows() {
-        WorkflowControllerImpl contourWorkflow = (WorkflowControllerImpl) workflowsBox
-                .getChildren().get(0);
-        contourWorkflow.setLabel("Contour");
+        relabelWorkflow(0, "Contour");
+        relabelWorkflow(1, "Palm");
+        relabelWorkflow(2, "Fingertips");
+    }
 
-        WorkflowControllerImpl convexHullWorkflow = (WorkflowControllerImpl) workflowsBox
-                .getChildren().get(1);
-        convexHullWorkflow.setLabel("Convex Hull");
+    private void relabelWorkflow(int index, String label) {
+        WorkflowControllerImpl workflowController
+                = (WorkflowControllerImpl) workflowsBox.getChildren().get(index);
+        workflowController.setLabel(label);
     }
 
     @Override

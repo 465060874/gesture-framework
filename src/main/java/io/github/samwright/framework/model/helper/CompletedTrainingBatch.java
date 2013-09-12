@@ -20,4 +20,11 @@ public class CompletedTrainingBatch {
             throw new RuntimeException("'Successful' set must be subset of 'all' set");
     }
 
+    public CompletedTrainingBatch rollBack() {
+        Set<Mediator> allInputs = Mediator.rollbackMediators(all);
+        Set<Mediator> successfulInputs = Mediator.rollbackMediators(successful);
+
+        return new CompletedTrainingBatch(allInputs, successfulInputs);
+    }
+
 }

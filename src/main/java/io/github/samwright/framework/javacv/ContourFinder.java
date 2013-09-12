@@ -2,7 +2,10 @@ package io.github.samwright.framework.javacv;
 
 import com.googlecode.javacpp.Loader;
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.*;
+import com.googlecode.javacv.cpp.opencv_core.CvBox2D;
+import com.googlecode.javacv.cpp.opencv_core.CvMemStorage;
+import com.googlecode.javacv.cpp.opencv_core.CvSeq;
+import com.googlecode.javacv.cpp.opencv_core.CvSize2D32f;
 import io.github.samwright.framework.javacv.helper.Contour;
 import io.github.samwright.framework.javacv.helper.TaggedImage;
 import io.github.samwright.framework.model.AbstractElement;
@@ -16,7 +19,7 @@ import org.w3c.dom.Document;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.googlecode.javacv.cpp.opencv_core.*;
+import static com.googlecode.javacv.cpp.opencv_core.cvCloneImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 
 /**
@@ -70,7 +73,7 @@ public class ContourFinder extends AbstractElement {
             contours = contours.h_next();
         }
 
-        return input.createNext(this, new Contour(bigContour, image.getImage()));
+        return input.createNext(this, new Contour(bigContour, image));
     }
 
     @Override

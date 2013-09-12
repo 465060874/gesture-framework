@@ -26,7 +26,7 @@ public class PalmViewer extends ImageViewer {
     @Override
     public void view(Mediator mediator) {
         Palm palm = (Palm) mediator.getData();
-        opencv_core.IplImage src = palm.getSourceImage();
+        opencv_core.IplImage src = palm.getSourceTaggedImage().getImage();
 
         opencv_core.IplImage copiedImage = opencv_core.IplImage.create(cvGetSize(src), src.depth(), 3);
         cvCvtColor(src, copiedImage, CV_GRAY2BGR);

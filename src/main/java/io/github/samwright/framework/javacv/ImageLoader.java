@@ -3,7 +3,7 @@ package io.github.samwright.framework.javacv;
 import com.googlecode.javacpp.Loader;
 import com.googlecode.javacv.FrameGrabber;
 import com.googlecode.javacv.cpp.opencv_objdetect;
-import io.github.samwright.framework.javacv.helper.TaggedImage;
+import io.github.samwright.framework.javacv.helper.LoadedImage;
 import io.github.samwright.framework.model.AbstractElement;
 import io.github.samwright.framework.model.datatypes.StartType;
 import io.github.samwright.framework.model.helper.Mediator;
@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 
+import static com.googlecode.javacv.cpp.opencv_core.IplImage;
 import static com.googlecode.javacv.cpp.opencv_highgui.cvSaveImage;
 
 /**
@@ -27,12 +28,12 @@ public class ImageLoader extends AbstractElement {
 
 
     @Getter private String directory;
-    @Getter private TaggedImage activeImage;
-    private List<TaggedImage> images;
+    @Getter private LoadedImage activeImage;
+    private List<LoadedImage> images;
 
 
     public ImageLoader() {
-        super(new TypeData(StartType.class, TaggedImage.class));
+        super(new TypeData(StartType.class, LoadedImage.class));
         images = new ArrayList<>();
         directory = "/Users/eatmuchpie/Documents/imageDir/";
         reloadImages();
@@ -46,11 +47,11 @@ public class ImageLoader extends AbstractElement {
         reloadImages();
     }
 
-    public List<TaggedImage> getImages() {
+    public List<LoadedImage> getImages() {
         return Collections.unmodifiableList(images);
     }
 
-    public void setActiveImage(TaggedImage image) {
+    public void setActiveImage(LoadedImage image) {
         if (image != null && !images.contains(image))
             throw new RuntimeException("Can only select a loaded image");
         this.activeImage = image;
@@ -64,13 +65,13 @@ public class ImageLoader extends AbstractElement {
         if (activeImage == null)
             throw new RuntimeException("Null active image!");
 
-        return Mediator.createEmpty().createNext(this, activeImage);
+        return input.createNext(this, activeImage);
     }
 
     @Override
     public List<Mediator> processTrainingData(Mediator input) {
         List<Mediator> outputs = new ArrayList<>();
-        for (TaggedImage image : images)
+        for (LoadedImage image : images)
             outputs.add(input.createNext(this, image));
 
         return outputs;
@@ -111,16 +112,16 @@ public class ImageLoader extends AbstractElement {
             }
         });
 
-        Map<String, TaggedImage> alreadyLoaded = new HashMap<>();
-        for (TaggedImage image : images)
-            alreadyLoaded.put(image.getTag(), image);
+        Map<String, LoadedImage> alreadyLoaded = new HashMap<>();
+        for (LoadedImage image : images)
+            alreadyLoaded.put(image.getFilename(), image);
 
         for (File jpg : jpgs) {
-            if (!alreadyLoaded.containsKey(jpg.getName())) {
-                TaggedImage image = TaggedImage.loadFromFilename(jpg.getAbsolutePath());
+            if (!alreadyLoaded.containsKey(jpg.getAbsolutePath())) {
+                LoadedImage image = LoadedImage.loadFromFilename(jpg.getAbsolutePath());
                 images.add(image);
             } else {
-                alreadyLoaded.remove(jpg.getName());
+                alreadyLoaded.remove(jpg.getAbsolutePath());
             }
         }
 
@@ -136,13 +137,13 @@ public class ImageLoader extends AbstractElement {
             tag = "Snapshot";
 
         tag = tag + ".jpg";
-        TaggedImage image;
+        IplImage image;
         FrameGrabber grabber = null;
 
         try {
             grabber = FrameGrabber.createDefault(-1);
             grabber.start();
-            image = new TaggedImage(grabber.grab(), tag);
+            image = grabber.grab();
         } catch (FrameGrabber.Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -157,17 +158,18 @@ public class ImageLoader extends AbstractElement {
         }
 
         if (isDirectoryValid()) {
-            cvSaveImage(directory + tag, image.getImage());
+            String fullFileName = directory + tag + ".jpg";
+            cvSaveImage(fullFileName, image);
             reloadImages();
             activeImage = null;
-            for (TaggedImage loadedImage : images) {
-                if (loadedImage.getTag().equals(tag)) {
+            for (LoadedImage loadedImage : images) {
+                if (loadedImage.getFilename().equals(fullFileName)) {
                     activeImage = loadedImage;
                     break;
                 }
             }
         } else {
-            activeImage = image;
+            activeImage = new LoadedImage(image, tag, null);
         }
     }
 

@@ -8,6 +8,10 @@ import io.github.samwright.framework.controller.helper.ElementLink;
  */
 public class FingertipFinderController extends ElementController {
 
+
+
+
+
     public FingertipFinderController() {
         super("/fxml/FingertipFinder.fxml");
         proposeModel(new FingertipFinder());
@@ -22,4 +26,8 @@ public class FingertipFinderController extends ElementController {
     public ElementController createClone() {
         return new FingertipFinderController(this);
     }
+
+
+
+
 }

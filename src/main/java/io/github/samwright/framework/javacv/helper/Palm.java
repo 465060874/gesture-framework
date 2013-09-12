@@ -10,6 +10,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Palm {
     @Getter private final opencv_core.CvPoint cog;
-    @Getter private final int contourAxisAngle;
-    @Getter private final opencv_core.IplImage sourceImage;
+    @Getter private final double contourAxisAngle;
+    @Getter private final TaggedImage sourceTaggedImage;
 }

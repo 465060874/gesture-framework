@@ -27,7 +27,7 @@ public class ContourViewer extends ImageViewer {
     @Override
     public void view(Mediator mediator) {
         Contour contours = (Contour) mediator.getData();
-        IplImage src = contours.getSourceImage();
+        IplImage src = contours.getSourceTaggedImage().getImage();
 
         opencv_core.IplImage copiedImage = IplImage.create(cvGetSize(src), src.depth(), 3);
         cvCvtColor(src, copiedImage, CV_GRAY2BGR);

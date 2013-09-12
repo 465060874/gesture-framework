@@ -8,11 +8,11 @@ import javafx.scene.text.TextAlignment;
 /**
  * User: Sam Wright Date: 05/09/2013 Time: 14:23
  */
-public class IntegerViewer extends DataViewer {
+public abstract class StringViewer extends DataViewer {
 
     private Label label;
 
-    public IntegerViewer() {
+    public StringViewer() {
         label = new Label("No data");
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
@@ -20,23 +20,9 @@ public class IntegerViewer extends DataViewer {
     }
 
     @Override
-    public DataViewer createClone() {
-        return new IntegerViewer();
-    }
-
-    @Override
-    public Class<?> getViewableClass() {
-        return Integer.class;
-    }
-
-    @Override
     public void view(Mediator mediator) {
-        Integer data = (Integer) mediator.getData();
-        label.setText(String.valueOf(data));
+        label.setText(getString(mediator));
     }
 
-    @Override
-    public String toString() {
-        return "Integer";
-    }
+    public abstract String getString(Mediator mediator);
 }

@@ -157,7 +157,7 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
             workflow.processCompletedTrainingBatch(workflowBatch);
         }
 
-        return super.processCompletedTrainingBatch(completedTrainingBatch);
+        return completedTrainingBatch.rollBack();
     }
 
     @SuppressWarnings("unchecked")

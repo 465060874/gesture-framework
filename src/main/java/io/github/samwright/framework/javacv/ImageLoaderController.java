@@ -3,7 +3,7 @@ package io.github.samwright.framework.javacv;
 import io.github.samwright.framework.controller.ElementController;
 import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.helper.ElementLink;
-import io.github.samwright.framework.javacv.helper.TaggedImage;
+import io.github.samwright.framework.javacv.helper.LoadedImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -25,18 +25,18 @@ public class ImageLoaderController extends ElementController {
     private Button snapshotButton;
 
     @FXML
-    private ListView<TaggedImage> imagesView;
+    private ListView<LoadedImage> imagesView;
 
     private boolean editingImages = false;
 
     {
-        imagesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TaggedImage>() {
+        imagesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<LoadedImage>() {
             @Override
-            public void changed(ObservableValue<? extends TaggedImage> observableValue,
-                                TaggedImage oldVal, TaggedImage newVal) {
+            public void changed(ObservableValue<? extends LoadedImage> observableValue,
+                                LoadedImage oldVal, LoadedImage newVal) {
                 if (!editingImages) {
                     getModel().setActiveImage(newVal);
-                    MainWindowController.getTopController().getModel().process(null);
+                    MainWindowController.getTopController().getModel().process();
                 }
             }
         });
@@ -80,7 +80,7 @@ public class ImageLoaderController extends ElementController {
         imagesView.getItems().addAll(getModel().getImages());
         editingImages = false;
 
-        TaggedImage activeImage = getModel().getActiveImage();
+        LoadedImage activeImage = getModel().getActiveImage();
         if (activeImage != null)
             imagesView.getSelectionModel().select(activeImage);
         else

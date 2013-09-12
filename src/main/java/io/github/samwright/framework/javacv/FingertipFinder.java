@@ -1,11 +1,9 @@
 package io.github.samwright.framework.javacv;
 
-import com.googlecode.javacpp.Loader;
 import com.googlecode.javacpp.Pointer;
 import io.github.samwright.framework.javacv.helper.Contour;
 import io.github.samwright.framework.javacv.helper.Fingertips;
 import io.github.samwright.framework.model.AbstractElement;
-import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 
@@ -20,31 +18,25 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.*;
  */
 public class FingertipFinder extends AbstractElement {
 
+
     public FingertipFinder() {
         super(new TypeData(Contour.class, Fingertips.class));
     }
 
-    public FingertipFinder(AbstractElement oldElement) {
+    public FingertipFinder(FingertipFinder oldElement) {
         super(oldElement);
     }
 
     @Override
     public Mediator process(Mediator input) {
         Contour contour = (Contour) input.getData();
-
         CvMemStorage storage = CvMemStorage.create();
 
-        CvSeq approxContour = cvApproxPoly(contour.getContour(),
-                Loader.sizeof(CvContour.class),
-                storage, CV_POLY_APPROX_DP, 3, 1);
-        // reduce number of points in the contour
-
-        CvSeq hullSeq = cvConvexHull2(approxContour,
-                storage, CV_COUNTER_CLOCKWISE, 0);
+        CvSeq hullSeq = cvConvexHull2(contour.getContour(),
+                storage, CV_CLOCKWISE, 0);
         // find the convex hull around the contour
 
-        CvSeq defects = cvConvexityDefects(approxContour,
-                hullSeq, storage);
+        CvSeq defects = cvConvexityDefects(contour.getContour(), hullSeq, storage);
         // find the defect differences between the contour and hull
 
         List<CvPoint> tips = new ArrayList<>();
@@ -70,11 +62,12 @@ public class FingertipFinder extends AbstractElement {
             // array contains distances from tips to folds
         }
 
-        return input.createNext(this, new Fingertips(tips, folds, depths,contour.getSourceImage()));
+
+        return input.createNext(this, new Fingertips(tips, folds, depths,contour.getSourceTaggedImage()));
     }
 
     @Override
-    public Element createMutableClone() {
+    public FingertipFinder createMutableClone() {
         return new FingertipFinder(this);
     }
 
@@ -82,4 +75,8 @@ public class FingertipFinder extends AbstractElement {
     public boolean isValid() {
         return true;
     }
+
+
+
+
 }

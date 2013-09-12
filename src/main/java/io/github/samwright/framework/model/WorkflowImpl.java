@@ -88,7 +88,11 @@ public class WorkflowImpl extends AbstractWorkflow {
             inputs = outputs;
         }
 
-        return inputs;
+        outputs = new ArrayList<>();
+        for (Mediator input : inputs)
+            outputs.add(input.createNext(this, input.getData()));
+
+        return outputs;
     }
 
     @Override

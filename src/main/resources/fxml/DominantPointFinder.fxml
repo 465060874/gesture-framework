@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<fx:root fx:id="element" type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/Element.css"
+         maxHeight="-Infinity"
+        >
+    <children>
+        <Label alignment="CENTER" text="Dominant Point Finder" fx:id="label" minWidth="-Infinity"/>
+    </children>
+</fx:root>

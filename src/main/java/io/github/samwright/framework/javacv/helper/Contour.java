@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Contour {
     @Getter private final opencv_core.CvSeq contour;
-    @Getter private final opencv_core.IplImage sourceImage;
+    @Getter private final TaggedImage sourceTaggedImage;
 
     public static List<opencv_core.CvSeq> cvSeq2List(opencv_core.CvSeq seq, int lowerLimit,
                                                      int upperLimit) {
