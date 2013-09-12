@@ -69,7 +69,7 @@ public abstract class AbstractProcessor implements Processor {
     public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
         // Check typedata
         Mediator first = completedTrainingBatch.getAll().iterator().next();
-        if (first != null) {
+        if (first != null && first.getData() != null) {
             Processor creator = first.getHistory().getCreator();
             if (creator != this)
                 throw new RuntimeException("Training batch was created by: " + creator

@@ -12,6 +12,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+
+import java.io.File;
 
 /**
  * User: Sam Wright Date: 06/09/2013 Time: 11:44
@@ -22,10 +26,13 @@ public class ImageLoaderController extends ElementController {
     private TextField tagField;
 
     @FXML
-    private Button snapshotButton;
+    private Button snapshotButton, directoryButton;
 
     @FXML
     private ListView<LoadedImage> imagesView;
+
+    @FXML
+    private VBox configPane;
 
     private boolean editingImages = false;
 
@@ -48,7 +55,16 @@ public class ImageLoaderController extends ElementController {
             }
         });
 
-        setConfigNode(imagesView);
+        directoryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                File folder = new DirectoryChooser().showDialog(null);
+                if (folder != null && folder.isDirectory())
+                    getModel().replaceWith(getModel().withDirectory(folder.getAbsolutePath()));
+            }
+        });
+
+        setConfigNode(configPane);
     }
 
     public ImageLoaderController() {

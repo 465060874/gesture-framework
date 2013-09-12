@@ -57,9 +57,7 @@ public class NNClassifier extends AbstractElement {
 
     @Override
     public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
-        System.out.println("About to setup NN");
         setupNet();
-        System.out.println("About to train NN");
         trainNet();
 
         Set<Mediator> successful = new HashSet<>();
@@ -72,7 +70,6 @@ public class NNClassifier extends AbstractElement {
         }
 
         Set<Mediator> all = Mediator.rollbackMediators(completedTrainingBatch.getAll());
-        System.out.println(" === success rate = " + (successful.size() * 100. / all.size()));
         return new CompletedTrainingBatch(all, successful);
     }
 
@@ -92,17 +89,13 @@ public class NNClassifier extends AbstractElement {
         // Find index of largest output:
         double maxVal = -100;
         int maxIndex = -1;
-        System.out.println(" == classes:");
         for (int i = 0; i < classIndex.size(); ++i) {
             double classOutput = cvGet2D(outputData, 0, i).getDoublePointerVal().get();
             if (classOutput > maxVal) {
                 maxVal = classOutput;
                 maxIndex = i;
             }
-            System.out.format(" %s : %f%n", classIndex.get(i), classOutput);
         }
-
-        System.out.println("\tClassified as: " + classIndex.get(maxIndex));
 
         return classIndex.get(maxIndex);
     }
@@ -163,6 +156,6 @@ public class NNClassifier extends AbstractElement {
 
     @Override
     public boolean isValid() {
-        return true;
+        return net != null;
     }
 }

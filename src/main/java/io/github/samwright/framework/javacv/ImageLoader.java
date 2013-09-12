@@ -5,10 +5,14 @@ import com.googlecode.javacv.FrameGrabber;
 import com.googlecode.javacv.cpp.opencv_objdetect;
 import io.github.samwright.framework.javacv.helper.LoadedImage;
 import io.github.samwright.framework.model.AbstractElement;
+import io.github.samwright.framework.model.Element;
+import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.datatypes.StartType;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
+import io.github.samwright.framework.model.helper.XMLHelper;
 import lombok.Getter;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -35,7 +39,7 @@ public class ImageLoader extends AbstractElement {
     public ImageLoader() {
         super(new TypeData(StartType.class, LoadedImage.class));
         images = new ArrayList<>();
-        directory = "/Users/eatmuchpie/Documents/imageDir/";
+        directory = "";
         reloadImages();
     }
 
@@ -84,7 +88,7 @@ public class ImageLoader extends AbstractElement {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isDirectoryValid();
     }
 
     public ImageLoader withDirectory(String directory) {
@@ -174,6 +178,23 @@ public class ImageLoader extends AbstractElement {
     }
 
     private boolean isDirectoryValid() {
-        return directory != null && new File(directory).isDirectory();
+        return !directory.isEmpty() && new File(directory).isDirectory();
+    }
+
+    @Override
+    public Element withXML(org.w3c.dom.Element node, Map<UUID, Processor> map) {
+        if (!isMutable())
+            return createMutableClone().withXML(node, map);
+
+        super.withXML(node, map);
+        directory = XMLHelper.getDataUnderNode(node, "Directory");
+        return this;
+    }
+
+    @Override
+    public org.w3c.dom.Element getXMLForDocument(Document doc) {
+        org.w3c.dom.Element node = super.getXMLForDocument(doc);
+        XMLHelper.addDataUnderNode(node, "Directory", directory);
+        return node;
     }
 }

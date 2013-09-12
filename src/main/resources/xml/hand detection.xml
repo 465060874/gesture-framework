@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<WorkflowContainer UUID="c623b8e7-84d3-4f15-980b-a202126eba5c" model="io.github.samwright.framework.model.TopWorkflowContainer">
+  <TypeData>
+    <Input>io.github.samwright.framework.model.datatypes.StartType</Input>
+    <Output>java.lang.Object</Output>
+  </TypeData>
+  <Observers/>
+  <Children>
+    <Workflow UUID="75ba6511-b866-40ce-b8e5-2528f3ff1540" model="io.github.samwright.framework.model.Workflow">
+      <Children>
+        <Element UUID="2ed48d1b-5d32-4cab-ade7-e63bf43477f7" model="io.github.samwright.framework.javacv.ImageLoader">
+          <Directory>/Users/eatmuchpie/Documents/imageDir/</Directory>
+          <TypeData>
+            <Input>io.github.samwright.framework.model.datatypes.StartType</Input>
+            <Output>io.github.samwright.framework.javacv.helper.TaggedImage</Output>
+          </TypeData>
+          <Observers/>
+        </Element>
+        <WorkflowContainer UUID="4e0e3672-69ec-4a00-b87f-fcd55e2b7da3" model="io.github.samwright.framework.javacv.SkinDetector">
+          <TypeData>
+            <Input>io.github.samwright.framework.javacv.helper.TaggedImage</Input>
+            <Output>io.github.samwright.framework.javacv.helper.TaggedImage</Output>
+          </TypeData>
+          <Observers/>
+          <Children>
+            <Workflow UUID="841157da-c78d-46a0-b4c5-ed8cd60b319c" model="io.github.samwright.framework.model.Workflow">
+              <Children/>
+            </Workflow>
+            <Workflow UUID="7a6e52af-6adb-46d0-b339-d34d495bca24" model="io.github.samwright.framework.model.Workflow">
+              <Children>
+                <Element UUID="5c67eb2f-ea18-4e0b-85be-4db5199c0383" model="io.github.samwright.framework.javacv.StaticColourRange">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.TaggedImage</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.ColourRange</Output>
+                  </TypeData>
+                  <Observers/>
+                  <UpperLimit>
+                    <H>180.0</H>
+                    <S>238.44155844155844</S>
+                    <V>139.087012987013</V>
+                  </UpperLimit>
+                  <LowerLimit>
+                    <H>0.0</H>
+                    <S>74.512987012987</S>
+                    <V>0.0</V>
+                  </LowerLimit>
+                </Element>
+              </Children>
+            </Workflow>
+          </Children>
+        </WorkflowContainer>
+        <Element UUID="38106598-c7d3-48ca-a536-362fd1763633" model="io.github.samwright.framework.javacv.ContourFinder">
+          <TypeData>
+            <Input>io.github.samwright.framework.javacv.helper.TaggedImage</Input>
+            <Output>io.github.samwright.framework.javacv.helper.Contour</Output>
+          </TypeData>
+          <Observers/>
+          <UpperLimit>1000</UpperLimit>
+          <LowerLimit>100</LowerLimit>
+        </Element>
+        <Element UUID="3e9d4fcd-2f24-4d0e-ac9c-4e12ee02be3e" model="io.github.samwright.framework.javacv.SimplifyContour">
+          <TypeData>
+            <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+            <Output>io.github.samwright.framework.javacv.helper.Contour</Output>
+          </TypeData>
+          <Observers/>
+          <Accuracy>4.0</Accuracy>
+        </Element>
+        <WorkflowContainer UUID="4958a585-c1d3-4625-af4a-7b8f45a944d9" model="io.github.samwright.framework.javacv.HandDetector">
+          <TypeData>
+            <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+            <Output>io.github.samwright.framework.javacv.helper.Hand</Output>
+          </TypeData>
+          <Observers/>
+          <Children>
+            <Workflow UUID="bc34ddf9-cfb8-437e-983f-5f70171379f3" model="io.github.samwright.framework.model.Workflow">
+              <Children/>
+            </Workflow>
+            <Workflow UUID="c946e814-e497-4cc0-a180-cb61c9867747" model="io.github.samwright.framework.model.Workflow">
+              <Children>
+                <Element UUID="fb681985-27e6-479d-8ad7-4d151f0a5ff9" model="io.github.samwright.framework.javacv.PalmDetector">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.Palm</Output>
+                  </TypeData>
+                  <Observers/>
+                </Element>
+              </Children>
+            </Workflow>
+            <Workflow UUID="b7e1accf-e3cd-4baa-91b0-ea28c0e89533" model="io.github.samwright.framework.model.Workflow">
+              <Children>
+                <Element UUID="c1b4a641-ecf0-47f9-a046-ef90d8970107" model="io.github.samwright.framework.javacv.FingertipFinder">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.Fingertips</Output>
+                  </TypeData>
+                  <Observers/>
+                </Element>
+                <Element UUID="adf4e6c5-56b6-47ef-96d1-bd31aef813da" model="io.github.samwright.framework.javacv.FingertipReducer">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.Fingertips</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.Fingertips</Output>
+                  </TypeData>
+                  <Observers/>
+                </Element>
+              </Children>
+            </Workflow>
+          </Children>
+        </WorkflowContainer>
+        <Element UUID="b6ada6d4-1347-4cb0-9039-feae6b6aeb7e" model="io.github.samwright.framework.javacv.NNClassifier">
+          <TypeData>
+            <Input>io.github.samwright.framework.model.datatypes.Features</Input>
+            <Output>io.github.samwright.framework.model.datatypes.Classification</Output>
+          </TypeData>
+          <Observers/>
+        </Element>
+      </Children>
+    </Workflow>
+  </Children>
+</WorkflowContainer>

@@ -25,4 +25,9 @@ public class ClassificationViewer extends StringViewer {
     public Class<?> getViewableClass() {
         return Classification.class;
     }
+
+    @Override
+    public String toString() {
+        return "Classification";
+    }
 }

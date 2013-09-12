@@ -4,7 +4,6 @@ import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.controller.helper.PreviewPane;
 import io.github.samwright.framework.javacv.*;
-import io.github.samwright.framework.javacv.to_delete.PointsViewer;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.TopWorkflowContainer;
@@ -139,7 +138,6 @@ public class MainWindowController extends VBox {
         PreviewPane.registerDataViewer(new ContourViewer());
         PreviewPane.registerDataViewer(new PalmViewer());
         PreviewPane.registerDataViewer(new FingertipViewer());
-        PreviewPane.registerDataViewer(new PointsViewer());
         PreviewPane.registerDataViewer(new HandViewer());
         PreviewPane.registerDataViewer(new ClassificationViewer());
 

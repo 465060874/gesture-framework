@@ -5,6 +5,7 @@ import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 import io.github.samwright.framework.model.mock.TopProcessor;
+import javafx.application.Platform;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
     @Getter @Setter private boolean transientModel = false;
     private Object[] processLock = new Object[0];
     @Getter private boolean busy = false;
+
 
     public TopWorkflowContainer() {
         super(new TypeData(StartType.class, Object.class));
@@ -103,6 +105,12 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                         }
                     } finally {
                         busy = false;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Dummy implementation
+                            }
+                        });
                     }
                 }
             }
