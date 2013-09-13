@@ -9,7 +9,6 @@ import javafx.application.Platform;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -96,9 +95,10 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                                 continue;
                             }
 
+                            HashSet<Mediator> outputMediators = new HashSet<>(completedTrainingData);
                             CompletedTrainingBatch completedTrainingBatch = new CompletedTrainingBatch(
-                                    new HashSet<>(completedTrainingData),
-                                    Collections.<Mediator>emptySet()
+                                    outputMediators,
+                                    outputMediators
                             );
 
                             workflow.processCompletedTrainingBatch(completedTrainingBatch);

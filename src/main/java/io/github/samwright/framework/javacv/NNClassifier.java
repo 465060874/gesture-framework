@@ -21,9 +21,7 @@ import static com.googlecode.javacv.cpp.opencv_ml.CvANN_MLP_TrainParams;
 public class NNClassifier extends AbstractElement {
 
     private Map<History,CvANN_MLP> nets = new HashMap<>();
-    private Map<History, List<Features>> trainingSet = new HashMap<>();
     private int featuresSize = -1;
-    private Set<String> classSet = new HashSet<>();
     private List<String> classIndex = new ArrayList<>();
 
     public NNClassifier() {
@@ -43,29 +41,47 @@ public class NNClassifier extends AbstractElement {
     @Override
     public List<Mediator> processTrainingData(Mediator input) {
         Features features = (Features) input.getData();
-
-        if (trainingSet.isEmpty()) {
-            featuresSize = features.getFeatures().size();
-        } else if (features.getFeatures().size() != featuresSize) {
-            throw new RuntimeException("Each training data must have same number of features!");
-        }
-
-        classSet.add(features.getTag());
-
-        List<Features> featuresList = trainingSet.get(input.getHistory());
-        if (featuresList == null) {
-            featuresList = new ArrayList<>();
-            trainingSet.put(input.getHistory(), featuresList);
-        }
-        featuresList.add(features);
-
         return Arrays.asList(input.createNext(this, new Classification(features.getTag())));
     }
 
     @Override
     public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
-        // Set up the class index
+        // Clean up
         classIndex.clear();
+        featuresSize = -1;
+        classIndex.clear();
+        nets.clear();
+        Map<History, List<Features>> trainingSet = new HashMap<>();
+        Set<String> classSet = new HashSet<>();
+
+        // Make sure there's at least 1 output mediator
+        if (completedTrainingBatch.getAll().isEmpty())
+            return completedTrainingBatch;
+
+        // Roll back the batch
+        CompletedTrainingBatch inputBatch = super.processCompletedTrainingBatch(completedTrainingBatch);
+
+        // Extract data from completed training batch
+        for (Mediator input : inputBatch.getAll()) {
+            Features features = (Features) input.getData();
+
+            // Check featuresSize is equal across all features
+            if (featuresSize == -1)
+                featuresSize = features.getFeatures().size();
+            else if (featuresSize != features.getFeatures().size())
+                throw new RuntimeException("Each training data must have same number of features!");
+
+            // Add tag if not already in classSet
+            classSet.add(features.getTag());
+
+            List<Features> featuresList = trainingSet.get(input.getHistory());
+            if (featuresList == null) {
+                featuresList = new ArrayList<>();
+                trainingSet.put(input.getHistory(), featuresList);
+            }
+            featuresList.add(features);
+        }
+
         classIndex.addAll(classSet);
 
         // Setup a network for each unique mediator history:
@@ -74,11 +90,8 @@ public class NNClassifier extends AbstractElement {
             List<Features> featuresList = e.getValue();
 
             // Create new or load existing net
-            CvANN_MLP net = nets.get(history);
-            if (net == null) {
-                net = createNet();
-                nets.put(history, net);
-            }
+            CvANN_MLP net = createNet(featuresSize, classIndex.size());
+            nets.put(history, net);
 
             // Train net
             trainLeavingOneOut(net, featuresList, history);
@@ -86,16 +99,14 @@ public class NNClassifier extends AbstractElement {
 
         Set<Mediator> successful = new HashSet<>();
 
-        for (Mediator mediator : completedTrainingBatch.getAll()) {
-            Mediator inputMediator = mediator.getPrevious();
+        for (Mediator inputMediator : inputBatch.getSuccessful()) {
             Features features = (Features) inputMediator.getData();
 
             if (predict(features, inputMediator.getHistory()).equals(features.getTag()))
-                successful.add(mediator.getPrevious());
+                successful.add(inputMediator);
         }
 
-        Set<Mediator> all = Mediator.rollbackMediators(completedTrainingBatch.getAll());
-        return new CompletedTrainingBatch(all, successful);
+        return new CompletedTrainingBatch(inputBatch.getAll(), successful);
     }
 
     private String predict(Features features, History history) {
@@ -143,13 +154,13 @@ public class NNClassifier extends AbstractElement {
                 (successes * 100. / trainingSet.size()), successes, trainingSet.size());
     }
 
-    private CvANN_MLP createNet() {
+    private CvANN_MLP createNet(int featuresSize, int classesSize) {
         // Setup NN layers information
         CvMat layers = cvCreateMat(4, 1, CV_32SC1);
         cvSetReal1D(layers, 0, featuresSize);
         cvSetReal1D(layers, 1, 15);
         cvSetReal1D(layers, 2, 15);
-        cvSetReal1D(layers, 3, classSet.size());
+        cvSetReal1D(layers, 3, classesSize);
 
         // Initialise net
         CvANN_MLP net = new CvANN_MLP();
@@ -163,7 +174,7 @@ public class NNClassifier extends AbstractElement {
         CvMat trainingData = cvCreateMat(trainingSet.size(), featuresSize, CV_32FC1);
 
         // Create matrix of classifications
-        CvMat classificationData = cvCreateMat(trainingSet.size(), classSet.size(), CV_32FC1);
+        CvMat classificationData = cvCreateMat(trainingSet.size(), classIndex.size(), CV_32FC1);
 
         // Create training data weighting matrix
         CvMat trainingWeights = cvCreateMat(trainingSet.size(), 1, CV_32FC1);

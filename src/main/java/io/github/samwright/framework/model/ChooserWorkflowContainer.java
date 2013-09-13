@@ -12,7 +12,7 @@ import java.util.*;
 public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer {
 
     public ChooserWorkflowContainer(TypeData typeData) {
-        super(TypeData.getDefaultType());
+        super(typeData);
     }
 
     public ChooserWorkflowContainer(AbstractWorkflowContainer oldWorkflowContainer) {
