@@ -109,6 +109,14 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
         return outputs;
     }
 
+    /**
+     * Joins the data in the supplied mediators into one output data (to be used in the final
+     * output mediator).  The supplied mediators are the outputs of the child workflows (in the
+     * same order as the workflows appear in {@code this.getChildren()}.
+     *
+     * @param mediators the list of mediators whose data should be joined.
+     * @return the single output object that results from joining the supplied data.
+     */
     public abstract Object joinOutputMediators(List<Mediator> mediators);
 
     private void processWorkflow(final Workflow workflow,
@@ -160,6 +168,16 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
         return completedTrainingBatch.rollBack();
     }
 
+    /**
+     * Returns the set of training data mediators that each workflow outputted (on the forward
+     * pass of training data).
+     *
+     * @param mediators the set of mediators before being joined, which each contain (as their
+     *                  data) the list of mediators to join (in the same order as the workflows
+     *                  that created them).
+     * @return the set of training data mediators that each workflow outputted (on the forward
+     * pass of training data).
+     */
     @SuppressWarnings("unchecked")
     private Map<Workflow, Set<Mediator>> rollbackMediatorsToWorkflows(Set<Mediator> mediators) {
         Map<Workflow, Set<Mediator>> mediatorsPerWorkflow = new HashMap<>();

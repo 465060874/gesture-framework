@@ -43,6 +43,19 @@ public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer
     @Override
     public abstract ChooserWorkflowContainer createMutableClone();
 
+    /**
+     * Decide on a workflow-choosing strategy (ie. so {@code chooseWorkflow(Mediator m)} gives a
+     * sensible answer) given the {@link CompletedTrainingBatch} which contains all of the
+     * training data mediators which were passed to {@code processTrainingData(..)} (ie. for each
+     * batch in the map, batch.getAll() gives the same set).
+     * <p/>
+     * However each batch has been sent back along the workflow that created it,
+     * so each batch's 'successful' set contains the input mediators which were processed by
+     * the relevant workflow and went on to be successfully classified.
+     *
+     * @param inputBatchesByWorkflow the batches returned when each workflow processes the
+     *                               completed training batch passed to this object.
+     */
     public abstract void handleSuccessfulInputBatches(Map<Workflow, CompletedTrainingBatch> inputBatchesByWorkflow);
 
     @Override

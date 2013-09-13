@@ -140,12 +140,14 @@ public class ImageLoader extends AbstractElement {
         if (tag == null || tag.isEmpty())
             tag = "Snapshot";
 
-        tag = tag + ".jpg";
+//        while ()
+
+//        tag = tag + ".jpg";
         IplImage image;
         FrameGrabber grabber = null;
 
         try {
-            grabber = FrameGrabber.createDefault(-1);
+            grabber = FrameGrabber.createDefault(0);
             grabber.start();
             image = grabber.grab();
         } catch (FrameGrabber.Exception e) {
@@ -162,7 +164,13 @@ public class ImageLoader extends AbstractElement {
         }
 
         if (isDirectoryValid()) {
-            String fullFileName = directory + tag + ".jpg";
+            String fullFileName;
+            int i = 1;
+            do {
+                fullFileName = directory + tag + " " + i;
+            } while(new File(fullFileName + ".jpg").exists());
+            fullFileName = fullFileName + ".jpg";
+
             cvSaveImage(fullFileName, image);
             reloadImages();
             activeImage = null;

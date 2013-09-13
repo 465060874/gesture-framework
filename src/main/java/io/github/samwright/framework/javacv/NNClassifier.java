@@ -84,8 +84,6 @@ public class NNClassifier extends AbstractElement {
             trainLeavingOneOut(net, featuresList, history);
         }
 
-        System.out.println("Nets: " + nets);
-
         Set<Mediator> successful = new HashSet<>();
 
         for (Mediator mediator : completedTrainingBatch.getAll()) {
