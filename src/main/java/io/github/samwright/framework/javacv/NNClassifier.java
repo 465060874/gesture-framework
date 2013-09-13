@@ -30,7 +30,7 @@ public class NNClassifier extends AbstractElement {
         super(new TypeData(Features.class, Classification.class));
     }
 
-    public NNClassifier(AbstractElement oldElement) {
+    public NNClassifier(NNClassifier oldElement) {
         super(oldElement);
     }
 

@@ -151,16 +151,14 @@ public class HandDetector extends SplitJoinWorkflowContainer {
 //        double[] angleDeltas = new double[]{};
 
         // Find thumb - most negative angle
-        double maxAngle = digitAngles.get(0);
-        int thumbIndex = 0;
-        for (int i = 1; i < digitAngles.size(); ++i) {
-            if (maxAngle < digitAngles.get(i)) {
-                maxAngle = digitAngles.get(i);
-                thumbIndex = i;
-            }
-        }
-
-        double minThumbSeparation = 0.5; // radians
+//        double maxAngle = -1000;
+//        int thumbIndex = 0;
+//        for (int i = 0; i < digitAngles.size(); ++i) {
+//            if (maxAngle < digitAngles.get(i)) {
+//                maxAngle = digitAngles.get(i);
+//                thumbIndex = i;
+//            }
+//        }
 
         List<Double> orderedAngles = new ArrayList<>(digitAngles);
         Collections.sort(orderedAngles);

@@ -25,7 +25,7 @@
                   <ScrollPane id="scrollPanel" fx:id="mainScrollPanel" HBox.hgrow="ALWAYS"
                               fitToHeight="true" fitToWidth="true" />
                   <ScrollPane fx:id="toolboxScrollPane" HBox.hgrow="ALWAYS"
-                              fitToHeight="true" fitToWidth="true" />
+                              fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" />
               </items>
           </SplitPane>
       </children>

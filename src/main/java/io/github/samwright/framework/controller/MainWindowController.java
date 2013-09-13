@@ -1,6 +1,7 @@
 package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
+import io.github.samwright.framework.actors.KeyboardActorController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.controller.helper.PreviewPane;
 import io.github.samwright.framework.javacv.*;
@@ -132,6 +133,7 @@ public class MainWindowController extends VBox {
 //        ModelLoader.registerPrototypeModel(new DominantPointFinderController().getModel());
         ModelLoader.registerPrototypeModel(new NNClassifierController().getModel());
         ModelLoader.registerPrototypeModel(new OptimiserController().getModel());
+        ModelLoader.registerPrototypeModel(new KeyboardActorController().getModel());
 
 
 //        PreviewPane.registerDataViewer(new StringViewer());

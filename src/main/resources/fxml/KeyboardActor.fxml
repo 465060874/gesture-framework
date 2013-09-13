@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<fx:root fx:id="element" type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/Element.css"
+         maxHeight="-Infinity"
+         minWidth="200"
+        >
+    <children>
+        <HBox>
+            <children>
+                <Label alignment="CENTER" text="Keyboard Actor" fx:id="label" minWidth="-Infinity"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label text="enabled" />
+                <CheckBox fx:id="enabledCheckBox" />
+            </children>
+        </HBox>
+        <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" fitToHeight="true" fitToWidth="true">
+            <GridPane fx:id="gridPane" />
+        </ScrollPane>
+    </children>
+</fx:root>
