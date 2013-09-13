@@ -35,18 +35,6 @@ public class HandDetectorController extends WorkflowContainerControllerImpl {
         super(toClone);
     }
 
-    private void relabelWorkflows() {
-        relabelWorkflow(0, "Contour");
-        relabelWorkflow(1, "Palm");
-        relabelWorkflow(2, "Fingertips");
-    }
-
-    private void relabelWorkflow(int index, String label) {
-        WorkflowControllerImpl workflowController
-                = (WorkflowControllerImpl) workflowsBox.getChildren().get(index);
-        workflowController.setLabel(label);
-    }
-
     @Override
     public HandDetectorController createClone() {
         return new HandDetectorController(this);
@@ -56,6 +44,8 @@ public class HandDetectorController extends WorkflowContainerControllerImpl {
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
 
-        relabelWorkflows();
+        relabelWorkflow(0, "Contour");
+        relabelWorkflow(1, "Palm");
+        relabelWorkflow(2, "Fingertips");
     }
 }

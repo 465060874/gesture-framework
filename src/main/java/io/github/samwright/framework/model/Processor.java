@@ -102,7 +102,7 @@ public interface Processor
      * <p/>
      * One approach would be to use a {@code Map<History, Classifier>} object that is queried in
      * the {@code process(input)} method to get the appropriate
-     * {@link io.github.samwright.framework.learner.Classifier} for the given
+     * {@code Classifier} for the given
      * {@code input.getHistory()} object.
      * <p/>
      * It is left to the concrete class to decide whether to do this or not (eg. the training set

@@ -4,6 +4,7 @@ import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.controller.helper.PreviewPane;
 import io.github.samwright.framework.javacv.*;
+import io.github.samwright.framework.javacv.viewers.*;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
 import io.github.samwright.framework.model.TopWorkflowContainer;
@@ -31,7 +32,7 @@ import java.io.File;
 public class MainWindowController extends VBox {
 
     @FXML
-    private ScrollPane mainScrollPanel;
+    private ScrollPane mainScrollPanel, toolboxScrollPane;
 
     @FXML
     private HBox hBox;
@@ -99,8 +100,8 @@ public class MainWindowController extends VBox {
 
         toolboxController = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
         toolboxController.setStyle("-fx-vgap: 5;-fx-hgap: 5;-fx-padding: 5");
-        splitPane.getItems().add(toolboxController);
-        SplitPane.setResizableWithParent(toolboxController, false);
+        toolboxScrollPane.setContent(toolboxController);
+        SplitPane.setResizableWithParent(toolboxScrollPane, false);
 
         topController.handleUpdatedModel();
         topController.addNewWorkflow();
@@ -130,6 +131,7 @@ public class MainWindowController extends VBox {
         ModelLoader.registerPrototypeModel(new SimplifyContourController().getModel());
 //        ModelLoader.registerPrototypeModel(new DominantPointFinderController().getModel());
         ModelLoader.registerPrototypeModel(new NNClassifierController().getModel());
+        ModelLoader.registerPrototypeModel(new OptimiserController().getModel());
 
 
 //        PreviewPane.registerDataViewer(new StringViewer());

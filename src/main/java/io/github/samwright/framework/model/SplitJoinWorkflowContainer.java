@@ -145,7 +145,7 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
         // Let workflows process the completed set...
         for (Map.Entry<Workflow, Set<Mediator>> entry : allMediatorsMap.entrySet()) {
             Workflow workflow = entry.getKey();
-            Set<Mediator> allMediators = allMediatorsMap.get(workflow);
+            Set<Mediator> allMediators = entry.getValue();
             Set<Mediator> successfulMediators = successfulMediatorsMap.get(workflow);
 
             if (successfulMediators == null)

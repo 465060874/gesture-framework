@@ -1,4 +1,4 @@
-package io.github.samwright.framework.javacv;
+package io.github.samwright.framework.javacv.viewers;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import io.github.samwright.framework.controller.helper.DataViewer;

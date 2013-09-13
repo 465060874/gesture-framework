@@ -1,5 +1,6 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.model.common.ChildOf;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.ModelLoader;
@@ -71,9 +72,12 @@ public abstract class AbstractProcessor implements Processor {
         Mediator first = completedTrainingBatch.getAll().iterator().next();
         if (first != null && first.getData() != null) {
             Processor creator = first.getHistory().getCreator();
-            if (creator != this)
+            if (creator != this) {
+                if (this instanceof ChildOf)
+                    System.out.println("My parent is: " + ((ChildOf) this).getParent());
                 throw new RuntimeException("Training batch was created by: " + creator
                                         + " instead of this: " + this);
+            }
 
             Class<?> myOutput = getTypeData().getOutputType();
             Class<?> outputDataType = first.getData().getClass();

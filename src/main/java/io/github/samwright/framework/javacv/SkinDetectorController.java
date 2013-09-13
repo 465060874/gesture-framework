@@ -31,14 +31,6 @@ public class SkinDetectorController extends WorkflowContainerControllerImpl {
         super(toClone);
     }
 
-    private void relabelWorkflows() {
-        WorkflowControllerImpl imageWorkflow = (WorkflowControllerImpl) workflowsBox.getChildren().get(0);
-        imageWorkflow.setLabel("Image");
-
-        WorkflowControllerImpl colourWorkflow = (WorkflowControllerImpl) workflowsBox.getChildren().get(1);
-        imageWorkflow.setLabel("Skin Colour");
-    }
-
     @Override
     public SkinDetectorController createClone() {
         return new SkinDetectorController(this);
@@ -48,6 +40,7 @@ public class SkinDetectorController extends WorkflowContainerControllerImpl {
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
 
-        relabelWorkflows();
+        relabelWorkflow(0, "Image");
+        relabelWorkflow(1, "Skin Colour");
     }
 }

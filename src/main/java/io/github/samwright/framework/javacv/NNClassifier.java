@@ -5,6 +5,7 @@ import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.datatypes.Classification;
 import io.github.samwright.framework.model.datatypes.Features;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
+import io.github.samwright.framework.model.helper.History;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 
@@ -19,8 +20,8 @@ import static com.googlecode.javacv.cpp.opencv_ml.CvANN_MLP_TrainParams;
  */
 public class NNClassifier extends AbstractElement {
 
-    private CvANN_MLP net;
-    private List<Features> trainingSet = new ArrayList<>();
+    private Map<History,CvANN_MLP> nets = new HashMap<>();
+    private Map<History, List<Features>> trainingSet = new HashMap<>();
     private int featuresSize = -1;
     private Set<String> classSet = new HashSet<>();
     private List<String> classIndex = new ArrayList<>();
@@ -36,7 +37,7 @@ public class NNClassifier extends AbstractElement {
     @Override
     public Mediator process(Mediator input) {
         Features features = (Features) input.getData();
-        return input.createNext(this, new Classification(predict(features)));
+        return input.createNext(this, new Classification(predict(features, input.getHistory())));
     }
 
     @Override
@@ -50,22 +51,48 @@ public class NNClassifier extends AbstractElement {
         }
 
         classSet.add(features.getTag());
-        trainingSet.add(features);
+
+        List<Features> featuresList = trainingSet.get(input.getHistory());
+        if (featuresList == null) {
+            featuresList = new ArrayList<>();
+            trainingSet.put(input.getHistory(), featuresList);
+        }
+        featuresList.add(features);
 
         return Arrays.asList(input.createNext(this, new Classification(features.getTag())));
     }
 
     @Override
     public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
-        setupNet();
-        trainNet();
+        // Set up the class index
+        classIndex.clear();
+        classIndex.addAll(classSet);
+
+        // Setup a network for each unique mediator history:
+        for (Map.Entry<History,List<Features>> e : trainingSet.entrySet()) {
+            History history = e.getKey();
+            List<Features> featuresList = e.getValue();
+
+            // Create new or load existing net
+            CvANN_MLP net = nets.get(history);
+            if (net == null) {
+                net = createNet();
+                nets.put(history, net);
+            }
+
+            // Train net
+            trainLeavingOneOut(net, featuresList, history);
+        }
+
+        System.out.println("Nets: " + nets);
 
         Set<Mediator> successful = new HashSet<>();
 
         for (Mediator mediator : completedTrainingBatch.getAll()) {
-            Features features = (Features) mediator.getPrevious().getData();
+            Mediator inputMediator = mediator.getPrevious();
+            Features features = (Features) inputMediator.getData();
 
-            if (predict(features).equals(features.getTag()))
+            if (predict(features, inputMediator.getHistory()).equals(features.getTag()))
                 successful.add(mediator.getPrevious());
         }
 
@@ -73,7 +100,7 @@ public class NNClassifier extends AbstractElement {
         return new CompletedTrainingBatch(all, successful);
     }
 
-    private String predict(Features features) {
+    private String predict(Features features, History history) {
         // Setup the features in the correct format
         CvMat inputData = cvCreateMat(1, featuresSize, CV_32FC1);
 
@@ -84,7 +111,7 @@ public class NNClassifier extends AbstractElement {
         CvMat outputData = cvCreateMat(1, classIndex.size(), CV_32FC1);
 
         // Predict, and populate outputData.
-        net.predict(inputData, outputData);
+        nets.get(history).predict(inputData, outputData);
 
         // Find index of largest output:
         double maxVal = -100;
@@ -100,11 +127,25 @@ public class NNClassifier extends AbstractElement {
         return classIndex.get(maxIndex);
     }
 
-    private void setupNet() {
-        // Set up the class index
-        classIndex.clear();
-        classIndex.addAll(classSet);
+    private void trainLeavingOneOut(CvANN_MLP net, List<Features> trainingSet, History history) {
+        LinkedList<Features> partialTrainingSet = new LinkedList<>(trainingSet);
+        int successes = 0;
 
+        for (int i = 0; i < trainingSet.size(); ++i) {
+            Features removed = partialTrainingSet.removeFirst();
+
+            trainNet(net, partialTrainingSet);
+            if (predict(removed, history).equals(removed.getTag()))
+                ++successes;
+
+            partialTrainingSet.addLast(removed);
+        }
+
+        System.out.format("Success rate = %f (%d out of %d)%n",
+                (successes * 100. / trainingSet.size()), successes, trainingSet.size());
+    }
+
+    private CvANN_MLP createNet() {
         // Setup NN layers information
         CvMat layers = cvCreateMat(4, 1, CV_32SC1);
         cvSetReal1D(layers, 0, featuresSize);
@@ -113,11 +154,13 @@ public class NNClassifier extends AbstractElement {
         cvSetReal1D(layers, 3, classSet.size());
 
         // Initialise net
-        net = new CvANN_MLP();
+        CvANN_MLP net = new CvANN_MLP();
         net.create(layers, CvANN_MLP.SIGMOID_SYM, 1., 1.);
+
+        return net;
     }
 
-    private void trainNet() {
+    private void trainNet(CvANN_MLP net, List<Features> trainingSet) {
         // Create matrix of training set
         CvMat trainingData = cvCreateMat(trainingSet.size(), featuresSize, CV_32FC1);
 
@@ -156,6 +199,6 @@ public class NNClassifier extends AbstractElement {
 
     @Override
     public boolean isValid() {
-        return net != null;
+        return !nets.isEmpty();
     }
 }

@@ -108,7 +108,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                // Dummy implementation
+                                getController().handleUpdatedModel();
                             }
                         });
                     }

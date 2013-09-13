@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<WorkflowContainer UUID="ca1454b0-2c76-4c7d-8805-1a669f6135f1" model="io.github.samwright.framework.model.TopWorkflowContainer">
+  <TypeData>
+    <Input>io.github.samwright.framework.model.datatypes.StartType</Input>
+    <Output>java.lang.Object</Output>
+  </TypeData>
+  <Observers/>
+  <Children>
+    <Workflow UUID="df9c94e6-4370-4f40-9698-b7005b785240" model="io.github.samwright.framework.model.Workflow">
+      <Children>
+        <Element UUID="269ebed0-2f87-4dfa-bdcc-5318b3a8829e" model="io.github.samwright.framework.javacv.ImageLoader">
+          <TypeData>
+            <Input>io.github.samwright.framework.model.datatypes.StartType</Input>
+            <Output>io.github.samwright.framework.javacv.helper.TaggedImage</Output>
+          </TypeData>
+          <Observers/>
+          <Directory>/Users/eatmuchpie/Documents/imageDir/</Directory>
+        </Element>
+        <WorkflowContainer UUID="dafc6f59-b443-4390-b285-0536b0e4b810" model="io.github.samwright.framework.javacv.SkinDetector">
+          <TypeData>
+            <Input>io.github.samwright.framework.javacv.helper.TaggedImage</Input>
+            <Output>io.github.samwright.framework.javacv.helper.TaggedImage</Output>
+          </TypeData>
+          <Observers/>
+          <Children>
+            <Workflow UUID="65157b23-98fb-4ecc-8736-73c3141f116d" model="io.github.samwright.framework.model.Workflow">
+              <Children/>
+            </Workflow>
+            <Workflow UUID="d3e9bdf0-cd76-4738-8faa-b203e9f1047e" model="io.github.samwright.framework.model.Workflow">
+              <Children>
+                <Element UUID="91f932c5-54a8-4a6a-bf57-a1f61542c4e4" model="io.github.samwright.framework.javacv.StaticColourRange">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.TaggedImage</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.ColourRange</Output>
+                  </TypeData>
+                  <Observers/>
+                  <UpperLimit>
+                    <H>180.0</H>
+                    <S>238.44155844155844</S>
+                    <V>139.087012987013</V>
+                  </UpperLimit>
+                  <LowerLimit>
+                    <H>0.0</H>
+                    <S>74.512987012987</S>
+                    <V>0.0</V>
+                  </LowerLimit>
+                </Element>
+              </Children>
+            </Workflow>
+          </Children>
+        </WorkflowContainer>
+        <Element UUID="5ed32f57-d3c1-4d6e-9474-f0ea90fb7758" model="io.github.samwright.framework.javacv.ContourFinder">
+          <TypeData>
+            <Input>io.github.samwright.framework.javacv.helper.TaggedImage</Input>
+            <Output>io.github.samwright.framework.javacv.helper.Contour</Output>
+          </TypeData>
+          <Observers/>
+          <UpperLimit>1000</UpperLimit>
+          <LowerLimit>100</LowerLimit>
+        </Element>
+        <WorkflowContainer UUID="1c4562a5-e73a-4dc8-9859-82a0c95bf860" model="io.github.samwright.framework.model.Optimiser">
+          <TypeData>
+            <Input>java.lang.Object</Input>
+            <Output>java.lang.Object</Output>
+          </TypeData>
+          <Observers/>
+          <Children>
+            <Workflow UUID="22d7a8c4-2840-438d-9c4c-8d6bb4460027" model="io.github.samwright.framework.model.Workflow">
+              <Children>
+                <Element UUID="9a601412-633f-4465-89fb-355941535e09" model="io.github.samwright.framework.javacv.SimplifyContour">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.Contour</Output>
+                  </TypeData>
+                  <Observers/>
+                  <Accuracy>4.0</Accuracy>
+                </Element>
+              </Children>
+            </Workflow>
+            <Workflow UUID="f00c998a-859f-46b4-a16f-60ba88d549f6" model="io.github.samwright.framework.model.Workflow">
+              <Children/>
+            </Workflow>
+          </Children>
+        </WorkflowContainer>
+        <WorkflowContainer UUID="1b8d795c-9833-409a-a64c-610e4a2f9117" model="io.github.samwright.framework.javacv.HandDetector">
+          <TypeData>
+            <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+            <Output>io.github.samwright.framework.javacv.helper.Hand</Output>
+          </TypeData>
+          <Observers/>
+          <Children>
+            <Workflow UUID="eb5ae5bd-5ae7-490d-baa9-fb9186689b36" model="io.github.samwright.framework.model.Workflow">
+              <Children/>
+            </Workflow>
+            <Workflow UUID="194f0a2b-25c5-4b72-97bf-2cac3abd3300" model="io.github.samwright.framework.model.Workflow">
+              <Children>
+                <Element UUID="27577558-a9dc-4942-8d47-df16d97ca9fb" model="io.github.samwright.framework.javacv.PalmDetector">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.Palm</Output>
+                  </TypeData>
+                  <Observers/>
+                </Element>
+              </Children>
+            </Workflow>
+            <Workflow UUID="62233200-91ff-4887-9799-5775c44ba77b" model="io.github.samwright.framework.model.Workflow">
+              <Children>
+                <Element UUID="3bad07ab-2586-4245-b82d-96c0f6307b7b" model="io.github.samwright.framework.javacv.FingertipFinder">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.Contour</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.Fingertips</Output>
+                  </TypeData>
+                  <Observers/>
+                </Element>
+                <Element UUID="bdf9fec6-fcc5-428b-84e9-ea4e9c11713b" model="io.github.samwright.framework.javacv.FingertipReducer">
+                  <TypeData>
+                    <Input>io.github.samwright.framework.javacv.helper.Fingertips</Input>
+                    <Output>io.github.samwright.framework.javacv.helper.Fingertips</Output>
+                  </TypeData>
+                  <Observers/>
+                </Element>
+              </Children>
+            </Workflow>
+          </Children>
+        </WorkflowContainer>
+        <Element UUID="96328d17-31e4-4d67-919e-34512e964aaa" model="io.github.samwright.framework.javacv.NNClassifier">
+          <TypeData>
+            <Input>io.github.samwright.framework.model.datatypes.Features</Input>
+            <Output>io.github.samwright.framework.model.datatypes.Classification</Output>
+          </TypeData>
+          <Observers/>
+        </Element>
+      </Children>
+    </Workflow>
+  </Children>
+</WorkflowContainer>

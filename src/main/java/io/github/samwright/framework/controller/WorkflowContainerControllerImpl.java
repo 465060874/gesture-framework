@@ -72,4 +72,13 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
             workflowsBox.getChildren().add((Node) workflow.getController());
         }
     }
+
+    public void relabelWorkflow(int index, String label) {
+        if (workflowsBox.getChildren().size() > index && index > 0) {
+            WorkflowControllerImpl workflowController
+                    = (WorkflowControllerImpl) workflowsBox.getChildren().get(index);
+            if (workflowController != null)
+                workflowController.setLabel(label);
+        }
+    }
 }

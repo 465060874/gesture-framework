@@ -1,4 +1,4 @@
-package io.github.samwright.framework.javacv;
+package io.github.samwright.framework.javacv.viewers;
 
 import io.github.samwright.framework.controller.helper.DataViewer;
 import io.github.samwright.framework.controller.helper.StringViewer;
