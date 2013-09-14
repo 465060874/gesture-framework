@@ -70,17 +70,12 @@ public class NNClassifierController extends ElementController {
             button.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    Set<JavaFXController> historicElements = new HashSet<>();
-                    historicElements.add(NNClassifierController.this);
-                    History historicMediator = history;
+                    Set<JavaFXController> historicProcessors = new HashSet<>();
+                    for (Processor creator : History.getAllCreators(history))
+                        historicProcessors.add((JavaFXController) creator.getController());
 
-                    while(historicMediator != History.getEpoch()) {
-                        Processor creator = historicMediator.getCreator();
-                        historicElements.add((JavaFXController) creator.getController());
-                        historicMediator = historicMediator.getPrevious();
-                    }
-
-                    MainWindowController.getTopController().setSelection(historicElements);
+                    historicProcessors.add(NNClassifierController.this);
+                    MainWindowController.getTopController().setSelection(historicProcessors);
                 }
             });
         }

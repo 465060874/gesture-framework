@@ -3,6 +3,7 @@ package io.github.samwright.framework.model.helper;
 import io.github.samwright.framework.model.Processor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,6 +48,28 @@ public abstract class Mediator {
      *         {@code Mediator} as input.
      */
     public abstract Mediator createNext(Processor creator, Object data);
+
+    /**
+     * Create a {@code Mediator} object after this one, which has been branched off and processed
+     * concurrently to give a list of mediators to join.  The list is saved in the new mediator's
+     * data.
+     * <p/>
+     * The returned object's {@code History} is the {@code History.join(..)} of this object's
+     * {@code History}, so if this method is ran twice with different {@code mediatorsToJoin} but
+     * which were created by the same {@code Processor} objects, the returned {@code Mediator}
+     * objects will have the same {@code History} object.  If they were produced by different
+     * {@code Processor} objects in the branches, then the returned {@code Mediator} objects
+     * would have different {@code History} objects.
+     * <p/>
+     * Calling {@code getPrevious()} on the returned {@code Mediator} object yields this object.
+     * The branched/joined {@code Mediator} objects are only accessible through the returned
+     * object's data field.
+     *
+     * @param creator
+     * @param mediatorsToJoin
+     * @return
+     */
+    public abstract Mediator join(Processor creator, List<Mediator> mediatorsToJoin);
 
     /**
      * Returns true iff this is an empty {@code Mediator} (ie. the first in a sequence of

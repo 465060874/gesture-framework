@@ -102,7 +102,7 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
         List<Mediator> outputs = new ArrayList<>();
         for (List<Mediator> combination : combinations) {
             outputs.add(input
-                    .createNext(this, combination)
+                    .join(this, combination)
                     .createNext(this, joinOutputMediators(combination)));
         }
 
