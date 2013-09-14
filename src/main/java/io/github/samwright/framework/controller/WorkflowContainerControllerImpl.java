@@ -53,8 +53,6 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
         return new WorkflowContainerControllerImpl(this);
     }
 
-
-
     public void addNewWorkflow() {
         List<Workflow> newChildren = new ArrayList<>(getModel().getChildren());
         newChildren.add(new WorkflowControllerImpl().getModel());
@@ -74,7 +72,7 @@ public class WorkflowContainerControllerImpl extends WorkflowContainerController
     }
 
     public void relabelWorkflow(int index, String label) {
-        if (workflowsBox.getChildren().size() > index && index > 0) {
+        if (workflowsBox.getChildren().size() > index && index >= 0) {
             WorkflowControllerImpl workflowController
                     = (WorkflowControllerImpl) workflowsBox.getChildren().get(index);
             if (workflowController != null)
