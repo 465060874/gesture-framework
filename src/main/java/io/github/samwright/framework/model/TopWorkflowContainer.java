@@ -1,5 +1,6 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.controller.ModelController;
 import io.github.samwright.framework.controller.TopController;
 import io.github.samwright.framework.model.datatypes.StartType;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
@@ -125,6 +126,15 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
     @Override
     public TopController getController() {
         return (TopController) super.getController();
+    }
+
+    @Override
+    public void setController(ModelController controller) {
+        if (controller instanceof TopController)
+            super.setController(controller);
+        else
+            throw new RuntimeException("TopProcessor can only be controlled by a TopController, " +
+                    "not a: " + controller.getClass());
     }
 
     public TopWorkflowContainer getPreviousCompleted() {
