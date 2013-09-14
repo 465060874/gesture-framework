@@ -33,7 +33,7 @@ public class SimplifyContourController extends ElementController {
             }
         });
 
-        setConfigNode(configPane);
+        addConfigNode(configPane);
     }
 
     public SimplifyContourController() {

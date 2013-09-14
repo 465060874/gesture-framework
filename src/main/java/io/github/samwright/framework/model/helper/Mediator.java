@@ -90,6 +90,11 @@ public abstract class Mediator {
     /**
      * Gets the {@link History} object (ie. the sequence of {@link Processor} which led to this
      * {@code Mediator} object's creation).
+     * <p/>
+     * If any two {@code Mediator} objects were produced by the same sequence of {@code Processor}
+     * objects, they MUST share the same {@code History} object (ie.
+     * {@code m1.getHistory() == m2.getHistory()} ). Otherwise they must have different
+     * {@code History} objects.
      *
      * @return the {@code History} object for this {@code Mediator}.
      */

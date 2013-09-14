@@ -27,7 +27,7 @@ public class KeyboardActorController extends ElementController {
     private CheckBox enabledCheckBox;
 
     {
-        setConfigNode(scrollPane);
+        addConfigNode(scrollPane);
 
         enabledCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override

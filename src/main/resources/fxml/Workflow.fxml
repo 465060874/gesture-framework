@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <fx:root fx:id="workflow" type="javafx.scene.layout.VBox"
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/Workflow.css"
          maxWidth="Infinity">
   <children>
-      <HBox >
+      <FlowPane fx:id="header">
           <children>
               <Label fx:id="label" alignment="CENTER" text="Workflow" minWidth="-Infinity"/>
           </children>
-      </HBox>
+      </FlowPane>
 
     <HBox fx:id="elementsBox" fillHeight="true" alignment="CENTER" prefHeight="-Infinity" />
   </children>

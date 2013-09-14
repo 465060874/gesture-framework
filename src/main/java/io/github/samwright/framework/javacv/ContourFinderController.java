@@ -41,7 +41,7 @@ public class ContourFinderController extends ElementController {
             }
         });
 
-        setConfigNode(configPanel);
+        addConfigNode(configPanel);
     }
 
     public ContourFinderController() {

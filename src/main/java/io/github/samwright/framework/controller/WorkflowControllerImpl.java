@@ -5,6 +5,7 @@ import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.WorkflowImpl;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
@@ -20,8 +21,12 @@ public class WorkflowControllerImpl extends WorkflowController {
     @FXML
     private HBox elementsBox;
 
+    @FXML @Getter
+    private FlowPane header;
+
     @FXML
     private Label label;
+
 
     @Getter private ElementLink defaultElementLink;
 

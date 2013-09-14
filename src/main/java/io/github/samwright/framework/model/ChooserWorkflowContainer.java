@@ -1,6 +1,7 @@
 package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
+import io.github.samwright.framework.model.helper.History;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 
@@ -45,18 +46,18 @@ public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer
 
     /**
      * Decide on a workflow-choosing strategy (ie. so {@code chooseWorkflow(Mediator m)} gives a
-     * sensible answer) given the {@link CompletedTrainingBatch} which contains all of the
-     * training data mediators which were passed to {@code processTrainingData(..)} (ie. for each
-     * batch in the map, batch.getAll() gives the same set).
-     * <p/>
-     * However each batch has been sent back along the workflow that created it,
-     * so each batch's 'successful' set contains the input mediators which were processed by
-     * the relevant workflow and went on to be successfully classified.
+     * sensible answer).
      *
-     * @param inputBatchesByWorkflow the batches returned when each workflow processes the
-     *                               completed training batch passed to this object.
+     * @param allInputsByHistory all training data given to this object, indexed by their History
+     *                           objects.
+     * @param successfulInputsByWorkflowAndHistory the training data given to this object that
+     *                                             went on to be successfully classified,
+     *                                             indexed by the training data's history,
+     *                                             and the workflow that successfully processed it.
      */
-    public abstract void handleSuccessfulInputBatches(Map<Workflow, CompletedTrainingBatch> inputBatchesByWorkflow);
+    public abstract void handleSuccessfulInputsByWorkflowAndHistory(
+            Map<History, Set<Mediator>> allInputsByHistory,
+            Map<History, Map<Workflow, Set<Mediator>>> successfulInputsByWorkflowAndHistory);
 
     @Override
     public CompletedTrainingBatch processCompletedTrainingBatch(CompletedTrainingBatch completedTrainingBatch) {
@@ -97,9 +98,71 @@ public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer
             inputBatchesByWorkflow.put(workflow, workflowInputBatch);
         }
 
+        Set<Mediator> allInputs = null;
+        Map<History, Map<Workflow, Set<Mediator>>> successfulInputsByWorkflowAndHistory
+                = new HashMap<>();
+
+        // Process the batches returned by the child workflows (ie. containing mediators that
+        // were this object's inputs).
+        for (Map.Entry<Workflow, CompletedTrainingBatch> e : inputBatchesByWorkflow.entrySet()) {
+            Workflow workflow = e.getKey();
+            CompletedTrainingBatch inputBatch = e.getValue();
+            Set<Mediator> successfulInputsForWorkflow = inputBatch.getSuccessful();
+
+            // Make sure all input batches now share the same 'getAll()':
+            if (allInputs == null)
+                allInputs = inputBatch.getAll();
+            else if (!allInputs.equals(inputBatch.getAll()))
+                throw new RuntimeException("Child workflows did not properly rollback");
+
+            // Index the input data that goes on to be successful by History and Workfow
+            for (Mediator successfulInputForWorkflow : successfulInputsForWorkflow) {
+                History history = successfulInputForWorkflow.getHistory();
+
+                Map<Workflow, Set<Mediator>> successfulInputsForHistoryByWorkflow
+                        = successfulInputsByWorkflowAndHistory.get(history);
+
+                // If this is a new history object ...
+                if (successfulInputsForHistoryByWorkflow == null) {
+                    // ... create a new map of workflows to successful mediators they processed ...
+                    successfulInputsForHistoryByWorkflow = new HashMap<>();
+                    // ... and assign an empty list for each workflow
+                    for (Workflow childWorkflow : getChildren())
+                        successfulInputsForHistoryByWorkflow.put(childWorkflow, new HashSet<Mediator>());
+
+                    successfulInputsByWorkflowAndHistory.put(history, successfulInputsForHistoryByWorkflow);
+                }
+
+                // Get the set of mediators that this workflow successfully processed (which has
+                // already been initialised as an empty HashSet).
+                Set<Mediator> successfulInputsForWorkflowAndHistory
+                        = successfulInputsForHistoryByWorkflow.get(workflow);
+
+                // Finally, add the successful input to the set for this workflow and history.
+                successfulInputsForWorkflowAndHistory.add(successfulInputForWorkflow);
+            }
+        }
+
+        if (allInputs == null)
+            allInputs = Collections.emptySet();
+
+        // Index allInputs by their History objects
+        Map<History,Set<Mediator>> allInputsByHistory = new HashMap<>();
+        for (Mediator mediator : allInputs) {
+            History history = mediator.getHistory();
+            Set<Mediator> allInputsForHistory = allInputsByHistory.get(history);
+
+            if (allInputsForHistory == null) {
+                allInputsForHistory = new HashSet<>();
+                allInputsByHistory.put(history, allInputsForHistory);
+            }
+
+            allInputsForHistory.add(mediator);
+        }
+
         // Let the concrete implementer use the completed training batch from the inputs of the
         // workflows to decide how to choose the correct workflow in future.
-        handleSuccessfulInputBatches(inputBatchesByWorkflow);
+        handleSuccessfulInputsByWorkflowAndHistory(allInputsByHistory, successfulInputsByWorkflowAndHistory);
 
         // Find all input mediators that would have been chosen, if they now went to
         // 'process(input)'
@@ -121,4 +184,5 @@ public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer
 
         return new CompletedTrainingBatch(allChosenInputs, successfulChosenInputs);
     }
+
 }

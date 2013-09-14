@@ -64,7 +64,7 @@ public class ImageLoaderController extends ElementController {
             }
         });
 
-        setConfigNode(configPane);
+        addConfigNode(configPane);
     }
 
     public ImageLoaderController() {

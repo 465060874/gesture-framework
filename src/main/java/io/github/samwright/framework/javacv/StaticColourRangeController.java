@@ -52,7 +52,7 @@ public class StaticColourRangeController extends ElementController {
         for (Slider slider : sliders)
             slider.valueChangingProperty().addListener(changeListener);
 
-        setConfigNode(configPane);
+        addConfigNode(configPane);
     }
 
     public StaticColourRangeController() {

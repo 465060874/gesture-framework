@@ -10,11 +10,10 @@ import io.github.samwright.framework.model.mock.TopProcessor;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.*;
+import javafx.scene.layout.Pane;
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 22:53
@@ -24,7 +23,7 @@ abstract public class ElementController extends JavaFXController {
     public final static DataFormat dataFormat
             = new DataFormat("io.github.samwright.framework.model.Element");
 
-    private Node configNode;
+    private Map<Node, Pane> configNodesAndParent = new HashMap<>();
     @Getter private ElementLink elementLink;
 
     {
@@ -151,18 +150,27 @@ abstract public class ElementController extends JavaFXController {
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
-        if (configNode == null)
-            return;
 
-        boolean configVisible = getChildren().contains(configNode);
-        if (configVisible && !selected)
-            getChildren().remove(configNode);
-        else if (!configVisible && selected)
-            getChildren().add(configNode);
+        for (Map.Entry<Node,Pane> e : configNodesAndParent.entrySet()) {
+            Node configNode = e.getKey();
+            Pane parent = e.getValue();
+
+            boolean configVisible = parent.getChildren().contains(configNode);
+            if (configVisible && !selected)
+                parent.getChildren().remove(configNode);
+            else if (!configVisible && selected)
+                parent.getChildren().add(0, configNode);
+        }
+
     }
 
-    public void setConfigNode(Node configNode) {
-        this.configNode = configNode;
+    public void addConfigNode(Node configNode) {
+        if (configNodesAndParent.containsKey(configNode))
+            return;
+
+        if (configNode.getParent() == null)
+            throw new RuntimeException("config node has no parent!");
+        configNodesAndParent.put(configNode, (Pane) configNode.getParent());
         setSelected(isSelected());
     }
 }
