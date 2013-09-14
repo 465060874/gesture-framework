@@ -1,3 +1,4 @@
-BestSoFar.framework.core
-BestSoFar.framework.core.helper
-BestSoFar.framework.core.helper.mock
+io.github.samwright.framework.model
+io.github.samwright.framework.model.datatypes
+io.github.samwright.framework.model.helper
+io.github.samwright.framework.model.helper.mock

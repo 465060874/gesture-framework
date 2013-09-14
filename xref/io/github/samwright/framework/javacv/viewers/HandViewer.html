@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>HandViewer xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../apidocs/io/github/samwright/framework/javacv/viewers/HandViewer.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> io.github.samwright.framework.javacv.viewers;
+<a class="jxr_linenumber" name="2" href="#2">2</a>   
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> com.googlecode.javacv.cpp.opencv_core;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> io.github.samwright.framework.controller.helper.DataViewer;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> io.github.samwright.framework.javacv.helper.Hand;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> io.github.samwright.framework.model.helper.Mediator;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> com.googlecode.javacv.cpp.opencv_core.*;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> com.googlecode.javacv.cpp.opencv_imgproc.CV_GRAY2BGR;
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
+<a class="jxr_linenumber" name="11" href="#11">11</a>  
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * User: Sam Wright Date: 12/09/2013 Time: 11:47</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../io/github/samwright/framework/javacv/viewers/HandViewer.html">HandViewer</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../io/github/samwright/framework/javacv/viewers/ImageViewer.html">ImageViewer</a> {
+<a class="jxr_linenumber" name="16" href="#16">16</a>      @Override
+<a class="jxr_linenumber" name="17" href="#17">17</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../io/github/samwright/framework/controller/helper/DataViewer.html">DataViewer</a> createClone() {
+<a class="jxr_linenumber" name="18" href="#18">18</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../io/github/samwright/framework/javacv/viewers/HandViewer.html">HandViewer</a>();
+<a class="jxr_linenumber" name="19" href="#19">19</a>      }
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>      @Override
+<a class="jxr_linenumber" name="22" href="#22">22</a>      <strong class="jxr_keyword">public</strong> Class&lt;?&gt; getViewableClass() {
+<a class="jxr_linenumber" name="23" href="#23">23</a>          <strong class="jxr_keyword">return</strong> Hand.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="24" href="#24">24</a>      }
+<a class="jxr_linenumber" name="25" href="#25">25</a>  
+<a class="jxr_linenumber" name="26" href="#26">26</a>      @Override
+<a class="jxr_linenumber" name="27" href="#27">27</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> view(<a href="../../../../../../io/github/samwright/framework/model/helper/Mediator.html">Mediator</a> mediator) {
+<a class="jxr_linenumber" name="28" href="#28">28</a>          <a href="../../../../../../io/github/samwright/framework/javacv/helper/Hand.html">Hand</a> hand = (Hand) mediator.getData();
+<a class="jxr_linenumber" name="29" href="#29">29</a>          opencv_core.IplImage src = hand.getSourceTaggedImage().getImage();
+<a class="jxr_linenumber" name="30" href="#30">30</a>  
+<a class="jxr_linenumber" name="31" href="#31">31</a>          opencv_core.IplImage copiedImage = opencv_core.IplImage.create(cvGetSize(src), src.depth(), 3);
+<a class="jxr_linenumber" name="32" href="#32">32</a>          cvCvtColor(src, copiedImage, CV_GRAY2BGR);
+<a class="jxr_linenumber" name="33" href="#33">33</a>  
+<a class="jxr_linenumber" name="34" href="#34">34</a>          CvPoint centre = hand.getPalm().getCog();
+<a class="jxr_linenumber" name="35" href="#35">35</a>  
+<a class="jxr_linenumber" name="36" href="#36">36</a>          System.out.println(<span class="jxr_string">"\n== Fingers:"</span>);
+<a class="jxr_linenumber" name="37" href="#37">37</a>  
+<a class="jxr_linenumber" name="38" href="#38">38</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; hand.getDigitAngles().size(); ++i) {
+<a class="jxr_linenumber" name="39" href="#39">39</a>              <strong class="jxr_keyword">double</strong> angle = hand.getDigitAngles().get(i);
+<a class="jxr_linenumber" name="40" href="#40">40</a>              <strong class="jxr_keyword">double</strong> length = hand.getDigitLengths().get(i);
+<a class="jxr_linenumber" name="41" href="#41">41</a>              System.out.format(<span class="jxr_string">"angle: %f , length: %f%n"</span>, angle, length);
+<a class="jxr_linenumber" name="42" href="#42">42</a>  
+<a class="jxr_linenumber" name="43" href="#43">43</a>              CvPoint fingertip = <strong class="jxr_keyword">new</strong> CvPoint(
+<a class="jxr_linenumber" name="44" href="#44">44</a>                      (<strong class="jxr_keyword">int</strong>) (centre.x() + length * Math.cos(angle)),
+<a class="jxr_linenumber" name="45" href="#45">45</a>                      (<strong class="jxr_keyword">int</strong>) (centre.y() + length * Math.sin(angle))
+<a class="jxr_linenumber" name="46" href="#46">46</a>              );
+<a class="jxr_linenumber" name="47" href="#47">47</a>              cvDrawLine(copiedImage, centre, fingertip, CvScalar.RED, 10, CV_AA, 0);
+<a class="jxr_linenumber" name="48" href="#48">48</a>          }
+<a class="jxr_linenumber" name="49" href="#49">49</a>  
+<a class="jxr_linenumber" name="50" href="#50">50</a>          CvPoint dirPnt = <strong class="jxr_keyword">new</strong> CvPoint(
+<a class="jxr_linenumber" name="51" href="#51">51</a>                  (<strong class="jxr_keyword">int</strong>) (centre.x() + hand.getWidth() * Math.cos(hand.getPalm().getContourAxisAngle())),
+<a class="jxr_linenumber" name="52" href="#52">52</a>                  (<strong class="jxr_keyword">int</strong>) (centre.y() + hand.getWidth() * Math.sin(hand.getPalm().getContourAxisAngle()))
+<a class="jxr_linenumber" name="53" href="#53">53</a>          );
+<a class="jxr_linenumber" name="54" href="#54">54</a>          cvDrawLine(copiedImage, centre, dirPnt, CvScalar.GREEN, 10, CV_AA, 0);
+<a class="jxr_linenumber" name="55" href="#55">55</a>  
+<a class="jxr_linenumber" name="56" href="#56">56</a>  
+<a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">super</strong>.view(copiedImage);
+<a class="jxr_linenumber" name="58" href="#58">58</a>      }
+<a class="jxr_linenumber" name="59" href="#59">59</a>  
+<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> drawCircle(opencv_core.IplImage image, opencv_core.CvScalar colour, opencv_core.CvPoint position) {
+<a class="jxr_linenumber" name="61" href="#61">61</a>          cvDrawCircle(image, position, 10, colour, 10, CV_AA, 0);
+<a class="jxr_linenumber" name="62" href="#62">62</a>      }
+<a class="jxr_linenumber" name="63" href="#63">63</a>  
+<a class="jxr_linenumber" name="64" href="#64">64</a>      @Override
+<a class="jxr_linenumber" name="65" href="#65">65</a>      <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">return</strong> <span class="jxr_string">"Fingertip Viewer"</span>;
+<a class="jxr_linenumber" name="67" href="#67">67</a>      }
+<a class="jxr_linenumber" name="68" href="#68">68</a>  }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

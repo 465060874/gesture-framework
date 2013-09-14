@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Element xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/io/github/samwright/framework/model/Element.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> io.github.samwright.framework.model;
+<a class="jxr_linenumber" name="2" href="#2">2</a>   
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> io.github.samwright.framework.model.common.ChildOf;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> io.github.samwright.framework.model.common.ElementObserver;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> io.github.samwright.framework.model.helper.TypeData;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> java.util.Set;
+<a class="jxr_linenumber" name="8" href="#8">8</a>   
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_javadoccomment"> * An {@code Element} is a {@link Processor} which sits inside a {@link Workflow}.</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment"> * It can be observed by {@link ElementObserver} objects, which are registered with the</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * {@code withObservers(newObservers)} method.</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a href="../../../../../io/github/samwright/framework/model/Element.html">Element</a> <strong class="jxr_keyword">extends</strong> Processor, ChildOf&lt;Workflow&gt; {
+<a class="jxr_linenumber" name="16" href="#16">16</a>  
+<a class="jxr_linenumber" name="17" href="#17">17</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_javadoccomment">     * Gets the {@link ElementObserver} objects that are observing this.  When this is</em>
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_javadoccomment">     * replaced, the observers are updated to their latest versions.</em>
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment">     * @return the {@link ElementObserver} objects that are observing this.</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>      Set&lt;ElementObserver&gt; getObservers();
+<a class="jxr_linenumber" name="24" href="#24">24</a>  
+<a class="jxr_linenumber" name="25" href="#25">25</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment">     * Returns this (or if this is not mutable, a clone) with the given set of observers.</em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">     * @param newObservers the observers who's latest versions will be in the returned</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">     *                     {@code Element}.</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">     * @return an {@code Element} with the latest versions of the given {@code newObservers}.</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>      <a href="../../../../../io/github/samwright/framework/model/Element.html">Element</a> withObservers(Set&lt;ElementObserver&gt; newObservers);
+<a class="jxr_linenumber" name="33" href="#33">33</a>  
+<a class="jxr_linenumber" name="34" href="#34">34</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment">     * Return a clone of this with the given {@link TypeData}.  It will only work if this is</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment">     * immutable (since the parametric types must be set at instantiation).</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * @param newTypeData the type data to put in the returned clone.</em>
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     * @return a clone of this with the given {@code TypeData}.</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     * @throws RuntimeException if this is still mutable.</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>      <a href="../../../../../io/github/samwright/framework/model/Element.html">Element</a> withTypeData(<a href="../../../../../io/github/samwright/framework/model/helper/TypeData.html">TypeData</a> newTypeData);
+<a class="jxr_linenumber" name="43" href="#43">43</a>  
+<a class="jxr_linenumber" name="44" href="#44">44</a>      @Override
+<a class="jxr_linenumber" name="45" href="#45">45</a>      <a href="../../../../../io/github/samwright/framework/model/Element.html">Element</a> withParent(<a href="../../../../../io/github/samwright/framework/model/Workflow.html">Workflow</a> newParent);
+<a class="jxr_linenumber" name="46" href="#46">46</a>  
+<a class="jxr_linenumber" name="47" href="#47">47</a>      @Override
+<a class="jxr_linenumber" name="48" href="#48">48</a>      <a href="../../../../../io/github/samwright/framework/model/Element.html">Element</a> createMutableClone();
+<a class="jxr_linenumber" name="49" href="#49">49</a>  
+<a class="jxr_linenumber" name="50" href="#50">50</a>      @Override
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <a href="../../../../../io/github/samwright/framework/model/Element.html">Element</a> getCurrentVersion();
+<a class="jxr_linenumber" name="52" href="#52">52</a>  }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+
