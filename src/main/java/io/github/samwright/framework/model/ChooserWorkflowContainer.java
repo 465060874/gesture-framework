@@ -8,7 +8,14 @@ import io.github.samwright.framework.model.helper.TypeData;
 import java.util.*;
 
 /**
- * User: Sam Wright Date: 08/09/2013 Time: 15:34
+ * A {@link WorkflowContainer} where one of its {@link Workflow} objects will be chosen for
+ * processing data.
+ * <p/>
+ * During the training phase this will process training data through all of its {@code Workflow}
+ * objects, but as the {@link CompletedTrainingBatch} flows back through it,
+ * it will decide on a strategy for choosing a {@code Workflow}.  The choice is made when
+ * {@code process(..)} is called, so the choosing strategy can involve information from the
+ * supplied {@link Mediator} (eg. its {@link History}).
  */
 public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer {
 

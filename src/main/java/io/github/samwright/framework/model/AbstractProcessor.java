@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * User: Sam Wright Date: 31/08/2013 Time: 12:53
+ * Abstract implementation of {@link Processor}.
  */
 public abstract class AbstractProcessor implements Processor {
 
@@ -27,10 +27,7 @@ public abstract class AbstractProcessor implements Processor {
 
     public AbstractProcessor() {
         this.mutabilityHelper = new MutabilityHelper(this, false);
-
         setUUID(ModelLoader.makeNewUUID());
-//        this.uuid = ModelLoader.makeNewUUID();
-//        ModelLoader.registerProcessor(this);
     }
 
     public AbstractProcessor(AbstractProcessor oldProcessor) {

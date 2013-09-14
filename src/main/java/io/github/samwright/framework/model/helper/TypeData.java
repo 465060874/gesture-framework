@@ -90,6 +90,12 @@ final public class TypeData {
         return this.inputType.isAssignableFrom(workflow.inputType);
     }
 
+    /**
+     * Serialises this to an XML {@link Element}.
+     *
+     * @param doc the {@link Document} to create the node from.
+     * @return
+     */
     public Element getXMLForDocument(Document doc) {
         Element node = doc.createElement("TypeData");
         XMLHelper.addDataUnderNode(node, "Input", inputType.getName());
@@ -97,6 +103,13 @@ final public class TypeData {
         return node;
     }
 
+    /**
+     * Load a new {@code TypeData} object from the given XML.
+     *
+     * @param node the XML from which to load.
+     * @param dictionary the dictionary of old to new UUIDs.
+     * @return the loaded {@code TypeData} object.
+     */
     public TypeData withXML(Element node, Map<UUID, Processor> dictionary) {
         Element typeDataNode = XMLHelper.getFirstChildWithName(node, "TypeData");
 
@@ -106,6 +119,12 @@ final public class TypeData {
         return new TypeData(loadClass(inputString), loadClass(outputString));
     }
 
+    /**
+     * Wrapper for {@code Class.forName(className)} that only throws unchecked exceptions.
+     *
+     * @param className the name of the class to load.
+     * @return
+     */
     private Class<?> loadClass(String className) {
         try {
             return Class.forName(className);

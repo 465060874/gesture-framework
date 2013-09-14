@@ -1,9 +1,12 @@
 package io.github.samwright.framework.model.common;
 
 /**
- * User: Sam Wright Date: 31/08/2013 Time: 15:30
+ * A class whose instantiations are deletable.
  */
 public interface Deletable {
 
+    /**
+     * Delete this.
+     */
     void delete();
 }

@@ -1,7 +1,7 @@
 package io.github.samwright.framework.model.common;
 
 /**
- * User: Sam Wright Date: 03/09/2013 Time: 13:02
+ * Implementors can be valid or invalid.
  */
 public interface Validatable {
     /**

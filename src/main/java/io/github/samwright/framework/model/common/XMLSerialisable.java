@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * User: Sam Wright Date: 26/08/2013 Time: 19:06
+ * Implementers can be serialised to an {@link Element}, or deserialised from one.
  */
 public interface XMLSerialisable {
 
@@ -46,7 +46,18 @@ public interface XMLSerialisable {
      */
     XMLSerialisable withXML(Element node, Map<UUID, Processor> dictionary);
 
+    /**
+     * Gets the model identifier for this object, which is saved when serialising to XML and is
+     * registered with the {@link ModelLoader}.
+     *
+     * @return the model identifier.
+     */
     String getModelIdentifier();
 
+    /**
+     * Gets the XML tag, which is used as the name of the node when serialising to XML.
+     *
+     * @return the XML tag.
+     */
     String getXMLTag();
 }

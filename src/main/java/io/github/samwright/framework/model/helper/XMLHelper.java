@@ -20,7 +20,7 @@ import java.io.StringWriter;
 import java.util.Iterator;
 
 /**
- * User: Sam Wright Date: 27/08/2013 Time: 12:18
+ * Helper class containing useful methods for dealing with XML (de)serialisation.
  */
 public class XMLHelper {
 
@@ -37,6 +37,11 @@ public class XMLHelper {
 
     private XMLHelper() {}
 
+    /**
+     * Iterable class that goes through an {@link Element} object's children (not grandchildren,
+     * great-grandchildren etc...), optionally selecting only those children with the supplied
+     * tag name.
+     */
     private static class ElementIterable implements Iterable<Element> {
         private static final String wildcard = "*";
         private Element next;
@@ -87,6 +92,27 @@ public class XMLHelper {
         }
     }
 
+    /**
+     * Adds data under the given node, ie:
+     * <p/>
+     * {@code
+     * <Parent></Parent>>
+     * }
+     * <p/>
+     * becomes...
+     * <p/>
+     * {@code
+     * <Parent>
+     *     <nodeString>
+     *         nodeData
+     *     </nodeString>
+     * </Parent>
+     * }
+     *
+     * @param parentNode the node to add the data to.
+     * @param nodeString the name of the data node to put under the parent node.
+     * @param nodeData the data to put in the data node.
+     */
     public static void addDataUnderNode(Element parentNode, String nodeString, String nodeData) {
         // Create an element for this data type
         Element dataElement = parentNode.getOwnerDocument().createElement(nodeString);
@@ -97,6 +123,13 @@ public class XMLHelper {
         parentNode.appendChild(dataElement);
     }
 
+    /**
+     * Gets the first child (not grandchild, great-grandchild, ...) with the specified name.
+     *
+     * @param node the node to look under.
+     * @param name the name to match the child's tag name with.
+     * @return the first child node with the supplied name.
+     */
     public static Element getFirstChildWithName(Element node, String name) {
         Iterator<Element> iterator = new ElementIterable(node, name).iterator();
         if (!iterator.hasNext())
@@ -105,26 +138,77 @@ public class XMLHelper {
         return iterator.next();
     }
 
+    /**
+     * Gets data under the given node, ie.
+     * <p/>
+     * {@code
+     * <node>
+     *     <nodeString>
+     *         nodeData
+     *     </nodeString>
+     * </node>
+     * }
+     * <p/>
+     * would return "nodeData".
+     *
+     * @param node the node to look for data under.
+     * @param nodeString the data node to look for.
+     * @return the data in the data node.
+     */
     public static String getDataUnderNode(Element node, String nodeString) {
         return getFirstChildWithName(node, nodeString).getTextContent();
     }
 
+    /**
+     * Loads a {@link Processor} from a file with the given filename,
+     * optionally using an already-loaded {@code Processor} if it has the same UUID.
+     *
+     * @param filename the location of the file from which to load the {@code Processor}.
+     * @param useExistingIfPossible if true and there is already a {@code Processor} with the
+     *                              UUID specified in the file, return the current version of
+     *                              that {@code Processor}.  Otherwise create a new one from
+     *                              the relevant prototype model in {@link ModelLoader}.
+     * @return the loaded {@code Processor}.
+     */
     public static Processor loadProcessorFromFile(String filename, boolean useExistingIfPossible) {
         Document doc = getDocumentFromInput(new InputSource(new File(filename).toURI().toASCIIString()));
         return loadProcessorFromDocument(doc, useExistingIfPossible);
     }
 
+    /**
+     * Loads a {@link Processor} from a XML string optionally using an already-loaded {@code
+     * Processor} if it has the same UUID.
+     *
+     * @param xml the XML string from which to load the {@code Processor}.
+     * @param useExistingIfPossible if true and there is already a {@code Processor} with the
+     *                              UUID specified in the string, return the current version of
+     *                              that {@code Processor}.  Otherwise create a new one from
+     *                              the relevant prototype model in {@link ModelLoader}.
+     * @return the loaded {@code Processor}.
+     */
     public static Processor loadProcessorFromString(String xml, boolean useExistingIfPossible) {
         Document doc = getDocumentFromInput(new InputSource(new StringReader(xml)));
         return loadProcessorFromDocument(doc, useExistingIfPossible);
     }
 
+    /**
+     * Serialise the given {@link Processor} into an XML string.
+     *
+     * @param processor the {@code Processor} to serialise.
+     * @return the XML representation of the given object as a string.
+     */
     public static String writeProcessorToString(Processor processor) {
         StringWriter stringWriter = new StringWriter();
         writeProcessorToResult(processor, new StreamResult(stringWriter));
         return stringWriter.getBuffer().toString();
     }
 
+    /**
+     * Serialise the given {@link Processor} into an XML file.
+     *
+     * @param processor the {@code Processor} to serialise.
+     * @param filename the location to create the XML file.
+     */
     public static void writeProcessorToFile(Processor processor, String filename) {
         writeProcessorToResult(processor, new StreamResult(new File(filename)));
     }
@@ -137,14 +221,36 @@ public class XMLHelper {
         return ModelLoader.loadProcessor(doc.getDocumentElement(), useExistingIfPossible);
     }
 
+    /**
+     * Return an iterator for use in a for-each loop that will iterate through the given
+     * {@link Element} object's children (not grandchildren, great-grandchildren, ...).
+     *
+     * @param node the node whose children will be iterated through.
+     * @return an iterator to go through the node's children.
+     */
     public static Iterable<Element> iterator(Element node) {
         return new ElementIterable(node);
     }
 
+    /**
+     * Return an iterator for use in a for-each loop that will iterate through the given
+     * {@link Element} object's children (not grandchildren, great-grandchildren,
+     * ...) that have the supplied name.
+     *
+     * @param node the node whose children will be iterated through.
+     * @param name the required name to look for children with.
+     * @return an iterator to go through the node's children.
+     */
     public static Iterable<Element> iterator(Element node, String name) {
         return new ElementIterable(node, name);
     }
 
+    /**
+     * Gets the first child of a node.
+     *
+     * @param node the node to get the first child of.
+     * @return the first child of the given node.
+     */
     public static Element getFirstChild(Element node) {
         return getFirstChildWithName(node, "*");
     }
@@ -191,34 +297,5 @@ public class XMLHelper {
         } catch (TransformerException e) {
             throw new ModelLoader.ModelLoadException(e);
         }
-    }
-
-    public static String xmlNodeToString(Element xmlNode) {
-        Document doc = xmlNode.getOwnerDocument();
-
-        // Create transformer, which converts 'doc' into xml
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer;
-        try {
-            transformer = transformerFactory.newTransformer();
-        } catch (TransformerConfigurationException e) {
-            throw new ModelLoader.ModelLoadException(e);
-        }
-
-        // Make the xml nicely formatted (with multiple lines and indentation)
-        // (taken from 'http://stackoverflow.com/questions/5142632/java-dom-xml-file-create-have-no-tabs-or-whitespaces-in-output-file')
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
-        // Prepare input to transformer (ie. doc)
-        DOMSource source = new DOMSource(doc);
-        StringWriter stringWriter = new StringWriter();
-        // Perform the transformation
-        try {
-            transformer.transform(source, new StreamResult(stringWriter));
-        } catch (TransformerException e) {
-            throw new ModelLoader.ModelLoadException(e);
-        }
-        return stringWriter.getBuffer().toString();
     }
 }

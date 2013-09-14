@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * User: Sam Wright Date: 17/07/2013 Time: 09:21
+ * An implementation of {@link TopProcessor}.
  */
 public class TopWorkflowContainer extends AbstractWorkflowContainer implements TopProcessor {
 

@@ -9,10 +9,9 @@ import lombok.Getter;
 import java.util.*;
 
 /**
- * Run best 1, output 1.
- * Run all, output collection of all.
- *
- * User: Sam Wright Date: 07/09/2013 Time: 10:46
+ * A {@link WorkflowContainer} that allows for all of its {@link Workflow} objects to
+ * concurrently process input data, before finally joining them together back into a single
+ * {@link Mediator} output.
  */
 public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContainer {
 

@@ -9,7 +9,7 @@ import lombok.Getter;
 import java.util.*;
 
 /**
- * Implementation of Workflow.
+ * Implementation of {@link Workflow}.
  */
 public class WorkflowImpl extends AbstractWorkflow {
 

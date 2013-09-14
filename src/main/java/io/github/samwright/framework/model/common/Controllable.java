@@ -3,7 +3,7 @@ package io.github.samwright.framework.model.common;
 import io.github.samwright.framework.controller.ModelController;
 
 /**
- * User: Sam Wright Date: 31/08/2013 Time: 13:54
+ * A class whose instantiations can each have a controller.
  */
 public interface Controllable {
 

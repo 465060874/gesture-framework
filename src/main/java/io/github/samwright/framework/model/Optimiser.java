@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * User: Sam Wright Date: 13/09/2013 Time: 08:16
+ * A {@link ChooserWorkflowContainer} that statically decides during training which
+ * {@link Workflow} is best suited to each {@link History} object of its incoming
+ * {@link Mediator} objects.
  */
 public class Optimiser extends ChooserWorkflowContainer {
 
