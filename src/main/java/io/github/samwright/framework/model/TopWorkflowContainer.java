@@ -44,7 +44,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
         final List<Workflow> workflows = getChildren();
 
         if (busy)
-            throw new RuntimeException("Cannot process new requests while busy");
+            return null;
 
         new Thread(new Runnable() {
             @Override
@@ -57,6 +57,13 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                                 workflow.process(input);
                             } catch (RuntimeException e) {
                                 e.printStackTrace();
+                                busy = false;
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getController().handleUpdatedModel();
+                                    }
+                                });
                             }
                         }
                     } finally {
@@ -79,7 +86,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
         final List<Workflow> workflows = getChildren();
 
         if (busy)
-            throw new RuntimeException("Cannot process new requests while busy");
+            return null;
 
         new Thread(new Runnable() {
             @Override

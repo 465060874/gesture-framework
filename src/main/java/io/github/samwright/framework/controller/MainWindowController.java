@@ -71,12 +71,15 @@ public class MainWindowController extends VBox {
             @Override
             public void handle(ActionEvent actionEvent) {
                 topController.getModel().process();
+                handleUpdatedModel();
             }
         });
         trainButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+//                trainButton.setDisable(true);
                 topController.getModel().train();
+                handleUpdatedModel();
             }
         });
         saveButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -168,6 +171,8 @@ public class MainWindowController extends VBox {
         redoButton.setDisable(!topController.canRedo());
         undoButton.setDisable(!topController.canUndo());
         processButton.setDisable(!topController.canProcess());
+        trainButton.setDisable(!topController.canTrain());
+
         requestLayout();
     }
 

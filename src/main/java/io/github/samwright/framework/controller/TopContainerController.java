@@ -193,6 +193,10 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     }
 
     public boolean canProcess() {
-        return getModel().areChildrenValid() && getModel().isValid();
+        return getModel().areChildrenValid() && getModel().isValid() && !getModel().isBusy();
+    }
+
+    public boolean canTrain() {
+        return !getModel().isBusy();
     }
 }
