@@ -31,7 +31,8 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
     }
 
     public void process() {
-        process(Mediator.createEmpty());
+        if (isValid() && areChildrenValid())
+            process(Mediator.createEmpty());
     }
 
     public void train() {

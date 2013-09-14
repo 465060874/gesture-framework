@@ -123,6 +123,8 @@ public class NNClassifier extends AbstractElement {
     }
 
     private String predict(CvANN_MLP net, Features features) {
+        if (!isValid())
+            return "Not trained";
         // Setup the features in the correct format
         CvMat inputData = cvCreateMat(1, featuresSize, CV_32FC1);
 
