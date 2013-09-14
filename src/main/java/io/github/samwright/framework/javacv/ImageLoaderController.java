@@ -1,5 +1,6 @@
 package io.github.samwright.framework.javacv;
 
+import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.ElementController;
 import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.helper.ElementLink;
@@ -51,14 +52,16 @@ public class ImageLoaderController extends ElementController {
         snapshotButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                getModel().takeSnapshot(tagField.getText());
+                getModel().setSnapshotTag(tagField.getText());
+                getModel().setActiveImage(null);
+                MainWindowController.getTopController().getModel().process();
             }
         });
 
         directoryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                File folder = new DirectoryChooser().showDialog(null);
+                File folder = new DirectoryChooser().showDialog(MainApp.getStage());
                 if (folder != null && folder.isDirectory())
                     getModel().replaceWith(getModel().withDirectory(folder.getAbsolutePath()));
             }

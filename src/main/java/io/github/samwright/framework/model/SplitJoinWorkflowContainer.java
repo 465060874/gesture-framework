@@ -57,10 +57,9 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
     public Mediator process(Mediator input) {
         final ArrayList<Mediator> outputs = new ArrayList<>();
 
-        for (Workflow workflow : getChildren()) {
-            Mediator preparedInput = input.createNext(workflow, input.getData());
-            processWorkflow(workflow, preparedInput, outputs);
-        }
+        for (Workflow workflow : getChildren())
+            processWorkflow(workflow, input, outputs);
+
 
         synchronized (outputs) {
             while (outputs.size() != getChildren().size()) {
@@ -85,7 +84,7 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
         }
 
         return input
-                .createNext(this, orderedOutputs)
+                .join(this, orderedOutputs)
                 .createNext(this, joinOutputMediators(orderedOutputs));
     }
 

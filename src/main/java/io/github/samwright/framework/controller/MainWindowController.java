@@ -185,7 +185,7 @@ public class MainWindowController extends VBox {
     }
 
     public void saveAs() {
-        File file = new FileChooser().showSaveDialog(null);
+        File file = new FileChooser().showSaveDialog(MainApp.getStage());
         if (file == null)
             return;
 
@@ -196,7 +196,7 @@ public class MainWindowController extends VBox {
     }
 
     public void open() {
-        File file = new FileChooser().showOpenDialog(null);
+        File file = new FileChooser().showOpenDialog(MainApp.getStage());
         if (file == null)
             return;
         filename = file.getAbsolutePath();

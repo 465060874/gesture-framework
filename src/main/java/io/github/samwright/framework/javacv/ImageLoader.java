@@ -12,6 +12,7 @@ import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 import io.github.samwright.framework.model.helper.XMLHelper;
 import lombok.Getter;
+import lombok.Setter;
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class ImageLoader extends AbstractElement {
     @Getter private String directory;
     @Getter private LoadedImage activeImage;
     private List<LoadedImage> images;
+    @Getter @Setter private String snapshotTag = "Snapshot";
 
 
     public ImageLoader() {
@@ -64,7 +66,7 @@ public class ImageLoader extends AbstractElement {
     @Override
     public Mediator process(Mediator input) {
         if (activeImage == null)
-            takeSnapshot("Snapshot");
+            takeSnapshot();
 
         if (activeImage == null)
             throw new RuntimeException("Null active image!");
@@ -136,9 +138,7 @@ public class ImageLoader extends AbstractElement {
         Collections.sort(images);
     }
 
-    public void takeSnapshot(String tag) {
-        if (tag == null || tag.isEmpty())
-            tag = "Snapshot";
+    public void takeSnapshot() {
 
 //        while ()
 
@@ -167,7 +167,7 @@ public class ImageLoader extends AbstractElement {
             String fullFileName;
             int i = 1;
             do {
-                fullFileName = directory + tag + " " + i;
+                fullFileName = directory + snapshotTag + " " + i;
             } while(new File(fullFileName + ".jpg").exists());
             fullFileName = fullFileName + ".jpg";
 
@@ -181,7 +181,7 @@ public class ImageLoader extends AbstractElement {
                 }
             }
         } else {
-            activeImage = new LoadedImage(image, tag, null);
+            activeImage = new LoadedImage(image, snapshotTag, null);
         }
     }
 

@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lombok.Getter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -14,6 +15,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class MainApp extends Application {
 
     public final static BeanFactory beanFactory;
+    @Getter private static Stage stage;
 
     static{
         beanFactory = new ClassPathXmlApplicationContext("/META-INF/beans.xml");
@@ -25,6 +27,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        MainApp.stage = stage;
         Parent root = new MainWindowController();
         Scene scene = new Scene(root, 500, 600);
 

@@ -1,5 +1,6 @@
 package io.github.samwright.framework.model.mock;
 
+import io.github.samwright.framework.controller.TopController;
 import io.github.samwright.framework.model.WorkflowContainer;
 
 /**
@@ -51,4 +52,7 @@ public interface TopProcessor extends WorkflowContainer {
 
     @Override
     TopProcessor createMutableClone();
+
+    @Override
+    TopController getController();
 }

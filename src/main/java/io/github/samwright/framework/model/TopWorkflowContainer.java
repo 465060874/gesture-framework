@@ -1,11 +1,11 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.controller.TopController;
 import io.github.samwright.framework.model.datatypes.StartType;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
 import io.github.samwright.framework.model.mock.TopProcessor;
-import javafx.application.Platform;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,24 +50,19 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
             @Override
             public void run() {
                 synchronized (processLock) {
-                    busy = true;
                     try {
+                        busy = true;
                         for (Workflow workflow : workflows) {
                             try {
                                 workflow.process(input);
-                            } catch (RuntimeException e) {
-                                e.printStackTrace();
+                            } catch (final RuntimeException e) {
                                 busy = false;
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        getController().handleUpdatedModel();
-                                    }
-                                });
+                                getController().handleExceptions(e);
                             }
                         }
                     } finally {
                         busy = false;
+                        getController().handleExceptions(null);
                     }
                 }
             }
@@ -99,7 +94,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                             try {
                                 completedTrainingData = workflow.processTrainingData(input);
                             } catch (RuntimeException e) {
-                                e.printStackTrace();
+                                getController().handleExceptions(e);
                                 continue;
                             }
 
@@ -113,12 +108,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                         }
                     } finally {
                         busy = false;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                getController().handleUpdatedModel();
-                            }
-                        });
+                        getController().handleExceptions(null);
                     }
                 }
             }
@@ -130,6 +120,11 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
     @Override
     public TopWorkflowContainer createMutableClone() {
         return new TopWorkflowContainer(this);
+    }
+
+    @Override
+    public TopController getController() {
+        return (TopController) super.getController();
     }
 
     public TopWorkflowContainer getPreviousCompleted() {

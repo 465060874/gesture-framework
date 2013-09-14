@@ -2,18 +2,27 @@ package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.model.TopWorkflowContainer;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * User: Sam Wright Date: 20/08/2013 Time: 18:05
  */
-public class TopContainerController extends WorkflowContainerControllerImpl {
+public class TopContainerController
+        extends WorkflowContainerControllerImpl implements TopController {
 
     private final Set<JavaFXController> selected = new HashSet<>();
 
@@ -21,6 +30,8 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
     private int transientUpdateMode = 0;
     private Object[] updateLock = new Object[0];
     private boolean needsUpdate = false;
+    private final Stage popupStage;
+    private Label popupLabel;
 
     {
         setMaxHeight(Double.MAX_VALUE);
@@ -33,6 +44,14 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
                 mouseEvent.consume();
             }
         });
+
+        popupStage = new Stage();
+        popupStage.setTitle("Exception");
+        HBox box = new HBox();
+        popupStage.setScene(new Scene(box, 400, 300));
+        popupLabel = new Label();
+        box.getChildren().add(popupLabel);
+        popupStage.initModality(Modality.APPLICATION_MODAL);
     }
 
     public TopContainerController(TopContainerController toClone) {
@@ -198,5 +217,24 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
 
     public boolean canTrain() {
         return !getModel().isBusy();
+    }
+
+    @Override
+    public void handleExceptions(final Exception e) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                mainWindow.handleUpdatedModel();
+                if (e != null) {
+                    StringWriter stringWriter = new StringWriter();
+                    PrintWriter printWriter = new PrintWriter(stringWriter);
+                    e.printStackTrace(printWriter);
+                    String stackTrace = stringWriter.toString();
+
+                    popupLabel.setText(stackTrace);
+                    popupStage.showAndWait();
+                }
+            }
+        });
     }
 }
