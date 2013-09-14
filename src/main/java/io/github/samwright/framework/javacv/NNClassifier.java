@@ -8,6 +8,7 @@ import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.History;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
+import lombok.Getter;
 
 import java.util.*;
 
@@ -23,6 +24,7 @@ public class NNClassifier extends AbstractElement {
     private Map<History,CvANN_MLP> nets = new HashMap<>();
     private int featuresSize = -1;
     private List<String> classIndex = new ArrayList<>();
+    @Getter private Map<History,Double> successRates;
 
     public NNClassifier() {
         super(new TypeData(Features.class, Classification.class));
@@ -35,12 +37,18 @@ public class NNClassifier extends AbstractElement {
     @Override
     public Mediator process(Mediator input) {
         Features features = (Features) input.getData();
-        return input.createNext(this, new Classification(predict(features, input.getHistory())));
+        CvANN_MLP net = nets.get(input.getHistory());
+        String predictedTag = predict(net, features);
+
+        return input.createNext(this, new Classification(predictedTag));
     }
 
     @Override
     public List<Mediator> processTrainingData(Mediator input) {
         Features features = (Features) input.getData();
+
+        // For training data, assume the classifier works 100% of the time (ie. use the supplied
+        // tag as the predicted tag.
         return Arrays.asList(input.createNext(this, new Classification(features.getTag())));
     }
 
@@ -50,6 +58,7 @@ public class NNClassifier extends AbstractElement {
         classIndex.clear();
         featuresSize = -1;
         classIndex.clear();
+        successRates = null;
         nets.clear();
         Map<History, List<Features>> trainingSet = new HashMap<>();
         Set<String> classSet = new HashSet<>();
@@ -83,6 +92,7 @@ public class NNClassifier extends AbstractElement {
         }
 
         classIndex.addAll(classSet);
+        successRates = new HashMap<>();
 
         // Setup a network for each unique mediator history:
         for (Map.Entry<History,List<Features>> e : trainingSet.entrySet()) {
@@ -94,22 +104,25 @@ public class NNClassifier extends AbstractElement {
             nets.put(history, net);
 
             // Train net
-            trainLeavingOneOut(net, featuresList, history);
+            double successRate = trainLeavingOneOut(net, featuresList);
+
+            successRates.put(history, successRate);
         }
 
         Set<Mediator> successful = new HashSet<>();
 
         for (Mediator inputMediator : inputBatch.getSuccessful()) {
             Features features = (Features) inputMediator.getData();
+            CvANN_MLP net = nets.get(inputMediator.getHistory());
 
-            if (predict(features, inputMediator.getHistory()).equals(features.getTag()))
+            if (predict(net, features).equals(features.getTag()))
                 successful.add(inputMediator);
         }
 
         return new CompletedTrainingBatch(inputBatch.getAll(), successful);
     }
 
-    private String predict(Features features, History history) {
+    private String predict(CvANN_MLP net, Features features) {
         // Setup the features in the correct format
         CvMat inputData = cvCreateMat(1, featuresSize, CV_32FC1);
 
@@ -120,7 +133,7 @@ public class NNClassifier extends AbstractElement {
         CvMat outputData = cvCreateMat(1, classIndex.size(), CV_32FC1);
 
         // Predict, and populate outputData.
-        nets.get(history).predict(inputData, outputData);
+        net.predict(inputData, outputData);
 
         // Find index of largest output:
         double maxVal = -100;
@@ -136,7 +149,15 @@ public class NNClassifier extends AbstractElement {
         return classIndex.get(maxIndex);
     }
 
-    private void trainLeavingOneOut(CvANN_MLP net, List<Features> trainingSet, History history) {
+    /**
+     * Trains the given net on the given training set using the leave-1-out strategy,
+     * returning the average training success rate as a fraction (ie. 0 -> 1).
+     *
+     * @param net the net to train.
+     * @param trainingSet the training set to train the net with.
+     * @return the success rate as a fraction (ie. 0 -> 1).
+     */
+    private double trainLeavingOneOut(CvANN_MLP net, List<Features> trainingSet) {
         LinkedList<Features> partialTrainingSet = new LinkedList<>(trainingSet);
         int successes = 0;
 
@@ -144,16 +165,27 @@ public class NNClassifier extends AbstractElement {
             Features removed = partialTrainingSet.removeFirst();
 
             trainNet(net, partialTrainingSet);
-            if (predict(removed, history).equals(removed.getTag()))
+            if (predict(net, removed).equals(removed.getTag()))
                 ++successes;
 
             partialTrainingSet.addLast(removed);
         }
 
-        System.out.format("Success rate = %f (%d out of %d)%n",
-                (successes * 100. / trainingSet.size()), successes, trainingSet.size());
+        try {
+            return successes * 1. / trainingSet.size();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
+    /**
+     * Creates a net with the given features size and classes size (for input and output layer
+     * sizes respectively).
+     *
+     * @param featuresSize the number of features.
+     * @param classesSize the number of classes.
+     * @return the new net.
+     */
     private CvANN_MLP createNet(int featuresSize, int classesSize) {
         // Setup NN layers information
         CvMat layers = cvCreateMat(4, 1, CV_32SC1);
@@ -169,6 +201,12 @@ public class NNClassifier extends AbstractElement {
         return net;
     }
 
+    /**
+     * Train the given net with the given training set.
+     *
+     * @param net the net to train.
+     * @param trainingSet the training set to train the net with.
+     */
     private void trainNet(CvANN_MLP net, List<Features> trainingSet) {
         // Create matrix of training set
         CvMat trainingData = cvCreateMat(trainingSet.size(), featuresSize, CV_32FC1);

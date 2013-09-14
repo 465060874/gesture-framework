@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
 <fx:root fx:id="element" type="javafx.scene.layout.VBox"
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="/css/Element.css"
          maxHeight="-Infinity"
+         minWidth="90"
         >
     <children>
         <Label alignment="CENTER" text="NN Classifier" fx:id="label" minWidth="-Infinity"/>
+        <VBox fx:id="successRatesBox"/>
     </children>
 </fx:root>

@@ -177,6 +177,21 @@ public class TopContainerController extends WorkflowContainerControllerImpl {
         selected.clear();
     }
 
+    public void setSelection(Set<JavaFXController> newSelection) {
+        newSelection.remove(this);
+
+        for (JavaFXController toDeselect : selected) {
+            if (!newSelection.contains(toDeselect))
+                toDeselect.setSelected(false);
+        }
+        selected.clear();
+
+        for (JavaFXController toSelect : newSelection)
+            toSelect.setSelected(true);
+
+        selected.addAll(newSelection);
+    }
+
     public boolean canProcess() {
         return getModel().areChildrenValid() && getModel().isValid();
     }
