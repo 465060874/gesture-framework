@@ -55,8 +55,6 @@ public class OptimiserController extends WorkflowContainerControllerImpl {
 
         for (WorkflowControllerImpl workflowController : workflowControllers) {
             workflowController.getHeader().getChildren().clear();
-            System.out.println("Header should have 0 children: " + workflowController.getHeader()
-                    .getChildren());
 
             Workflow workflow = workflowController.getModel();
             Map<History,Double> successRateByHistory = getModel().getSuccessRates().get(workflow);
@@ -76,8 +74,6 @@ public class OptimiserController extends WorkflowContainerControllerImpl {
 
                 workflowController.getHeader().getChildren().add(button);
             }
-            System.out.println("Header has children: " + workflowController.getHeader()
-                    .getChildren());
         }
     }
 }

@@ -43,9 +43,6 @@ public class Optimiser extends ChooserWorkflowContainer {
         successRates.clear();
         chosenWorkflows.clear();
 
-        System.out.println("  ====  Optimising === " + successRates.isEmpty() + chosenWorkflows
-                .isEmpty());
-
         for (Map.Entry<History, Map<Workflow, Set<Mediator>>> e1 : successfulInputsByWorkflowAndHistory.entrySet()) {
             History history = e1.getKey();
             Set<Mediator> allInputsForHistory = allInputsByHistory.get(history);
@@ -74,9 +71,6 @@ public class Optimiser extends ChooserWorkflowContainer {
                     bestWorkflowForHistory = workflow;
                 }
             }
-            System.out.println(" -- history: " + history + " best workflow: " +
-                    bestWorkflowForHistory);
-
             chosenWorkflows.put(history, bestWorkflowForHistory);
         }
 
