@@ -48,22 +48,9 @@ public class HandDetector extends SplitJoinWorkflowContainer {
         Palm palm = (Palm) mediators.get(1).getData();
         Fingertips fingertips = (Fingertips) mediators.get(2).getData();
 
-//        CvSeq cvSeq = new CvSeq();
-//        int i = 0;
-//        for (CvPoint point : fingertips.getFolds())
-//            cvSeqInsert(cvSeq, i++, point);
-//
         CvMemStorage storage = CvMemStorage.create();
-//
         CvBox2D cvRect = cvMinAreaRect2(contour.getContour(), storage);
-////        CvBox2D cvRect = cvMinAreaRect2(cvSeq, storage);
-//
         CvSize2D32f size = cvRect.size();
-//        CvPoint centre = cvPointFrom32f(cvRect.center());
-
-
-//        System.out.format("Angle: %f , Width: %f , Height: %f%n", cvRect.angle(), size.width(),
-//                size.height());
 
         float angle = (cvRect.angle() + 225) % 180 - 45;
         double width, height;
@@ -78,36 +65,7 @@ public class HandDetector extends SplitJoinWorkflowContainer {
             height = size.width();
             angle = angle - 90;
         }
-//        System.out.format(" == Angle: %f , Width: %f , Height: %f%n", angle, width, height);
-//
-//                // Angle is now in range -45 to 45.
-//        // top edge is a width
-//
-//        double topLeftX = centre.x()
-//                - width * Math.cos(angle) * 0.5
-//                + height * Math.sin(angle) * 0.5;
-//
-//        double topRightX = centre.x()
-//                + width * Math.cos(angle) * 0.5
-//                + height * Math.sin(angle) * 0.5;
-//
-//        double topLeftY = centre.y()
-//                + height * Math.cos(angle) * 0.5
-//                + width * Math.sin(angle) * 0.5;
-//
-//        double topRightY = centre.y()
-//                + height * Math.cos(angle) * 0.5
-//                - width * Math.sin(angle) * 0.5;
-//
-//        CvPoint topLeft = new CvPoint((int)topLeftX, (int)topLeftY);
-//        CvPoint topRight = new CvPoint((int) topRightX, (int) topRightY);
-//
-//
 
-//        int thumbFingerMin = 80;
-//        double fingerFingerMax = width / 4.;
-
-//        System.out.println(" === ANGLE: " + cvRect.angle() / 180 * Math.PI);
         Palm newPalm = new Palm(palm.getCog(), cvRect.angle() / 180 * Math.PI,
                 palm.getSourceTaggedImage());
 
@@ -120,51 +78,12 @@ public class HandDetector extends SplitJoinWorkflowContainer {
             digitLengths.add(distanceBetween(palm.getCog(), tip));
         }
 
-//        for (int i = 0; i < 5; ++i)
-//            digits.set(i, -1);
-//
-//        digits.set(0,0);
-//        if ()
-//
-//        CvPoint previousTip = fingertips.getTips().get(0);
-//        int currentIndex = 1;
-//        for (CvPoint tip : fingertips.getTips()) {
-//            if (previousTip != null) {
-//                double distance = distanceBetween(tip, previousTip);
-//                if (distance < fingerFingerMax) {
-//                    digits.set(currentIndex, )
-//                }
-//
-//            } else {
-//                digits.set(currentIndex, currentIndex);
-//            }
-//
-//            ++currentIndex;
-//            previousTip = tip;
-//        }
-
         int[] digitIndices = new int[5];
         for (int i = 0; i < 5; ++i)
             digitIndices[i] = -1;
-//
-//        double[] idealAngles = new double[]{-2.8, -0.8, };
-//        double[] angleDeltas = new double[]{};
-
-        // Find thumb - most negative angle
-//        double maxAngle = -1000;
-//        int thumbIndex = 0;
-//        for (int i = 0; i < digitAngles.size(); ++i) {
-//            if (maxAngle < digitAngles.get(i)) {
-//                maxAngle = digitAngles.get(i);
-//                thumbIndex = i;
-//            }
-//        }
 
         List<Double> orderedAngles = new ArrayList<>(digitAngles);
         Collections.sort(orderedAngles);
-        // Use first as thumb, unless it's too close to the next digit
-//        if (Math.abs(orderedAngles.get(0) - orderedAngles.get(1)) > minThumbSeparation)
-//            digitIndices[0] = digitAngles.indexOf(orderedAngles.get(0));
 
         for (int i = 0; i < orderedAngles.size() && i < 5; ++i)
             digitIndices[i] = digitAngles.indexOf(orderedAngles.get(i));

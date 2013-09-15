@@ -1,6 +1,5 @@
 package io.github.samwright.framework.controller.helper;
 
-import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.datatypes.ClassHelper;
 import io.github.samwright.framework.model.helper.Mediator;
 import javafx.beans.value.ChangeListener;
@@ -15,7 +14,7 @@ import java.util.Map;
 /**
  * User: Sam Wright Date: 05/09/2013 Time: 12:16
  */
-public class PreviewPane extends VBox implements ElementObserver {
+public class PreviewPane extends VBox {
 
     private final static Map<Class, DataViewer> dataViewers = new HashMap<>();
 
@@ -111,9 +110,8 @@ public class PreviewPane extends VBox implements ElementObserver {
             selectedViewer.view(lastMediator);
     }
 
-    @Override
-    public void notify(Mediator mediator) {
-        this.lastMediator = mediator;
+    public void handleProcessedData(Mediator processedData) {
+        this.lastMediator = processedData;
         if (isVisible())
             updateDataViewer();
     }

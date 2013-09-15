@@ -81,7 +81,6 @@ public class PalmDetector extends AbstractElement {
         else if ((diff < 0) && (m11 < 0))   // -90 to -45
             return (180 + tilt);  // change to counter-clockwise angle
 
-        System.out.println("Error in moments for tilt angle");
         return 0;
     }
 

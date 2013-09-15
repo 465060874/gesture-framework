@@ -1,7 +1,12 @@
 package io.github.samwright.framework.controller;
 
+import com.googlecode.javacpp.Loader;
+import com.googlecode.javacv.cpp.opencv_objdetect;
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.actors.KeyboardActorController;
+import io.github.samwright.framework.controller.example.ExContainerController;
+import io.github.samwright.framework.controller.example.ExElementController;
+import io.github.samwright.framework.controller.example.StartElementController;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.controller.helper.PreviewPane;
 import io.github.samwright.framework.javacv.*;
@@ -71,7 +76,7 @@ public class MainWindowController extends VBox {
             @Override
             public void handle(ActionEvent actionEvent) {
                 topController.getModel().process();
-                handleUpdatedModel();
+                updateButtons();
             }
         });
         trainButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -79,7 +84,7 @@ public class MainWindowController extends VBox {
             public void handle(ActionEvent actionEvent) {
 //                trainButton.setDisable(true);
                 topController.getModel().train();
-                handleUpdatedModel();
+                updateButtons();
             }
         });
         saveButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -118,34 +123,47 @@ public class MainWindowController extends VBox {
             }
         });
 
-//        ModelLoader.registerPrototypeModel(new ExElementController().getModel());
-//        ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
+        boolean opencvWorks;
+        try {
+            Loader.load(opencv_objdetect.class);
+            opencvWorks = true;
+        } catch (Exception e) {
+            opencvWorks = false;
+            topController.handleException(e);
+        }
+
+        if (opencvWorks) {
+            ModelLoader.registerPrototypeModel(new ImageLoaderController().getModel());
+            ModelLoader.registerPrototypeModel(new SkinDetectorController().getModel());
+            ModelLoader.registerPrototypeModel(new StaticColourRangeController().getModel());
+            ModelLoader.registerPrototypeModel(new ContourFinderController().getModel());
+            ModelLoader.registerPrototypeModel(new HandDetectorController().getModel());
+            ModelLoader.registerPrototypeModel(new FingertipFinderController().getModel());
+            ModelLoader.registerPrototypeModel(new PalmDetectorController().getModel());
+            ModelLoader.registerPrototypeModel(new FingertipReducerController().getModel());
+            ModelLoader.registerPrototypeModel(new SimplifyContourController().getModel());
+            ModelLoader.registerPrototypeModel(new NNClassifierController().getModel());
+            ModelLoader.registerPrototypeModel(new OptimiserController().getModel());
+            ModelLoader.registerPrototypeModel(new KeyboardActorController().getModel());
+
+            PreviewPane.registerDataViewer(new ImageViewer());
+            PreviewPane.registerDataViewer(new ColourRangeViewer());
+            PreviewPane.registerDataViewer(new ContourViewer());
+            PreviewPane.registerDataViewer(new PalmViewer());
+            PreviewPane.registerDataViewer(new FingertipViewer());
+            PreviewPane.registerDataViewer(new HandViewer());
+        } else {
+            ModelLoader.registerPrototypeModel(new ExElementController().getModel());
+            ModelLoader.registerPrototypeModel(new ExContainerController().getModel());
+            ModelLoader.registerPrototypeModel(new StartElementController().getModel());
+
+            PreviewPane.registerDataViewer(new IntegerViewer());
+        }
+
         ModelLoader.registerPrototypeModel(new WorkflowControllerImpl().getModel());
-//        ModelLoader.registerPrototypeModel(new StartElementController().getModel());
-//        ModelLoader.registerPrototypeModel(new ViewerController().getModel());
-        ModelLoader.registerPrototypeModel(new ImageLoaderController().getModel());
-        ModelLoader.registerPrototypeModel(new SkinDetectorController().getModel());
-        ModelLoader.registerPrototypeModel(new StaticColourRangeController().getModel());
-        ModelLoader.registerPrototypeModel(new ContourFinderController().getModel());
-//        ModelLoader.registerPrototypeModel(new ConvexHullFinderController().getModel());
-        ModelLoader.registerPrototypeModel(new HandDetectorController().getModel());
-        ModelLoader.registerPrototypeModel(new FingertipFinderController().getModel());
-        ModelLoader.registerPrototypeModel(new PalmDetectorController().getModel());
-        ModelLoader.registerPrototypeModel(new FingertipReducerController().getModel());
-        ModelLoader.registerPrototypeModel(new SimplifyContourController().getModel());
-//        ModelLoader.registerPrototypeModel(new DominantPointFinderController().getModel());
-        ModelLoader.registerPrototypeModel(new NNClassifierController().getModel());
         ModelLoader.registerPrototypeModel(new OptimiserController().getModel());
         ModelLoader.registerPrototypeModel(new KeyboardActorController().getModel());
 
-
-//        PreviewPane.registerDataViewer(new StringViewer());
-        PreviewPane.registerDataViewer(new ImageViewer());
-        PreviewPane.registerDataViewer(new ColourRangeViewer());
-        PreviewPane.registerDataViewer(new ContourViewer());
-        PreviewPane.registerDataViewer(new PalmViewer());
-        PreviewPane.registerDataViewer(new FingertipViewer());
-        PreviewPane.registerDataViewer(new HandViewer());
         PreviewPane.registerDataViewer(new ClassificationViewer());
 
 
@@ -164,10 +182,10 @@ public class MainWindowController extends VBox {
             pointer = (TopProcessor) pointer.getPrevious();
         }
         topController.getModel().setTransientModel(false);
-        handleUpdatedModel();
+        updateButtons();
     }
 
-    public void handleUpdatedModel() {
+    public void updateButtons() {
         redoButton.setDisable(!topController.canRedo());
         undoButton.setDisable(!topController.canUndo());
         processButton.setDisable(!topController.canProcess());
@@ -200,9 +218,14 @@ public class MainWindowController extends VBox {
         if (file == null)
             return;
         filename = file.getAbsolutePath();
-        TopWorkflowContainer loaded = (TopWorkflowContainer)
-                XMLHelper.loadProcessorFromFile(file.getAbsolutePath(), false);
-
+        TopWorkflowContainer loaded;
+        try {
+            loaded = (TopWorkflowContainer)
+                    XMLHelper.loadProcessorFromFile(file.getAbsolutePath(), false);
+        } catch (Exception e) {
+            getTopController().handleException(e);
+            return;
+        }
 
         setTopController((TopContainerController) loaded.getController());
         topController.startTransientUpdateMode();

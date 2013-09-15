@@ -5,6 +5,7 @@ import io.github.samwright.framework.javacv.helper.HistoryHighlighter;
 import io.github.samwright.framework.model.Optimiser;
 import io.github.samwright.framework.model.Workflow;
 import io.github.samwright.framework.model.helper.History;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
@@ -46,7 +47,22 @@ public class OptimiserController extends WorkflowContainerControllerImpl {
     @Override
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
+        showTrainingStats();
+    }
 
+    @Override
+    public void handleTrained() {
+        super.handleTrained();
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                showTrainingStats();
+            }
+        });
+    }
+
+    private void showTrainingStats() {
         List<WorkflowControllerImpl> workflowControllers = new LinkedList<>();
         for (Node child : workflowsBox.getChildren()) {
             if (child instanceof WorkflowController)
@@ -57,7 +73,7 @@ public class OptimiserController extends WorkflowContainerControllerImpl {
             workflowController.getHeader().getChildren().clear();
 
             Workflow workflow = workflowController.getModel();
-            Map<History,Double> successRateByHistory = getModel().getSuccessRates().get(workflow);
+            Map<History, Double> successRateByHistory = getModel().getSuccessRates().get(workflow);
 
             // If workflow hasn't been trained, skip it.
             if (successRateByHistory == null)
@@ -65,7 +81,7 @@ public class OptimiserController extends WorkflowContainerControllerImpl {
 
             addConfigNode(workflowController.getHeader());
 
-            for (Map.Entry<History,Double> e : successRateByHistory.entrySet()) {
+            for (Map.Entry<History, Double> e : successRateByHistory.entrySet()) {
                 History history = e.getKey();
                 double successRate = e.getValue();
 

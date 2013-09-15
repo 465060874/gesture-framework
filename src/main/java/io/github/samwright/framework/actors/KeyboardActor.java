@@ -42,7 +42,7 @@ public class KeyboardActor extends AbstractElement {
     public Mediator process(Mediator input) {
         Classification classification = (Classification) input.getData();
         String keyToPress = keyCodes.get(classification.getTag());
-        if (isActive()) {
+        if (isActive() && !keyToPress.isEmpty()) {
             int key = KeyCode.getKeyCode(keyToPress).impl_getCode();
             robot.keyPress(key);
             robot.keyRelease(key);

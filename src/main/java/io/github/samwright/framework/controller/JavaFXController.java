@@ -3,12 +3,15 @@ package io.github.samwright.framework.controller;
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.Controllers;
 import io.github.samwright.framework.model.Processor;
+import io.github.samwright.framework.model.helper.Mediator;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * User: Sam Wright Date: 16/07/2013 Time: 12:25
@@ -83,5 +86,16 @@ public abstract class JavaFXController extends VBox implements ModelController {
     public void setSelected(boolean selected) {
         this.selected = selected;
         updateColours();
+    }
+
+    @Override
+    public void handleTrained() {
+        updateColours();
+    }
+
+    @Override
+    public void handleProcessedTrainingData(List<Mediator> processedTrainingData) {
+        // Does nothing - here for convenience because subclasses might not bother with training
+        // data.
     }
 }

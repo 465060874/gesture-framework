@@ -1,6 +1,7 @@
 package io.github.samwright.framework.model;
 
 import com.google.common.collect.Sets;
+import io.github.samwright.framework.controller.ModelController;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.TypeData;
@@ -92,8 +93,15 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
     public List<Mediator> processTrainingData(Mediator input) {
         List<Set<Mediator>> allWorkflowsOutputs = new ArrayList<>();
 
-        for (Workflow workflow : getChildren())
-            allWorkflowsOutputs.add(new HashSet<>(workflow.processTrainingData(input)));
+        for (Workflow workflow : getChildren()) {
+            List<Mediator> workflowOutput = workflow.processTrainingData(input);
+
+            ModelController controller = workflow.getController();
+            if (controller != null)
+                controller.handleProcessedTrainingData(workflowOutput);
+
+            allWorkflowsOutputs.add(new HashSet<>(workflowOutput));
+        }
 
         Set<List<Mediator>> combinations = Sets.cartesianProduct(allWorkflowsOutputs);
 
@@ -126,6 +134,11 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
                 Mediator output = null;
                 try {
                     output = workflow.process(mediator);
+
+                    ModelController controller = workflow.getController();
+                    if (controller != null)
+                        controller.handleProcessedData(output);
+
                 } finally {
                     synchronized (outputs) {
                         outputs.add(output);
@@ -161,6 +174,10 @@ public abstract class SplitJoinWorkflowContainer extends AbstractWorkflowContain
                     = new CompletedTrainingBatch(allMediators, successfulMediators);
 
             workflow.processCompletedTrainingBatch(workflowBatch);
+
+            ModelController controller = workflow.getController();
+            if (controller != null)
+                controller.handleTrained();
         }
 
         return completedTrainingBatch.rollBack();

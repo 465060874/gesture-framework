@@ -1,5 +1,6 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.controller.ModelController;
 import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.Mediator;
@@ -68,13 +69,25 @@ public class WorkflowImpl extends AbstractWorkflow {
 
     @Override
     public Mediator process(Mediator input) {
+        Mediator output = input;
+
         for (Element e : getChildren()) {
-            input = e.process(input);
+            output = e.process(input);
+
+            if (output == null)
+                throw new NullPointerException("Element " + e + " returned null as processed data");
+
             for (ElementObserver observer : e.getObservers())
-                observer.notify(input);
+                observer.handleProcessedData(output);
+
+            ModelController controller = e.getController();
+            if (controller != null)
+                controller.handleProcessedData(output);
+
+            input = output;
         }
 
-        return input.createNext(this, input.getData());
+        return output.createNext(this, output.getData());
     }
 
     @Override
@@ -82,16 +95,27 @@ public class WorkflowImpl extends AbstractWorkflow {
         List<Mediator> outputs, inputs = Arrays.asList(firstInput);
 
         for (Element element : getChildren()) {
-            outputs = new ArrayList<>();
+            outputs = new LinkedList<>();
             for (Mediator input : inputs)
                 outputs.addAll(element.processTrainingData(input));
+
+            if (outputs.isEmpty() && !inputs.isEmpty())
+                throw new NullPointerException("Element " + element + " returned no training " +
+                        "data, even though it was given " + inputs.size());
+
+            ModelController controller = element.getController();
+            if (controller != null)
+                controller.handleProcessedTrainingData(outputs);
+
+            for (ElementObserver observer : element.getObservers())
+                observer.handleProcessedTrainingData(outputs);
+
             inputs = outputs;
         }
 
         outputs = new ArrayList<>();
         for (Mediator input : inputs)
             outputs.add(input.createNext(this, input.getData()));
-
         return outputs;
     }
 
@@ -101,8 +125,12 @@ public class WorkflowImpl extends AbstractWorkflow {
         ListIterator<Element> itr = getChildren().listIterator(getChildren().size());
 
         while (itr.hasPrevious()) {
-            Processor child = itr.previous();
-            completedTrainingBatch = child.processCompletedTrainingBatch(completedTrainingBatch);
+            Element element = itr.previous();
+            completedTrainingBatch = element.processCompletedTrainingBatch(completedTrainingBatch);
+
+            ModelController controller = element.getController();
+            if (controller != null)
+                controller.handleTrained();
         }
 
         return completedTrainingBatch;

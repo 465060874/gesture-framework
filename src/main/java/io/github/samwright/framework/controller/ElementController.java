@@ -4,16 +4,17 @@ import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.controller.helper.ElementLink;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Processor;
-import io.github.samwright.framework.model.common.ElementObserver;
+import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.XMLHelper;
-import io.github.samwright.framework.model.mock.TopProcessor;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 22:53
@@ -66,6 +67,7 @@ abstract public class ElementController extends JavaFXController {
             }
         });
 
+        setElementLink(new ElementLink());
         setSelected(false);
     }
 
@@ -75,58 +77,16 @@ abstract public class ElementController extends JavaFXController {
 
     public ElementController(ElementController toClone) {
         super(toClone);
-        if (toClone.getElementLink() != null)
-            setElementLink(toClone.getElementLink().createClone());
     }
 
     public void setElementLink(ElementLink elementLink) {
-
         this.elementLink = elementLink;
         if (elementLink != null)
             elementLink.setController(this);
-
-        registerLinkWithElement(getModel());
-    }
-
-    private void registerLinkWithElement(Element element) {
-        ToolboxController toolbox = (ToolboxController) MainApp.beanFactory.getBean("toolbox");
-
-        if (element != null && !toolbox.getChildren().contains(this)) {
-            Set<ElementObserver> newObservers = new HashSet<>(element.getObservers());
-
-            Iterator<ElementObserver> iterator = newObservers.iterator();
-            while (iterator.hasNext()) {
-                ElementObserver observer = iterator.next();
-                if (observer instanceof ElementLink)
-                    iterator.remove();
-            }
-
-            if (elementLink != null)
-                newObservers.add(elementLink);
-
-            if (!newObservers.equals(element.getObservers())) {
-                Element newModel = element.withObservers(newObservers);
-                TopProcessor topProcessor = getModel().getTopProcessor();
-                if (topProcessor != null)
-                    MainWindowController.getTopController().startTransientUpdateMode();
-                try {
-                    element.replaceWith(newModel);
-                } finally {
-                    if (topProcessor != null)
-                        MainWindowController.getTopController().endTransientUpdateMode();
-                }
-            }
-        }
     }
 
     @Override
     abstract public ElementController createClone();
-
-    @Override
-    public void handleUpdatedModel() {
-        super.handleUpdatedModel();
-        registerLinkWithElement(getModel());
-    }
 
     @Override
     public void setBeingDragged(boolean beingDragged) {
@@ -161,7 +121,6 @@ abstract public class ElementController extends JavaFXController {
             else if (!configVisible && selected)
                 parent.getChildren().add(0, configNode);
         }
-
     }
 
     public void addConfigNode(Node configNode) {
@@ -172,5 +131,16 @@ abstract public class ElementController extends JavaFXController {
             throw new RuntimeException("config node has no parent!");
         configNodesAndParent.put(configNode, (Pane) configNode.getParent());
         setSelected(isSelected());
+    }
+
+    @Override
+    public void handleProcessedData(final Mediator processedData) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (elementLink != null)
+                    elementLink.handleProcessedData(processedData);
+            }
+        });
     }
 }

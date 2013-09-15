@@ -2,6 +2,7 @@ package io.github.samwright.framework.actors;
 
 import io.github.samwright.framework.controller.ElementController;
 import io.github.samwright.framework.controller.helper.ElementLink;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -63,12 +64,27 @@ public class KeyboardActorController extends ElementController {
     @Override
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
+        updateKeyConfigPanel();
+    }
 
+    @Override
+    public void handleTrained() {
+        super.handleTrained();
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                updateKeyConfigPanel();
+            }
+        });
+    }
+
+    private void updateKeyConfigPanel() {
         gridPane.getChildren().clear();
         enabledCheckBox.setSelected(getModel().isActive());
 
         int i = 0;
-        for (Map.Entry<String,String> entry : getModel().getKeyCodes().entrySet()) {
+        for (Map.Entry<String, String> entry : getModel().getKeyCodes().entrySet()) {
             String tag = entry.getKey();
             String key = entry.getValue();
 
@@ -80,6 +96,7 @@ public class KeyboardActorController extends ElementController {
             ++i;
         }
     }
+
 
     private class KeyInputField extends TextField {
 

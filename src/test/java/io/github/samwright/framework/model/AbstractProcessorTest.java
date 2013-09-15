@@ -1,12 +1,14 @@
 package io.github.samwright.framework.model;
 
 import io.github.samwright.framework.controller.ModelController;
+import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.ModelLoader;
 import io.github.samwright.framework.model.helper.mock.MockProcessor;
 import lombok.Getter;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static junit.framework.TestCase.*;
@@ -35,6 +37,21 @@ public class AbstractProcessorTest {
         public void handleUpdatedModel() {
             model = proposedModel;
             proposedModel = null;
+        }
+
+        @Override
+        public void handleProcessedData(Mediator processedData) {
+            // Dummy implementation
+        }
+
+        @Override
+        public void handleProcessedTrainingData(List<Mediator> processedTrainingData) {
+            // Dummy implementation
+        }
+
+        @Override
+        public void handleTrained() {
+            // Dummy implementation
         }
     }
 

@@ -5,7 +5,6 @@ import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.WorkflowController;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Workflow;
-import io.github.samwright.framework.model.common.ElementObserver;
 import io.github.samwright.framework.model.helper.Mediator;
 import io.github.samwright.framework.model.helper.XMLHelper;
 import javafx.beans.binding.Bindings;
@@ -33,7 +32,7 @@ import java.util.List;
 /**
  * User: Sam Wright Date: 17/07/2013 Time: 13:56
  */
-public class ElementLink extends Pane implements ElementObserver {
+public class ElementLink extends Pane {
 
     private static final String empty = " ";
 
@@ -49,14 +48,6 @@ public class ElementLink extends Pane implements ElementObserver {
     private PreviewPane previewPane;
     @Getter private ElementController controller;
     @Getter @Setter private boolean beingDragged = false;
-
-    private DelayedNotifier<Mediator> mediatorNotifier = new DelayedNotifier<Mediator>() {
-        @Override
-        public void handleNewObject(Mediator newObject) {
-            if (previewPane != null)
-                previewPane.notify(newObject);
-        }
-    };
     private String inputTypeString, outputTypeString;
     private boolean valid;
 
@@ -290,9 +281,9 @@ public class ElementLink extends Pane implements ElementObserver {
         return new ElementLink();
     }
 
-    @Override
-    public void notify(Mediator mediator) {
-        mediatorNotifier.notify(mediator);
+    public void handleProcessedData(Mediator processedData) {
+        if (previewPane != null)
+            previewPane.handleProcessedData(processedData);
     }
 
     @Override

@@ -2,6 +2,7 @@ package io.github.samwright.framework.controller;
 
 import io.github.samwright.framework.MainApp;
 import io.github.samwright.framework.model.TopWorkflowContainer;
+import io.github.samwright.framework.model.helper.Mediator;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -113,7 +114,7 @@ public class TopContainerController
                     super.handleUpdatedModel();
 
                     if (mainWindow != null)
-                        mainWindow.handleUpdatedModel();
+                        mainWindow.updateButtons();
                 }
             }
             if (needsUpdate && !Thread.holdsLock(updateLock))
@@ -224,17 +225,30 @@ public class TopContainerController
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                mainWindow.handleUpdatedModel();
-                if (e != null) {
-                    StringWriter stringWriter = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(stringWriter);
-                    e.printStackTrace(printWriter);
-                    String stackTrace = stringWriter.toString();
 
-                    popupLabel.setText(stackTrace);
-                    popupStage.showAndWait();
-                }
+                mainWindow.updateButtons();
+
+                StringWriter stringWriter = new StringWriter();
+                PrintWriter printWriter = new PrintWriter(stringWriter);
+                e.printStackTrace(printWriter);
+                String stackTrace = stringWriter.toString();
+
+                popupLabel.setText(stackTrace);
+                popupStage.showAndWait();
+
             }
         });
+    }
+
+    @Override
+    public void handleProcessedData(Mediator processedData) {
+        super.handleProcessedData(processedData);
+        mainWindow.updateButtons();
+    }
+
+    @Override
+    public void handleTrained() {
+        super.handleTrained();
+        mainWindow.updateButtons();
     }
 }

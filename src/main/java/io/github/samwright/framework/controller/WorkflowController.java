@@ -3,6 +3,7 @@ package io.github.samwright.framework.controller;
 import io.github.samwright.framework.controller.helper.ElementLink;
 import io.github.samwright.framework.model.Element;
 import io.github.samwright.framework.model.Workflow;
+import io.github.samwright.framework.model.helper.Mediator;
 import javafx.scene.input.DataFormat;
 
 /**
@@ -44,5 +45,11 @@ abstract public class WorkflowController extends JavaFXController {
     @Override
     public Workflow getModel() {
         return (Workflow) super.getModel();
+    }
+
+    @Override
+    public void handleProcessedData(Mediator processedData) {
+        // Does nothing - here for convenience because subclasses probably won't bother with
+        // handling processed data.
     }
 }

@@ -55,15 +55,22 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                         busy = true;
                         for (Workflow workflow : workflows) {
                             try {
-                                workflow.process(input);
+                                Mediator output = workflow.process(input);
+
+                                ModelController controller = workflow.getController();
+                                if (controller != null)
+                                    controller.handleProcessedData(output);
+
                             } catch (final RuntimeException e) {
                                 busy = false;
-                                getController().handleException(e);
+                                if (getController() != null)
+                                    getController().handleException(e);
                             }
                         }
                     } finally {
                         busy = false;
-                        getController().handleException(null);
+                        if (getController() != null)
+                            getController().handleProcessedData(null);
                     }
                 }
             }
@@ -92,10 +99,17 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                     try {
                         for (Workflow workflow : workflows) {
                             List<Mediator> completedTrainingData;
+                            ModelController controller = workflow.getController();
+
                             try {
                                 completedTrainingData = workflow.processTrainingData(input);
+
+                                if (controller != null)
+                                    controller.handleProcessedTrainingData(completedTrainingData);
+
                             } catch (RuntimeException e) {
-                                getController().handleException(e);
+                                if (getController() != null)
+                                    getController().handleException(e);
                                 continue;
                             }
 
@@ -106,10 +120,16 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                             );
 
                             workflow.processCompletedTrainingBatch(completedTrainingBatch);
+
+                            if (controller != null)
+                                controller.handleTrained();
                         }
                     } finally {
                         busy = false;
-                        getController().handleException(null);
+                        if (getController() != null) {
+                            getController().handleProcessedTrainingData(null);
+                            getController().handleTrained();
+                        }
                     }
                 }
             }

@@ -33,12 +33,9 @@ public class HandViewer extends ImageViewer {
 
         CvPoint centre = hand.getPalm().getCog();
 
-        System.out.println("\n== Fingers:");
-
         for (int i = 0; i < hand.getDigitAngles().size(); ++i) {
             double angle = hand.getDigitAngles().get(i);
             double length = hand.getDigitLengths().get(i);
-            System.out.format("angle: %f , length: %f%n", angle, length);
 
             CvPoint fingertip = new CvPoint(
                     (int) (centre.x() + length * Math.cos(angle)),

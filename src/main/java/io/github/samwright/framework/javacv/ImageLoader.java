@@ -1,7 +1,5 @@
 package io.github.samwright.framework.javacv;
 
-import com.googlecode.javacpp.Loader;
-import com.googlecode.javacv.cpp.opencv_objdetect;
 import io.github.samwright.framework.javacv.helper.Camera;
 import io.github.samwright.framework.javacv.helper.LoadedImage;
 import io.github.samwright.framework.model.AbstractElement;
@@ -26,11 +24,6 @@ import static com.googlecode.javacv.cpp.opencv_highgui.cvSaveImage;
  * User: Sam Wright Date: 05/09/2013 Time: 17:23
  */
 public class ImageLoader extends AbstractElement {
-
-    static {
-        Loader.load(opencv_objdetect.class);
-    }
-
 
     @Getter private String directory;
     @Getter private LoadedImage activeImage;
@@ -77,10 +70,13 @@ public class ImageLoader extends AbstractElement {
 
     @Override
     public List<Mediator> processTrainingData(Mediator input) {
+        if (images.isEmpty())
+            throw new RuntimeException("No images are loaded to use for training.  Try setting " +
+                    "the directory to somewhere with images.");
+
         List<Mediator> outputs = new ArrayList<>();
         for (LoadedImage image : images)
             outputs.add(input.createNext(this, image));
-
         return outputs;
     }
 

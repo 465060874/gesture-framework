@@ -5,6 +5,8 @@ import io.github.samwright.framework.controller.ElementController;
 import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.helper.ElementLink;
 import io.github.samwright.framework.javacv.helper.LoadedImage;
+import io.github.samwright.framework.model.helper.Mediator;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -18,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * User: Sam Wright Date: 06/09/2013 Time: 11:44
@@ -40,6 +43,7 @@ public class ImageLoaderController extends ElementController {
     private CheckBox saveToFileCheckbox;
 
     private boolean editingImages = false;
+    private List<Mediator> displayedImages;
 
     {
         imagesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<LoadedImage>() {
@@ -108,6 +112,25 @@ public class ImageLoaderController extends ElementController {
     @Override
     public void handleUpdatedModel() {
         super.handleUpdatedModel();
+        updateImagesList();
+    }
+
+    @Override
+    public void handleProcessedData(Mediator processedData) {
+        super.handleProcessedData(processedData);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                updateImagesList();
+            }
+        });
+    }
+
+    private void updateImagesList() {
+        if (getModel() == null || getModel().getImages() == null
+                || getModel().getImages().equals(displayedImages))
+            return;
 
         editingImages = true;
         imagesView.getItems().clear();
@@ -119,5 +142,6 @@ public class ImageLoaderController extends ElementController {
             imagesView.getSelectionModel().select(activeImage);
         else
             imagesView.getSelectionModel().clearSelection();
+
     }
 }

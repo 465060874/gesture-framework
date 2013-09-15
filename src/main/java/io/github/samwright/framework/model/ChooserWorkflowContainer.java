@@ -1,5 +1,6 @@
 package io.github.samwright.framework.model;
 
+import io.github.samwright.framework.controller.ModelController;
 import io.github.samwright.framework.model.helper.CompletedTrainingBatch;
 import io.github.samwright.framework.model.helper.History;
 import io.github.samwright.framework.model.helper.Mediator;
@@ -29,7 +30,13 @@ public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer
 
     @Override
     public Mediator process(Mediator input) {
-        Mediator output = chooseWorkflow(input).process(input);
+        Workflow chosenWorkflow = chooseWorkflow(input);
+        Mediator output = chosenWorkflow.process(input);
+
+        ModelController controller = chosenWorkflow.getController();
+        if (controller != null)
+            controller.handleProcessedData(output);
+
         return output.createNext(this, output.getData());
     }
 
@@ -39,8 +46,15 @@ public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer
     public List<Mediator> processTrainingData(Mediator input) {
         List<Mediator> outputs = new ArrayList<>(), finalOutputs = new ArrayList<>();
 
-        for (Workflow workflow : getChildren())
-            outputs.add(workflow.process(input));
+        for (Workflow workflow : getChildren()) {
+            List<Mediator> workflowOutput = workflow.processTrainingData(input);
+
+            ModelController controller = workflow.getController();
+            if (controller != null)
+                controller.handleProcessedTrainingData(workflowOutput);
+
+            outputs.addAll(workflowOutput);
+        }
 
         for (Mediator output : outputs)
             finalOutputs.add(output.createNext(this, output.getData()));
@@ -101,6 +115,10 @@ public abstract class ChooserWorkflowContainer extends AbstractWorkflowContainer
 
             CompletedTrainingBatch workflowInputBatch
                     = workflow.processCompletedTrainingBatch(workflowOutputBatch);
+
+            ModelController controller = workflow.getController();
+            if (controller != null)
+                controller.handleTrained();
 
             inputBatchesByWorkflow.put(workflow, workflowInputBatch);
         }

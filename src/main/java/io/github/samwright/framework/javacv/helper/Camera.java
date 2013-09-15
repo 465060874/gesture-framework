@@ -36,8 +36,7 @@ public class Camera {
                     try {
                         Thread.sleep(timeout);
                     } catch (InterruptedException e) {
-                        System.out.println("=== Interrupted the camera thread!");
-                        e.printStackTrace();
+                        MainWindowController.getTopController().handleException(e);
                     }
                     disableCameraAfterTimeout();
                 }
