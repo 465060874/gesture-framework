@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -34,6 +35,9 @@ public class ImageLoaderController extends ElementController {
 
     @FXML
     private VBox configPane;
+
+    @FXML
+    private CheckBox saveToFileCheckbox;
 
     private boolean editingImages = false;
 
@@ -64,6 +68,17 @@ public class ImageLoaderController extends ElementController {
                 File folder = new DirectoryChooser().showDialog(MainApp.getStage());
                 if (folder != null && folder.isDirectory())
                     getModel().replaceWith(getModel().withDirectory(folder.getAbsolutePath()));
+            }
+        });
+
+        saveToFileCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue,
+                                Boolean oldVal,
+                                Boolean newVal) {
+
+                tagField.setDisable(!newVal);
+                getModel().setSaveMode(newVal);
             }
         });
 

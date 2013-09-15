@@ -36,6 +36,7 @@ public class ImageLoader extends AbstractElement {
     @Getter private LoadedImage activeImage;
     private List<LoadedImage> images;
     @Getter @Setter private String snapshotTag = "Snapshot";
+    @Getter @Setter private boolean saveMode = true;
 
 
     public ImageLoader() {
@@ -141,11 +142,11 @@ public class ImageLoader extends AbstractElement {
     public void takeSnapshot() {
         IplImage image = Camera.getInstance().grabImage();
 
-        if (isDirectoryValid()) {
+        if (isDirectoryValid() && saveMode) {
             String fullFileName;
             int i = 1;
             do {
-                fullFileName = directory + snapshotTag + " " + i;
+                fullFileName = directory + File.separator + snapshotTag + " " + i;
             } while(new File(fullFileName + ".jpg").exists());
             fullFileName = fullFileName + ".jpg";
 

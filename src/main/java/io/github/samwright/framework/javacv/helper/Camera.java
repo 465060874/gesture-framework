@@ -85,7 +85,8 @@ public class Camera {
                 try {
                     grabber.stop();
                     grabberIsActive = false;
-                } catch (FrameGrabber.Exception e) {
+                    lock.wait();
+                } catch (FrameGrabber.Exception | InterruptedException e) {
                     MainWindowController.getTopController().handleException(e);
                 }
             }

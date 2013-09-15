@@ -14,7 +14,12 @@
         <VBox fx:id="configPane">
             <children>
                 <Button fx:id="directoryButton" text="Change directory"/>
-                <Button fx:id="snapshotButton" text="Take Snapshot"/>
+                <HBox>
+                    <children>
+                        <Button fx:id="snapshotButton" text="Take Snapshot"/>
+                        <CheckBox fx:id="saveToFileCheckbox" text="Save to file" selected="true" />
+                    </children>
+                </HBox>
                 <HBox>
                     <children>
                         <Label text="Tag:"/>

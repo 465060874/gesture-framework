@@ -1,6 +1,7 @@
 package io.github.samwright.framework.javacv.viewers;
 
 import com.googlecode.javacv.cpp.opencv_core;
+import io.github.samwright.framework.controller.MainWindowController;
 import io.github.samwright.framework.controller.helper.DataViewer;
 import io.github.samwright.framework.javacv.helper.TaggedImage;
 import io.github.samwright.framework.model.helper.Mediator;
@@ -57,7 +58,11 @@ public class ImageViewer extends DataViewer {
     }
 
     public void view(opencv_core.IplImage image) {
-        imageView.setImage(Image.impl_fromExternalImage(image.getBufferedImage()));
+        try {
+            imageView.setImage(Image.impl_fromExternalImage(image.getBufferedImage()));
+        } catch (Exception e) {
+            MainWindowController.getTopController().handleException(e);
+        }
     }
 
     @Override
