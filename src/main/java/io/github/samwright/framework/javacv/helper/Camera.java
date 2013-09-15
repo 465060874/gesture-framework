@@ -14,21 +14,31 @@ public class Camera {
 
     @Getter private static final Camera instance = new Camera();
     private final static long timeout = 5000;
-    private final static int deviceNumber = -1;
 
     private final Object[] lock = new Object[0];
+    @Getter private final boolean valid;
     private long lastAccessTimestamp = 0l;
     private FrameGrabber grabber;
     private boolean grabberIsActive = false;
 
 
     private Camera() {
-        try {
-            grabber = FrameGrabber.createDefault(deviceNumber);
-        } catch (FrameGrabber.Exception e) {
-            e.printStackTrace();
-        }
+        int i = -1;
+        do {
+            try {
+                grabber = FrameGrabber.createDefault(i);
+            } catch (FrameGrabber.Exception e) {
+                MainWindowController.getTopController().handleException(e);
+            }
+            ++i;
 
+            if (i > 5) {
+                valid = false;
+                return;
+            }
+        } while(grabber == null);
+
+        valid = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -45,6 +55,8 @@ public class Camera {
     }
 
     public opencv_core.IplImage grabImage() {
+        if (!valid)
+            throw new RuntimeException("Camera could not initialise");
 
         synchronized (lock) {
             if (!grabberIsActive) {
