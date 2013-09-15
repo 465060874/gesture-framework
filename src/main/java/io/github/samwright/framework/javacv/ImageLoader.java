@@ -1,8 +1,8 @@
 package io.github.samwright.framework.javacv;
 
 import com.googlecode.javacpp.Loader;
-import com.googlecode.javacv.FrameGrabber;
 import com.googlecode.javacv.cpp.opencv_objdetect;
+import io.github.samwright.framework.javacv.helper.Camera;
 import io.github.samwright.framework.javacv.helper.LoadedImage;
 import io.github.samwright.framework.model.AbstractElement;
 import io.github.samwright.framework.model.Element;
@@ -139,29 +139,7 @@ public class ImageLoader extends AbstractElement {
     }
 
     public void takeSnapshot() {
-
-//        while ()
-
-//        tag = tag + ".jpg";
-        IplImage image;
-        FrameGrabber grabber = null;
-
-        try {
-            grabber = FrameGrabber.createDefault(0);
-            grabber.start();
-            image = grabber.grab();
-        } catch (FrameGrabber.Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (grabber != null) {
-                    grabber.stop();
-                    grabber.release();
-                }
-            } catch (FrameGrabber.Exception e) {
-                e.printStackTrace();
-            }
-        }
+        IplImage image = Camera.getInstance().grabImage();
 
         if (isDirectoryValid()) {
             String fullFileName;

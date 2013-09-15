@@ -58,12 +58,12 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                                 workflow.process(input);
                             } catch (final RuntimeException e) {
                                 busy = false;
-                                getController().handleExceptions(e);
+                                getController().handleException(e);
                             }
                         }
                     } finally {
                         busy = false;
-                        getController().handleExceptions(null);
+                        getController().handleException(null);
                     }
                 }
             }
@@ -95,7 +95,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                             try {
                                 completedTrainingData = workflow.processTrainingData(input);
                             } catch (RuntimeException e) {
-                                getController().handleExceptions(e);
+                                getController().handleException(e);
                                 continue;
                             }
 
@@ -109,7 +109,7 @@ public class TopWorkflowContainer extends AbstractWorkflowContainer implements T
                         }
                     } finally {
                         busy = false;
-                        getController().handleExceptions(null);
+                        getController().handleException(null);
                     }
                 }
             }

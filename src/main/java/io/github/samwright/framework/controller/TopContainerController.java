@@ -220,7 +220,7 @@ public class TopContainerController
     }
 
     @Override
-    public void handleExceptions(final Exception e) {
+    public void handleException(final Exception e) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

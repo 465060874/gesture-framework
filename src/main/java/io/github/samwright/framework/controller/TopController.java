@@ -14,5 +14,5 @@ public interface TopController extends ModelController {
      *
      * @param e the exception thrown whilst processing.
      */
-    void handleExceptions(Exception e);
+    void handleException(Exception e);
 }
