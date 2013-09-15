@@ -19,13 +19,21 @@
               </items>
           </ToolBar>
 
-          <SplitPane fx:id="splitPane">
-              <VBox.vgrow>ALWAYS</VBox.vgrow>
+          <SplitPane orientation="VERTICAL" dividerPositions="0.8" VBox.vgrow="ALWAYS">
               <items>
-                  <ScrollPane id="scrollPanel" fx:id="mainScrollPanel" HBox.hgrow="ALWAYS"
-                              fitToHeight="true" fitToWidth="true" />
-                  <ScrollPane fx:id="toolboxScrollPane" HBox.hgrow="ALWAYS"
-                              fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" />
+                  <SplitPane fx:id="splitPane" >
+                      <items>
+                          <ScrollPane id="scrollPanel" fx:id="mainScrollPanel" HBox.hgrow="ALWAYS"
+                                      fitToHeight="true" fitToWidth="true" />
+                          <ScrollPane fx:id="toolboxScrollPane" HBox.hgrow="ALWAYS"
+                                      fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" />
+                      </items>
+                  </SplitPane>
+                  <ScrollPane SplitPane.resizableWithParent="false">
+                      <content>
+                          <Label fx:id="messageBox" />
+                      </content>
+                  </ScrollPane>
               </items>
           </SplitPane>
       </children>

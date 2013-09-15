@@ -30,6 +30,7 @@ public class ImageLoader extends AbstractElement {
     private List<LoadedImage> images;
     @Getter @Setter private String snapshotTag = "Snapshot";
     @Getter @Setter private boolean saveMode = true;
+    private boolean activeImageNotSaved = false;
 
 
     public ImageLoader() {
@@ -52,14 +53,16 @@ public class ImageLoader extends AbstractElement {
     }
 
     public void setActiveImage(LoadedImage image) {
-        if (image != null && !images.contains(image))
+        if (image != null && image != activeImage && !images.contains(image))
             throw new RuntimeException("Can only select a loaded image");
+        if (activeImage != image)
+            activeImageNotSaved = false;
         this.activeImage = image;
     }
 
     @Override
     public Mediator process(Mediator input) {
-        if (activeImage == null)
+        if (activeImage == null || activeImageNotSaved)
             takeSnapshot();
 
         if (activeImage == null)
@@ -136,6 +139,7 @@ public class ImageLoader extends AbstractElement {
     }
 
     public void takeSnapshot() {
+        boolean saveMode = this.saveMode;
         IplImage image = Camera.getInstance().grabImage();
 
         if (isDirectoryValid() && saveMode) {
@@ -157,6 +161,7 @@ public class ImageLoader extends AbstractElement {
             }
         } else {
             activeImage = new LoadedImage(image, snapshotTag, null);
+            activeImageNotSaved = true;
         }
     }
 

@@ -5,14 +5,9 @@ import io.github.samwright.framework.model.TopWorkflowContainer;
 import io.github.samwright.framework.model.helper.Mediator;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,8 +26,6 @@ public class TopContainerController
     private int transientUpdateMode = 0;
     private Object[] updateLock = new Object[0];
     private boolean needsUpdate = false;
-    private final Stage popupStage;
-    private Label popupLabel;
 
     {
         setMaxHeight(Double.MAX_VALUE);
@@ -45,14 +38,6 @@ public class TopContainerController
                 mouseEvent.consume();
             }
         });
-
-        popupStage = new Stage();
-        popupStage.setTitle("Exception");
-        HBox box = new HBox();
-        popupStage.setScene(new Scene(box, 400, 300));
-        popupLabel = new Label();
-        box.getChildren().add(popupLabel);
-        popupStage.initModality(Modality.APPLICATION_MODAL);
     }
 
     public TopContainerController(TopContainerController toClone) {
@@ -233,9 +218,7 @@ public class TopContainerController
                 e.printStackTrace(printWriter);
                 String stackTrace = stringWriter.toString();
 
-                popupLabel.setText(stackTrace);
-                popupStage.showAndWait();
-
+                mainWindow.getMessageBox().setText(stackTrace);
             }
         });
     }

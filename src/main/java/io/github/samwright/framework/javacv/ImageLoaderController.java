@@ -143,5 +143,6 @@ public class ImageLoaderController extends ElementController {
         else
             imagesView.getSelectionModel().clearSelection();
 
+
     }
 }

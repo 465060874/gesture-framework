@@ -22,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
@@ -49,6 +50,9 @@ public class MainWindowController extends VBox {
     @FXML
     private Button undoButton, redoButton, trainButton,
                    processButton, saveButton, saveAsButton, openButton;
+
+    @FXML
+    @Getter private Label messageBox;
 
 
     @Getter private static TopContainerController topController;
