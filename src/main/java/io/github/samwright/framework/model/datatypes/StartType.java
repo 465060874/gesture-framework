@@ -1,7 +1,9 @@
 package io.github.samwright.framework.model.datatypes;
 
+import io.github.samwright.framework.model.mock.TopProcessor;
+
 /**
- * User: Sam Wright Date: 03/09/2013 Time: 13:49
+ * The input type required by the {@link TopProcessor} object's workflows.
  */
-public interface StartType extends MetaType {
+public interface StartType {
 }
