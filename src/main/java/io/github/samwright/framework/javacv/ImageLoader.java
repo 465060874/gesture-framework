@@ -45,6 +45,8 @@ public class ImageLoader extends AbstractElement {
         images = new ArrayList<>(oldElement.getImages());
         activeImage = oldElement.getActiveImage();
         directory = oldElement.getDirectory();
+        saveMode = oldElement.saveMode;
+        snapshotTag = oldElement.snapshotTag;
         reloadImages();
     }
 
@@ -62,7 +64,7 @@ public class ImageLoader extends AbstractElement {
 
     @Override
     public Mediator process(Mediator input) {
-        if (activeImage == null || activeImageNotSaved)
+        if (activeImage == null)
             takeSnapshot();
 
         if (activeImage == null)
