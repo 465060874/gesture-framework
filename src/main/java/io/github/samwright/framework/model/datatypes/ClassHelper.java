@@ -31,10 +31,11 @@ public class ClassHelper {
     }
 
     /**
+     * Gets the superclasses and superinterfaces of the given class using a breadth-first search
+     * (ie. it checks for all interfaces before moving up to the next superclass).
      *
-     *
-     * @param clazz
-     * @return
+     * @param clazz the class to find the ancestry of.
+     * @return the ancestry of the given class.
      */
     public static LinkedHashSet<Class> getAncestry(Class clazz) {
         LinkedHashSet<Class> ancestry = new LinkedHashSet<>();

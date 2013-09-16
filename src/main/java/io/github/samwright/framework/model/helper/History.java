@@ -43,9 +43,9 @@ public abstract class History {
      * branches, and if those same {@code History} objects appear another call to
      * {@code this.join(..)}, the same {@code History} object is returned.
      *
-     * @param creator
-     * @param toJoin
-     * @return
+     * @param creator the {@link Processor} that is joining the history objects.
+     * @param toJoin the history objects to join.
+     * @return the next history object after the join.
      */
     public abstract History join(Processor creator, Set<History> toJoin);
 

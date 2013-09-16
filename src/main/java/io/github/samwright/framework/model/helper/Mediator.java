@@ -65,9 +65,9 @@ public abstract class Mediator {
      * The branched/joined {@code Mediator} objects are only accessible through the returned
      * object's data field.
      *
-     * @param creator
-     * @param mediatorsToJoin
-     * @return
+     * @param creator the {@link Processor} that is joining the mediator objects.
+     * @param mediatorsToJoin the mediator objects to join.
+     * @return the next mediator object after the join.
      */
     public abstract Mediator join(Processor creator, List<Mediator> mediatorsToJoin);
 
