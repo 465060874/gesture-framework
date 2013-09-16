@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2013 Sam Wright</copyright>
     <item>
-      <title>File: 109,
-             Errors: 1027,
+      <title>File: 112,
+             Errors: 1079,
              Warnings: 0,
              Infos: 0
       </title>
@@ -94,7 +94,7 @@
                   0
                 </td>
                 <td>
-                  27
+                  31
                 </td>
               </tr>
                           <tr>
@@ -235,6 +235,20 @@
                 </td>
                 <td>
                   1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#io.github.samwright.framework.javacv.helper.Camera.java">io/github/samwright/framework/javacv/helper/Camera.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
                 </td>
               </tr>
                           <tr>
@@ -598,7 +612,7 @@
                   0
                 </td>
                 <td>
-                  20
+                  22
                 </td>
               </tr>
                           <tr>
@@ -738,7 +752,7 @@
                   0
                 </td>
                 <td>
-                  12
+                  14
                 </td>
               </tr>
                           <tr>
@@ -766,7 +780,7 @@
                   0
                 </td>
                 <td>
-                  5
+                  18
                 </td>
               </tr>
                           <tr>
@@ -822,7 +836,7 @@
                   0
                 </td>
                 <td>
-                  32
+                  31
                 </td>
               </tr>
                           <tr>
@@ -864,7 +878,7 @@
                   0
                 </td>
                 <td>
-                  4
+                  8
                 </td>
               </tr>
                           <tr>
@@ -906,7 +920,7 @@
                   0
                 </td>
                 <td>
-                  24
+                  36
                 </td>
               </tr>
                           <tr>
@@ -1219,6 +1233,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#io.github.samwright.framework.controller.TopController.java">io/github/samwright/framework/controller/TopController.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://github.com/samwright/gesture-framework/checkstyle.html#io.github.samwright.framework.javacv.ContourFinderController.java">io/github/samwright/framework/javacv/ContourFinderController.java</a>
                 </td>
                 <td>
@@ -1396,7 +1424,7 @@
                   0
                 </td>
                 <td>
-                  54
+                  56
                 </td>
               </tr>
                           <tr>
@@ -1480,7 +1508,21 @@
                   0
                 </td>
                 <td>
-                  13
+                  14
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/samwright/gesture-framework/checkstyle.html#io.github.samwright.framework.javacv.viewers.IntegerViewer.java">io/github/samwright/framework/javacv/viewers/IntegerViewer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
                 </td>
               </tr>
                           <tr>
@@ -1494,7 +1536,7 @@
                   0
                 </td>
                 <td>
-                  4
+                  3
                 </td>
               </tr>
                           <tr>

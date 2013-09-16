@@ -43,39 +43,36 @@
 <a class="jxr_linenumber" name="33" href="#33">33</a>  
 <a class="jxr_linenumber" name="34" href="#34">34</a>          CvPoint centre = hand.getPalm().getCog();
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
-<a class="jxr_linenumber" name="36" href="#36">36</a>          System.out.println(<span class="jxr_string">"\n== Fingers:"</span>);
-<a class="jxr_linenumber" name="37" href="#37">37</a>  
-<a class="jxr_linenumber" name="38" href="#38">38</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; hand.getDigitAngles().size(); ++i) {
-<a class="jxr_linenumber" name="39" href="#39">39</a>              <strong class="jxr_keyword">double</strong> angle = hand.getDigitAngles().get(i);
-<a class="jxr_linenumber" name="40" href="#40">40</a>              <strong class="jxr_keyword">double</strong> length = hand.getDigitLengths().get(i);
-<a class="jxr_linenumber" name="41" href="#41">41</a>              System.out.format(<span class="jxr_string">"angle: %f , length: %f%n"</span>, angle, length);
-<a class="jxr_linenumber" name="42" href="#42">42</a>  
-<a class="jxr_linenumber" name="43" href="#43">43</a>              CvPoint fingertip = <strong class="jxr_keyword">new</strong> CvPoint(
-<a class="jxr_linenumber" name="44" href="#44">44</a>                      (<strong class="jxr_keyword">int</strong>) (centre.x() + length * Math.cos(angle)),
-<a class="jxr_linenumber" name="45" href="#45">45</a>                      (<strong class="jxr_keyword">int</strong>) (centre.y() + length * Math.sin(angle))
-<a class="jxr_linenumber" name="46" href="#46">46</a>              );
-<a class="jxr_linenumber" name="47" href="#47">47</a>              cvDrawLine(copiedImage, centre, fingertip, CvScalar.RED, 10, CV_AA, 0);
-<a class="jxr_linenumber" name="48" href="#48">48</a>          }
-<a class="jxr_linenumber" name="49" href="#49">49</a>  
-<a class="jxr_linenumber" name="50" href="#50">50</a>          CvPoint dirPnt = <strong class="jxr_keyword">new</strong> CvPoint(
-<a class="jxr_linenumber" name="51" href="#51">51</a>                  (<strong class="jxr_keyword">int</strong>) (centre.x() + hand.getWidth() * Math.cos(hand.getPalm().getContourAxisAngle())),
-<a class="jxr_linenumber" name="52" href="#52">52</a>                  (<strong class="jxr_keyword">int</strong>) (centre.y() + hand.getWidth() * Math.sin(hand.getPalm().getContourAxisAngle()))
-<a class="jxr_linenumber" name="53" href="#53">53</a>          );
-<a class="jxr_linenumber" name="54" href="#54">54</a>          cvDrawLine(copiedImage, centre, dirPnt, CvScalar.GREEN, 10, CV_AA, 0);
-<a class="jxr_linenumber" name="55" href="#55">55</a>  
+<a class="jxr_linenumber" name="36" href="#36">36</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; hand.getDigitAngles().size(); ++i) {
+<a class="jxr_linenumber" name="37" href="#37">37</a>              <strong class="jxr_keyword">double</strong> angle = hand.getDigitAngles().get(i);
+<a class="jxr_linenumber" name="38" href="#38">38</a>              <strong class="jxr_keyword">double</strong> length = hand.getDigitLengths().get(i);
+<a class="jxr_linenumber" name="39" href="#39">39</a>  
+<a class="jxr_linenumber" name="40" href="#40">40</a>              CvPoint fingertip = <strong class="jxr_keyword">new</strong> CvPoint(
+<a class="jxr_linenumber" name="41" href="#41">41</a>                      (<strong class="jxr_keyword">int</strong>) (centre.x() + length * Math.cos(angle)),
+<a class="jxr_linenumber" name="42" href="#42">42</a>                      (<strong class="jxr_keyword">int</strong>) (centre.y() + length * Math.sin(angle))
+<a class="jxr_linenumber" name="43" href="#43">43</a>              );
+<a class="jxr_linenumber" name="44" href="#44">44</a>              cvDrawLine(copiedImage, centre, fingertip, CvScalar.RED, 10, CV_AA, 0);
+<a class="jxr_linenumber" name="45" href="#45">45</a>          }
+<a class="jxr_linenumber" name="46" href="#46">46</a>  
+<a class="jxr_linenumber" name="47" href="#47">47</a>          CvPoint dirPnt = <strong class="jxr_keyword">new</strong> CvPoint(
+<a class="jxr_linenumber" name="48" href="#48">48</a>                  (<strong class="jxr_keyword">int</strong>) (centre.x() + hand.getWidth() * Math.cos(hand.getPalm().getContourAxisAngle())),
+<a class="jxr_linenumber" name="49" href="#49">49</a>                  (<strong class="jxr_keyword">int</strong>) (centre.y() + hand.getWidth() * Math.sin(hand.getPalm().getContourAxisAngle()))
+<a class="jxr_linenumber" name="50" href="#50">50</a>          );
+<a class="jxr_linenumber" name="51" href="#51">51</a>          cvDrawLine(copiedImage, centre, dirPnt, CvScalar.GREEN, 10, CV_AA, 0);
+<a class="jxr_linenumber" name="52" href="#52">52</a>  
+<a class="jxr_linenumber" name="53" href="#53">53</a>  
+<a class="jxr_linenumber" name="54" href="#54">54</a>          <strong class="jxr_keyword">super</strong>.view(copiedImage);
+<a class="jxr_linenumber" name="55" href="#55">55</a>      }
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
-<a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">super</strong>.view(copiedImage);
-<a class="jxr_linenumber" name="58" href="#58">58</a>      }
-<a class="jxr_linenumber" name="59" href="#59">59</a>  
-<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> drawCircle(opencv_core.IplImage image, opencv_core.CvScalar colour, opencv_core.CvPoint position) {
-<a class="jxr_linenumber" name="61" href="#61">61</a>          cvDrawCircle(image, position, 10, colour, 10, CV_AA, 0);
-<a class="jxr_linenumber" name="62" href="#62">62</a>      }
-<a class="jxr_linenumber" name="63" href="#63">63</a>  
-<a class="jxr_linenumber" name="64" href="#64">64</a>      @Override
-<a class="jxr_linenumber" name="65" href="#65">65</a>      <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">return</strong> <span class="jxr_string">"Fingertip Viewer"</span>;
-<a class="jxr_linenumber" name="67" href="#67">67</a>      }
-<a class="jxr_linenumber" name="68" href="#68">68</a>  }
+<a class="jxr_linenumber" name="57" href="#57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> drawCircle(opencv_core.IplImage image, opencv_core.CvScalar colour, opencv_core.CvPoint position) {
+<a class="jxr_linenumber" name="58" href="#58">58</a>          cvDrawCircle(image, position, 10, colour, 10, CV_AA, 0);
+<a class="jxr_linenumber" name="59" href="#59">59</a>      }
+<a class="jxr_linenumber" name="60" href="#60">60</a>  
+<a class="jxr_linenumber" name="61" href="#61">61</a>      @Override
+<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="63" href="#63">63</a>          <strong class="jxr_keyword">return</strong> <span class="jxr_string">"Fingertip Viewer"</span>;
+<a class="jxr_linenumber" name="64" href="#64">64</a>      }
+<a class="jxr_linenumber" name="65" href="#65">65</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
