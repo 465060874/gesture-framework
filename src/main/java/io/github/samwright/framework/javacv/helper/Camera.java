@@ -13,7 +13,7 @@ import java.util.Calendar;
 public class Camera {
 
     @Getter private static final Camera instance = new Camera();
-    private final static long timeout = 20000;
+    private final static long timeout = 1000;
 
     private final Object[] lock = new Object[0];
     @Getter private final boolean valid;

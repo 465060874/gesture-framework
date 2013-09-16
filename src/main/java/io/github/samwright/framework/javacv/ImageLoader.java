@@ -29,7 +29,7 @@ public class ImageLoader extends AbstractElement {
     @Getter private LoadedImage activeImage;
     private List<LoadedImage> images;
     @Getter @Setter private String snapshotTag = "Snapshot";
-    @Getter @Setter private boolean saveMode = true;
+    @Getter @Setter private boolean saveMode = false;
     private boolean activeImageNotSaved = false;
 
 
@@ -152,13 +152,17 @@ public class ImageLoader extends AbstractElement {
             } while(new File(fullFileName + ".jpg").exists());
             fullFileName = fullFileName + ".jpg";
 
-            cvSaveImage(fullFileName, image);
-            reloadImages();
-            activeImage = null;
-            for (LoadedImage loadedImage : images) {
-                if (loadedImage.getFilename().equals(fullFileName)) {
-                    activeImage = loadedImage;
-                    break;
+            try {
+                cvSaveImage(fullFileName, image);
+            } finally {
+                activeImage = new LoadedImage(image, snapshotTag, fullFileName);
+                images.add(activeImage);
+                reloadImages();
+                for (LoadedImage loadedImage : images) {
+                    if (loadedImage.getFilename().equals(fullFileName)) {
+                        activeImage = loadedImage;
+                        break;
+                    }
                 }
             }
         } else {

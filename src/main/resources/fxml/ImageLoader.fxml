@@ -17,10 +17,11 @@
                 <HBox>
                     <children>
                         <Button fx:id="snapshotButton" text="Take Snapshot"/>
-                        <CheckBox fx:id="saveToFileCheckbox" text="Save to file" selected="true" />
+                        <CheckBox fx:id="saveToFileCheckbox" text="Save to file" selected="true"
+                                  visible="false"/>
                     </children>
                 </HBox>
-                <HBox>
+                <HBox visible="false">
                     <children>
                         <Label text="Tag:"/>
                         <TextField fx:id="tagField" text="Snapshot" minWidth="-1.0"/>
